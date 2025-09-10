@@ -18,6 +18,7 @@ import { useAppDispatch, useAppSelector } from '@/store/hooks'
 import authSelectors from '@/store/features/auth/authSelectors'
 import { authApi, useLogoutMutation } from '@/store/features/auth/authApi'
 import { resetAuth } from '@/store/features/auth/authSlice'
+import LocaleSelect from '@/components/Layouts/LocaleSelect'
 
 type Stats = {
 	activeContracts: number
@@ -69,7 +70,7 @@ export default function Header({ stats, onOpenSettings }: Props) {
 			await logoutMutation().unwrap()
 			dispatch(resetAuth())
 			dispatch(authApi.util.resetApiState())
-			router.push('/login')
+			router.push('/he/login')
 			toast({
 				title: 'התנתקת בהצלחה',
 				description: 'נתראה בפעם הבאה!',
@@ -89,6 +90,7 @@ export default function Header({ stats, onOpenSettings }: Props) {
 				</div>
 
 				<div className='flex items-center gap-5'>
+					<LocaleSelect />
 					<Button
 						variant='ghost'
 						size='icon'

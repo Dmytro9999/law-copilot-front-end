@@ -14,8 +14,11 @@ import { Brain, Mail, Shield, Sparkles } from 'lucide-react'
 import Link from 'next/link'
 import { setUser } from '@/store/features/auth/authSlice'
 import { useAppDispatch } from '@/store/hooks'
+import { useI18n } from '@/providers/I18nProvider'
 
 export default function LoginClient() {
+	const { t } = useI18n()
+
 	const router = useRouter()
 	const { toast } = useToast()
 	const [email, setEmail] = useState('')
@@ -42,6 +45,7 @@ export default function LoginClient() {
 	return (
 		<>
 			<AuthBrand />
+			<h1>{t('auth.login.title')}</h1>
 			<AuthCard title='התחברות למערכת' subtitle='היכנס לחשבון שלך'>
 				<form onSubmit={onSubmit} className='space-y-4'>
 					<div className='space-y-2'>
