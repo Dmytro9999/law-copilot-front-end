@@ -25,3 +25,38 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+/.pnp
+.pnp.js
+
+# testing
+/coverage
+
+# Logs
+logs
+*.log
+
+# misc
+.DS_Store
+*.pem
+Thumbs.db
+
+# local env files
+.env*.local
+.env
+
+# IDEs and editors
+.idea/
+.vscode/
+*.iml
+*.suo
+*.sln
+*.swp
+*.bak
+*.tmp
+*.cache
+*.user
+*.lock
+
+# IDE - Visual Studio Code
+*.code-workspace
