@@ -90,7 +90,7 @@ export default function TwoFactorPage() {
 		if (e.key === 'ArrowRight' && idx < 5) inputsRef.current[idx + 1]?.focus()
 	}
 
-	const onPaste = (e: React.ClipboardEvent<HTMLDivElement>) => {
+	const onPaste = (e: any) => {
 		const text = e.clipboardData.getData('text').replace(/\D/g, '').slice(0, 6)
 		if (!text) return
 		e.preventDefault()
@@ -98,7 +98,7 @@ export default function TwoFactorPage() {
 		setOtp(next)
 		const lastFilled = Math.min(
 			5,
-			next.findLastIndex((c) => !!c)
+			next.findLastIndex((c: any) => !!c)
 		)
 		inputsRef.current[Math.max(0, lastFilled)]?.focus()
 	}
@@ -181,7 +181,7 @@ export default function TwoFactorPage() {
 							{otp.map((val, idx) => (
 								<Input
 									key={idx}
-									ref={(el) => (inputsRef.current[idx] = el)}
+									ref={(el: any) => (inputsRef.current[idx] = el)}
 									inputMode='numeric'
 									pattern='[0-9]*'
 									maxLength={1}

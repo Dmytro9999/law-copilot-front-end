@@ -30,6 +30,45 @@
 				"show": "הצג סיסמה",
 				"hide": "הסתר סיסמה"
 			}
+		},
+		"forgot": {
+			"title": "איפוס סיסמה",
+			"subtitle": "הזן את כתובת המייל לקבלת קישור לאיפוס",
+			"emailLabel": "כתובת מייל",
+			"emailPlaceholder": "lawyer@example.com",
+			"submit": "שלח קישור לאיפוס",
+			"sending": "שולח...",
+			"backToLogin": "חזור להתחברות",
+			"dialog": {
+				"title": "קישור לאיפוס נשלח",
+				"desc": "נשלח לדוא\"ל שלך מייל עם הוראות לשחזור סיסמה.",
+				"ok": "אישור"
+			},
+			"toast": {
+				"errorTitle": "שגיאה",
+				"defaultError": "אירעה שגיאה, נסה שוב"
+			}
+		},
+		"reset": {
+			"title": "איפוס סיסמה",
+			"subtitle": "בחר סיסמה חדשה והתחבר",
+			"emailLabel": "כתובת מייל *",
+			"emailPlaceholder": "lawyer@example.com",
+			"newPasswordLabel": "סיסמה חדשה *",
+			"confirmPasswordLabel": "אימות סיסמה *",
+			"submit": "שנה סיסמה והתחבר",
+			"saving": "שומר…",
+			"toast": {
+				"errorTitle": "שגיאה",
+				"emailRequired": "נא להזין כתובת מייל",
+				"pwMin": "הסיסמה חייבת להכיל לפחות 8 תווים",
+				"pwMismatch": "הסיסמאות אינן תואמות",
+				"successTitle": "הסיסמה עודכנה",
+				"successDesc": "התחברת בהצלחה",
+				"defaultError": "אירעה שגיאה, נסה שוב"
+			},
+			"invalidTitle": "הקישור אינו תקין או שפג תוקפו",
+			"invalidDesc": "נסה לבקש קישור חדש לאיפוס הסיסמה."
 		}
 	},
 	"twofa": {

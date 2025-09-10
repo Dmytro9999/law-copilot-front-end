@@ -10,85 +10,131 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { useToast } from '@/components/ui/use-toast'
 import { useConfirmResetPasswordMutation, useLoginMutation } from '@/store/features/auth/authApi'
+import { useI18n, useLocale } from '@/providers/I18nProvider'
 
 export default function ResetPasswordClient({
-                                                token,
-                                                email,
-                                                next,
-                                            }: {
-    token: string
-    email?: string
-    next: string
+	token,
+	email,
+	next,
+}: {
+	token: string
+	email?: string
+	next: string
 }) {
-    const router = useRouter()
-    const { toast } = useToast()
+	const router = useRouter()
+	const { toast } = useToast()
+	const { t } = useI18n()
+	const lang = useLocale()
 
-    // если бэк не вернул email — попросим пользователя ввести
-    const [emailState, setEmailState] = useState(email ?? '')
-    const [pw, setPw] = useState('')
-    const [pw2, setPw2] = useState('')
+	const [emailState, setEmailState] = useState(email ?? '')
+	const [pw, setPw] = useState('')
+	const [pw2, setPw2] = useState('')
 
-    const [confirmReset, { isLoading }] = useConfirmResetPasswordMutation()
-    const [login, { isLoading: isLoggingIn }] = useLoginMutation()
+	const [confirmReset, { isLoading }] = useConfirmResetPasswordMutation()
+	const [login, { isLoading: isLoggingIn }] = useLoginMutation()
 
-    async function onSubmit(e: React.FormEvent) {
-        e.preventDefault()
-        if (!emailState) {
-            toast({ title: 'שגיאה', description: 'נא להזין כתובת מייל', variant: 'destructive' })
-            return
-        }
-        if (!pw || pw.length < 8) {
-            toast({ title: 'שגיאה', description: 'הסיסמה חייבת להכיל לפחות 8 תווים', variant: 'destructive' })
-            return
-        }
-        if (pw !== pw2) {
-            toast({ title: 'שגיאה', description: 'הסיסמאות אינן תואמות', variant: 'destructive' })
-            return
-        }
+	function resolveNext(target: string, lang: string) {
+		if (!target || typeof target !== 'string') return `/${lang}`
+		if (/^https?:\/\//i.test(target)) return target
+		if (
+			target.startsWith('/he/') ||
+			target === '/he' ||
+			target.startsWith('/en/') ||
+			target === '/en'
+		) {
+			return target
+		}
+		return target.startsWith('/') ? `/${lang}${target}` : `/${lang}`
+	}
 
-        try {
-            await confirmReset({ email: emailState.trim(), password: pw, token }).unwrap()
-            await login({ email: emailState.trim(), password: pw }).unwrap()
+	async function onSubmit(e: React.FormEvent) {
+		e.preventDefault()
+		if (!emailState) {
+			toast({
+				title: t('reset.toast.errorTitle'),
+				description: t('reset.toast.emailRequired'),
+				variant: 'destructive',
+			})
+			return
+		}
+		if (!pw || pw.length < 8) {
+			toast({
+				title: t('reset.toast.errorTitle'),
+				description: t('reset.toast.pwMin'),
+				variant: 'destructive',
+			})
+			return
+		}
+		if (pw !== pw2) {
+			toast({
+				title: t('reset.toast.errorTitle'),
+				description: t('reset.toast.pwMismatch'),
+				variant: 'destructive',
+			})
+			return
+		}
 
-            toast({
-                title: 'הסיסמה עודכנה',
-                description: 'התחברת בהצלחה',
-                className: 'bg-green-600 text-white',
-            })
-            router.replace(next || '/')
-        } catch (err: any) {
-            const msg = err?.data?.message || err?.message || 'אירעה שגיאה, נסה שוב'
-            toast({ title: 'שגיאה', description: msg, variant: 'destructive' })
-        }
-    }
+		try {
+			await confirmReset({ email: emailState.trim(), password: pw, token }).unwrap()
+			await login({ email: emailState.trim(), password: pw }).unwrap()
 
-    return (
-        <>
-            <AuthBrand />
-            <AuthCard title="איפוס סיסמה" subtitle="בחר סיסמה חדשה והתחבר">
-                <form onSubmit={onSubmit} className="space-y-4">
-                    {!email && (
-                        <div className="space-y-2">
-                            <Label htmlFor="email">כתובת מייל *</Label>
-                            <Input
-                                id="email"
-                                type="email"
-                                value={emailState}
-                                onChange={(e) => setEmailState(e.target.value)}
-                                placeholder="lawyer@example.com"
-                                required
-                            />
-                        </div>
-                    )}
+			toast({
+				title: t('reset.toast.successTitle'),
+				description: t('reset.toast.successDesc'),
+				className: 'bg-green-600 text-white',
+			})
 
-                    <PasswordField id="pw" label="סיסמה חדשה *" value={pw} onChange={setPw} />
-                    <PasswordField id="pw2" label="אימות סיסמה *" value={pw2} onChange={setPw2} />
+			const dest = resolveNext(next, lang)
+			window.location.replace(dest)
+		} catch (err: any) {
+			const msg = err?.data?.message || err?.message || t('reset.toast.defaultError')
+			toast({ title: t('reset.toast.errorTitle'), description: msg, variant: 'destructive' })
+		}
+	}
 
-                    <Button type="submit" disabled={isLoading || isLoggingIn} className="w-full h-12">
-                        {isLoading || isLoggingIn ? 'שומר…' : 'שנה סיסמה והתחבר'}
-                    </Button>
-                </form>
-            </AuthCard>
-        </>
-    )
+	return (
+		<>
+			<AuthBrand />
+			<AuthCard title={t('reset.title')} subtitle={t('reset.subtitle')}>
+				<form onSubmit={onSubmit} className='space-y-4'>
+					{!email && (
+						<div className='space-y-2'>
+							<Label htmlFor='email' className='text-sm font-semibold text-slate-700'>
+								{t('reset.emailLabel')}
+							</Label>
+							<Input
+								id='email'
+								type='email'
+								value={emailState}
+								onChange={(e) => setEmailState(e.target.value)}
+								placeholder={t('reset.emailPlaceholder')}
+								required
+							/>
+						</div>
+					)}
+
+					<PasswordField
+						id='pw'
+						label={t('reset.newPasswordLabel')}
+						value={pw}
+						onChange={setPw}
+					/>
+					<PasswordField
+						id='pw2'
+						label={t('reset.confirmPasswordLabel')}
+						value={pw2}
+						onChange={setPw2}
+					/>
+
+					<Button
+						type='submit'
+						disabled={isLoading || isLoggingIn}
+						className='w-full h-12'
+					>
+						{isLoading || isLoggingIn ? t('reset.saving') : t('reset.submit')}
+					</Button>
+				</form>
+			</AuthCard>
+		</>
+	)
 }

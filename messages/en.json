@@ -30,6 +30,45 @@
 				"show": "Show password",
 				"hide": "Hide password"
 			}
+		},
+		"forgot": {
+			"title": "Reset password",
+			"subtitle": "Enter your email to receive a reset link",
+			"emailLabel": "Email address",
+			"emailPlaceholder": "lawyer@example.com",
+			"submit": "Send reset link",
+			"sending": "Sending...",
+			"backToLogin": "Back to sign in",
+			"dialog": {
+				"title": "Reset link sent",
+				"desc": "An email with password reset instructions has been sent to your address.",
+				"ok": "OK"
+			},
+			"toast": {
+				"errorTitle": "Error",
+				"defaultError": "Something went wrong, try again"
+			}
+		},
+		"reset": {
+			"title": "Reset password",
+			"subtitle": "Choose a new password and sign in",
+			"emailLabel": "Email address *",
+			"emailPlaceholder": "lawyer@example.com",
+			"newPasswordLabel": "New password *",
+			"confirmPasswordLabel": "Confirm password *",
+			"submit": "Change password & sign in",
+			"saving": "Saving…",
+			"toast": {
+				"errorTitle": "Error",
+				"emailRequired": "Please enter your email",
+				"pwMin": "Password must be at least 8 characters",
+				"pwMismatch": "Passwords do not match",
+				"successTitle": "Password updated",
+				"successDesc": "Signed in successfully",
+				"defaultError": "Something went wrong, try again"
+			},
+			"invalidTitle": "Link is invalid or expired",
+			"invalidDesc": "Try requesting a new password reset link."
 		}
 	},
 	"twofa": {
