@@ -69,6 +69,31 @@
 			},
 			"invalidTitle": "Link is invalid or expired",
 			"invalidDesc": "Try requesting a new password reset link."
+		},
+		"signup": {
+			"title": "Create account",
+			"subtitle": "Open a new account for your law firm",
+			"alert": "The system is intended for lawyers only. Professional verification is required.",
+			"fields": {
+				"fullNameLabel": "Full name *",
+				"fullNamePlaceholder": "Adv. David Cohen",
+				"lawFirmLabel": "Law firm *",
+				"lawFirmPlaceholder": "Cohen & Partners",
+				"phoneLabel": "Phone *",
+				"phonePlaceholder": "050-1234567",
+				"emailLabel": "Email address *",
+				"emailPlaceholder": "lawyer@example.com"
+			},
+			"passwordHelper": "Password must contain at least 8 characters, an uppercase letter, a lowercase letter and a number",
+			"submit": "Sign up",
+			"submitting": "Signing up...",
+			"footerLogin": "Already have an account? Sign in here",
+			"toast": {
+				"successTitle": "Signed up successfully! 📧",
+				"successDesc": "Please check your email to verify your account",
+				"errorTitle": "Error",
+				"defaultError": "Something went wrong, try again"
+			}
 		}
 	},
 	"twofa": {

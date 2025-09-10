@@ -69,6 +69,31 @@
 			},
 			"invalidTitle": "הקישור אינו תקין או שפג תוקפו",
 			"invalidDesc": "נסה לבקש קישור חדש לאיפוס הסיסמה."
+		},
+		"signup": {
+			"title": "הרשמה למערכת",
+			"subtitle": "צור חשבון חדש למשרד עורכי הדין",
+			"alert": "המערכת מיועדת לעורכי דין בלבד. נדרש אימות מקצועי.",
+			"fields": {
+				"fullNameLabel": "שם מלא *",
+				"fullNamePlaceholder": "עו״ד דוד כהן",
+				"lawFirmLabel": "משרד עורכי דין *",
+				"lawFirmPlaceholder": "משרד כהן ושות׳",
+				"phoneLabel": "טלפון *",
+				"phonePlaceholder": "050-1234567",
+				"emailLabel": "כתובת מייל *",
+				"emailPlaceholder": "lawyer@example.com"
+			},
+			"passwordHelper": "הסיסמה חייבת להכיל לפחות 8 תווים, אות גדולה, אות קטנה ומספר",
+			"submit": "הרשם למערכת",
+			"submitting": "נרשם...",
+			"footerLogin": "יש לך חשבון? התחבר כאן",
+			"toast": {
+				"successTitle": "נרשמת בהצלחה! 📧",
+				"successDesc": "אנא בדוק את המייל שלך לאימות החשבון",
+				"errorTitle": "שגיאה",
+				"defaultError": "אירעה שגיאה, נסה שוב"
+			}
 		}
 	},
 	"twofa": {
