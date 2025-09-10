@@ -14,10 +14,11 @@ import { Brain, Mail, Shield, Sparkles } from 'lucide-react'
 import Link from 'next/link'
 import { setUser } from '@/store/features/auth/authSlice'
 import { useAppDispatch } from '@/store/hooks'
-import { useI18n } from '@/providers/I18nProvider'
+import { useI18n, useLocale } from '@/providers/I18nProvider'
 
 export default function LoginClient() {
 	const { t } = useI18n()
+	const lang = useLocale()
 
 	const router = useRouter()
 	const { toast } = useToast()
@@ -33,9 +34,19 @@ export default function LoginClient() {
 				email: email.trim(),
 				password: password.trim(),
 			}).unwrap()
+			if ('requires2fa' in response && response.requires2fa) {
+				sessionStorage.setItem('twoFaToken', response.twoFaToken)
+				router.push(`${lang}/two-factor`)
+				router.refresh()
 
+				const nextUrl = `/${lang}/two-factor`
+				window.location.replace(nextUrl)
+				return
+			}
 			dispatch(setUser(response))
-			router.replace('/')
+			sessionStorage.removeItem('twoFaToken')
+			router.push(`/${lang}`)
+			router.refresh()
 		} catch (err: any) {
 			const msg = err?.data?.message || err?.message || 'Ошибка входа'
 			toast({ title: 'Ошибка', description: msg, variant: 'destructive' })
@@ -45,19 +56,18 @@ export default function LoginClient() {
 	return (
 		<>
 			<AuthBrand />
-			<h1>{t('auth.login.title')}</h1>
-			<AuthCard title='התחברות למערכת' subtitle='היכנס לחשבון שלך'>
+			<AuthCard title={t('auth.login.title')} subtitle={t('auth.login.subtitle')}>
 				<form onSubmit={onSubmit} className='space-y-4'>
 					<div className='space-y-2'>
 						<Label htmlFor='email' className='text-sm font-semibold text-slate-700'>
-							כתובת מייל *
+							{t('auth.login.emailLabel')}
 						</Label>
 						<div className='relative'>
 							<Mail className='absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400' />
 							<Input
 								id='email'
 								type='email'
-								placeholder='lawyer@example.com'
+								placeholder={t('auth.login.emailPlaceholder')}
 								value={email}
 								onChange={(e) => setEmail(e.target.value)}
 								className='h-12 pr-10 bg-white/70 border-slate-200 focus:border-blue-500 focus:ring-blue-500/20'
@@ -76,12 +86,12 @@ export default function LoginClient() {
 						{isLoading ? (
 							<div className='flex items-center gap-2'>
 								<div className='animate-spin rounded-full h-4 w-4 border-b-2 border-white' />
-								מתחבר...
+								{t('auth.login.loading')}
 							</div>
 						) : (
 							<div className='flex items-center gap-2'>
 								<Shield className='h-4 w-4' />
-								התחבר למערכת
+								{t('auth.login.button')}
 							</div>
 						)}
 					</Button>
@@ -92,11 +102,11 @@ export default function LoginClient() {
 						className='text-slate-600 hover:text-slate-800 text-sm'
 						href='/forgot-password'
 					>
-						שכחת סיסמה?
+						{t('auth.login.forgot')}
 					</Link>
 					<div>
 						<Link className='text-blue-600 hover:text-blue-700' href='/signup'>
-							אין לך חשבון? הרשם כאן
+							{t('auth.login.signup')}
 						</Link>
 					</div>
 				</div>
@@ -106,28 +116,34 @@ export default function LoginClient() {
 			<div className='mt-8 grid grid-cols-3 gap-4 text-center'>
 				<div className='bg-white/60 backdrop-blur-sm rounded-lg p-3'>
 					<Brain className='h-6 w-6 text-blue-600 mx-auto mb-1' />
-					<p className='text-xs text-slate-600 font-medium'>AI מתקדם</p>
+					<p className='text-xs text-slate-600 font-medium'>
+						{t('auth.login.features.ai')}
+					</p>
 				</div>
 				<div className='bg-white/60 backdrop-blur-sm rounded-lg p-3'>
 					<Shield className='h-6 w-6 text-green-600 mx-auto mb-1' />
-					<p className='text-xs text-slate-600 font-medium'>אבטחה מלאה</p>
+					<p className='text-xs text-slate-600 font-medium'>
+						{t('auth.login.features.security')}
+					</p>
 				</div>
 				<div className='bg-white/60 backdrop-blur-sm rounded-lg p-3'>
 					<Sparkles className='h-6 w-6 text-purple-600 mx-auto mb-1' />
-					<p className='text-xs text-slate-600 font-medium'>אוטומציה</p>
+					<p className='text-xs text-slate-600 font-medium'>
+						{t('auth.login.features.automation')}
+					</p>
 				</div>
 			</div>
 
 			{/* Legal Notice */}
 			<div className='mt-6 text-center'>
 				<p className='text-xs text-slate-500'>
-					על ידי הרשמה אתה מסכים ל
+					{t('auth.login.legal.prefix')}{' '}
 					<Button variant='link' className='text-xs p-0 h-auto text-blue-600'>
-						תנאי השימוש
+						{t('auth.login.legal.terms')}
 					</Button>{' '}
-					ו
+					{t('auth.login.legal.and')}{' '}
 					<Button variant='link' className='text-xs p-0 h-auto text-blue-600'>
-						מדיניות הפרטיות
+						{t('auth.login.legal.privacy')}
 					</Button>
 				</p>
 			</div>

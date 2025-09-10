@@ -1,10 +1,59 @@
 {
+	"brand": {
+		"title": "Law Copilot",
+		"subtitle": "עוזר משפטי מבוסס בינה מלאכותית",
+		"tagline": "המערכת המשפטית החכמה הראשונה בישראל"
+	},
 	"auth": {
 		"login": {
-			"title": "התחברות",
-			"email": "דוא\"ל",
-			"password": "סיסמה",
-			"submit": "התחבר"
+			"title": "התחברות למערכת",
+			"subtitle": "היכנס לחשבון שלך",
+			"emailLabel": "כתובת מייל *",
+			"emailPlaceholder": "lawyer@example.com",
+			"button": "התחבר למערכת",
+			"loading": "מתחבר...",
+			"forgot": "שכחת סיסמה?",
+			"signup": "אין לך חשבון? הירשם כאן",
+			"features": {
+				"ai": "AI מתקדם",
+				"security": "אבטחה מלאה",
+				"automation": "אוטומציה"
+			},
+			"legal": {
+				"prefix": "על ידי הרשמה אתה מסכים ל",
+				"terms": "תנאי השימוש",
+				"and": "ו",
+				"privacy": "מדיניות הפרטיות"
+			},
+			"password": {
+				"label": "סיסמה *",
+				"show": "הצג סיסמה",
+				"hide": "הסתר סיסמה"
+			}
+		}
+	},
+	"twofa": {
+		"title": "אימות דו-שלבי",
+		"subtitle": "הזן את הקוד שנשלח אליך",
+		"codeSent": "הקוד נשלח",
+		"to": "אל",
+		"validForApprox": "תקף לכ־",
+		"min": "דק׳",
+		"label6": "הזן קוד בן 6 ספרות",
+		"pasteHint": "ניתן להדביק את כל 6 הספרות בלחיצה אחת.",
+		"verifying": "מאמת...",
+		"confirmAndSignIn": "לאשר ולהיכנס",
+		"resend": "שלח קוד שוב",
+		"resendCooldown": "שלח שוב",
+		"changeAccount": "החלף חשבון",
+		"toast": {
+			"error": "שגיאה",
+			"codeIncompleteTitle": "קוד לא מלא",
+			"codeIncompleteDesc": "הזן 6 ספרות",
+			"resendOkTitle": "הקוד נשלח",
+			"resendOkDesc": "בדוק את תיבת הדוא״ל",
+			"resendFailDesc": "לא ניתן לשלוח את הקוד",
+			"verifyFailDefault": "קוד שגוי או שפג תוקפו"
 		}
 	}
 }

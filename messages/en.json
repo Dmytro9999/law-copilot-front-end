@@ -1,10 +1,59 @@
 {
+	"brand": {
+		"title": "Law Copilot",
+		"subtitle": "AI Legal Assistant",
+		"tagline": "The first smart legal system in Israel"
+	},
 	"auth": {
 		"login": {
 			"title": "Sign in",
-			"email": "Email",
-			"password": "Password",
-			"submit": "Log in"
+			"subtitle": "Access your account",
+			"emailLabel": "Email address *",
+			"emailPlaceholder": "lawyer@example.com",
+			"button": "Sign in",
+			"loading": "Signing in...",
+			"forgot": "Forgot password?",
+			"signup": "Don't have an account? Sign up",
+			"features": {
+				"ai": "Advanced AI",
+				"security": "Full security",
+				"automation": "Automation"
+			},
+			"legal": {
+				"prefix": "By signing up you agree to the",
+				"terms": "Terms of Use",
+				"and": "and",
+				"privacy": "Privacy Policy"
+			},
+			"password": {
+				"label": "Password *",
+				"show": "Show password",
+				"hide": "Hide password"
+			}
+		}
+	},
+	"twofa": {
+		"title": "Two-factor verification",
+		"subtitle": "Enter the code we sent you",
+		"codeSent": "Code sent",
+		"to": "to",
+		"validForApprox": "Valid for ~",
+		"min": "min.",
+		"label6": "Enter 6-digit code",
+		"pasteHint": "You can paste all 6 digits at once from the clipboard.",
+		"verifying": "Verifying...",
+		"confirmAndSignIn": "Confirm & sign in",
+		"resend": "Send code again",
+		"resendCooldown": "Send again",
+		"changeAccount": "Change account",
+		"toast": {
+			"error": "Error",
+			"codeIncompleteTitle": "Code is incomplete",
+			"codeIncompleteDesc": "Enter 6 digits",
+			"resendOkTitle": "Code sent",
+			"resendOkDesc": "Check your email",
+			"resendFailDesc": "Could not send the code",
+			"verifyFailDefault": "Invalid or expired code"
 		}
 	}
 }
