@@ -1,7 +1,44 @@
-import React from 'react'
+'use client'
+
+import React, { useState } from 'react'
+import AddContractModal from '@/components/Modals/AddContractModal'
+import { Button } from '@/components/ui/button'
+import {
+	useAnalyzeContractMutation,
+	useMaterializeContractMutation,
+	useUploadDocumentMutation,
+} from '@/store/features/contracts/contractsApi'
 
 const Page = () => {
-	return <div>HELLO</div>
+	const [isAddModalOpen, setAddModalOpen] = useState(false)
+
+	const [uploadDocument] = useUploadDocumentMutation()
+	const [analyzeContract] = useAnalyzeContractMutation()
+	const [materializeContract] = useMaterializeContractMutation()
+
+	const handleAddContract = async (contractForm: {
+		name: string
+		clientName: string
+		clientEmail: string
+		clientPhone?: string
+		clientId?: string
+		signingDate: string
+		contractType?: string
+		value?: string
+		file: File | null
+	}) => {}
+
+	return (
+		<div>
+			<Button onClick={() => setAddModalOpen(true)}>Modal</Button>
+			HELLO
+			<AddContractModal
+				isOpen={isAddModalOpen}
+				onClose={() => setAddModalOpen(false)}
+				onSave={handleAddContract}
+			/>
+		</div>
+	)
 }
 
 export default Page
