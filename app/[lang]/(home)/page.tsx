@@ -3,18 +3,9 @@
 import React, { useState } from 'react'
 import AddContractModal from '@/components/Modals/AddContractModal'
 import { Button } from '@/components/ui/button'
-import {
-	useAnalyzeContractMutation,
-	useMaterializeContractMutation,
-	useUploadDocumentMutation,
-} from '@/store/features/contracts/contractsApi'
 
 const Page = () => {
 	const [isAddModalOpen, setAddModalOpen] = useState(false)
-
-	const [uploadDocument] = useUploadDocumentMutation()
-	const [analyzeContract] = useAnalyzeContractMutation()
-	const [materializeContract] = useMaterializeContractMutation()
 
 	const handleAddContract = async (contractForm: {
 		name: string
@@ -31,7 +22,7 @@ const Page = () => {
 	return (
 		<div>
 			<Button onClick={() => setAddModalOpen(true)}>Modal</Button>
-			HELLO
+
 			<AddContractModal
 				isOpen={isAddModalOpen}
 				onClose={() => setAddModalOpen(false)}

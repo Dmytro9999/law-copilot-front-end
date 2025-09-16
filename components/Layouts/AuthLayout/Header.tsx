@@ -19,6 +19,7 @@ import authSelectors from '@/store/features/auth/authSelectors'
 import { authApi, useLogoutMutation } from '@/store/features/auth/authApi'
 import { resetAuth } from '@/store/features/auth/authSlice'
 import LocaleSelect from '@/components/Layouts/LocaleSelect'
+import { useLocale } from '@/providers/I18nProvider'
 
 type Stats = {
 	activeContracts: number
@@ -39,6 +40,7 @@ export default function Header({ stats, onOpenSettings }: Props) {
 	const pathname = usePathname()
 	const dispatch = useAppDispatch()
 	const { toast } = useToast()
+	const lang = useLocale()
 
 	const title = (() => {
 		if (pathname?.startsWith('/contracts')) return 'לוח בקרה ראשי'
@@ -70,7 +72,7 @@ export default function Header({ stats, onOpenSettings }: Props) {
 			await logoutMutation().unwrap()
 			dispatch(resetAuth())
 			dispatch(authApi.util.resetApiState())
-			router.push('/he/login')
+			router.push(`/${lang}/login`)
 			toast({
 				title: 'התנתקת בהצלחה',
 				description: 'נתראה בפעם הבאה!',

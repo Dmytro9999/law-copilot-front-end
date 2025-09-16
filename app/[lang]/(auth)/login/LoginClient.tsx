@@ -100,12 +100,15 @@ export default function LoginClient() {
 				<div className='mt-6 space-y-3 text-center'>
 					<Link
 						className='text-slate-600 hover:text-slate-800 text-sm'
-						href='/forgot-password'
+						href={`/${lang}/forgot-password`}
 					>
 						{t('auth.login.forgot')}
 					</Link>
 					<div>
-						<Link className='text-blue-600 hover:text-blue-700' href='/signup'>
+						<Link
+							className='text-blue-600 hover:text-blue-700'
+							href={`/${lang}/signup`}
+						>
 							{t('auth.login.signup')}
 						</Link>
 					</div>

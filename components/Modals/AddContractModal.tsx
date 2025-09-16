@@ -1,6 +1,6 @@
 'use client'
 
-import type React from 'react'
+import React, { useEffect } from 'react'
 
 import { useState } from 'react'
 import { Button } from '@/components/ui/button'
@@ -36,7 +36,8 @@ import {
 } from 'lucide-react'
 import { useToast } from '@/components/ui/use-toast'
 import { processFile, isSupportedFile, type ProcessedFile } from '@/lib/file-processor'
-import ManualObligationModal from '@/components/manual-obligation-modal'
+import { Pencil, Save, Trash2 } from 'lucide-react'
+
 import ObligationTimerModal from '@/components/obligation-timer-modal'
 // import { createContract, createObligation } from '@/lib/supabase-queries'
 import {
@@ -45,6 +46,8 @@ import {
 	useMaterializeContractMutation,
 	useUploadDocumentMutation,
 } from '@/store/features/contracts/contractsApi'
+import { useI18n, useLocale } from '@/providers/I18nProvider'
+import ManualObligationModal from '@/components/Modals/AddObligationModal'
 
 interface AddContractModalProps {
 	isOpen: boolean
@@ -118,13 +121,59 @@ export default function AddContractModal({ isOpen, onClose, onSave }: AddContrac
 	const [selectedObligation, setSelectedObligation] = useState(null)
 	const [isSubmitting, setIsSubmitting] = useState(false)
 	const { toast } = useToast()
+	const [obligations, setObligations] = useState<any[]>([])
+	const [editingKey, setEditingKey] = useState<string>('')
 
 	const [uploadDocument] = useUploadDocumentMutation()
 	const [analyzeContract] = useAnalyzeContractMutation()
 	const [materializeContract] = useMaterializeContractMutation()
 
+	const { t } = useI18n()
+
+	useEffect(() => {
+		if (contractAnalysis?.obligations) {
+			setObligations(
+				contractAnalysis.obligations.map((ob: any, i: number) => ({
+					...ob,
+					_key: ob.id ?? `tmp-${i}`,
+				}))
+			)
+		} else {
+			setObligations([])
+		}
+		setEditingKey('')
+	}, [contractAnalysis])
+
+	const startEdit = (key: string) => setEditingKey(key)
+	const cancelEdit = () => setEditingKey('')
+
 	const handleInputChange = (field: string, value: string) => {
 		setFormData((prev) => ({ ...prev, [field]: value }))
+	}
+
+	const updateObligation = (key: string, patch: Partial<any>) => {
+		setObligations((prev) => prev.map((ob) => (ob._key === key ? { ...ob, ...patch } : ob)))
+	}
+
+	const saveObligation = (key: string) => {
+		setEditingKey('')
+		setContractAnalysis((prev) => (prev ? { ...prev, obligations } : prev))
+		toast({
+			title: 'נשמר',
+			description: 'ההתחייבות עודכנה',
+			className: 'bg-green-500 text-white',
+		})
+	}
+
+	const deleteObligation = (key: string) => {
+		const next = obligations.filter((ob) => ob._key !== key)
+		setObligations(next)
+		setContractAnalysis((prev) => (prev ? { ...prev, obligations: next } : prev))
+		toast({
+			title: 'נמחק',
+			description: 'ההתחייבות הוסרה מהרשימה',
+			variant: 'destructive',
+		})
 	}
 
 	const handleDrag = (e: React.DragEvent) => {
@@ -405,8 +454,11 @@ export default function AddContractModal({ isOpen, onClose, onSave }: AddContrac
 				description: formData.description || (contractAnalysis?.description ?? null),
 				status: 'active' as const,
 				clientId: null,
+				dueDate:
+					formData.end_date || contractAnalysis?.endDate
+						? new Date(formData.end_date || contractAnalysis?.endDate).toISOString()
+						: null,
 				//effectiveDate: formData.start_date || contractAnalysis?.startDate || null,
-				dueDate: formData.end_date || contractAnalysis?.endDate || null,
 				tasks,
 				documentId: uploaded.id.toString(),
 			}
@@ -714,61 +766,376 @@ export default function AddContractModal({ isOpen, onClose, onSave }: AddContrac
 								</div>
 
 								{/* Obligations Preview */}
-								{contractAnalysis.obligations &&
-									contractAnalysis.obligations.length > 0 && (
-										<div className='bg-white p-4 rounded-lg border border-green-200'>
-											<h4 className='font-semibold text-slate-800 mb-3 flex items-center gap-2'>
-												<Target className='h-4 w-4 text-amber-600' />
-												התחייבויות שזוהו (
-												{contractAnalysis.obligations.length})
-											</h4>
-											<div className='space-y-2 max-h-60 overflow-y-auto'>
-												{contractAnalysis.obligations
-													.slice(0, 5)
-													.map((obligation, index) => (
-														<div
-															key={index}
-															className='bg-slate-50 p-3 rounded border'
-														>
-															<div className='flex items-start justify-between mb-2'>
-																<span className='font-medium text-slate-800 text-sm'>
-																	{obligation.description}
-																</span>
-																<div className='flex items-center gap-2'>
-																	<Badge
-																		className={getPriorityColor(
-																			obligation.priority
-																		)}
-																	>
-																		{obligation.priority}
-																	</Badge>
-																	<Button
-																		onClick={() => {
-																			setSelectedObligation(
-																				obligation
+								{obligations && obligations.length > 0 && (
+									<div className='bg-white p-4 rounded-lg border border-green-200'>
+										<h4 className='font-semibold text-slate-800 mb-3 flex items-center gap-2'>
+											<Target className='h-4 w-4 text-amber-600' />
+											{t('obligation.obligationsTitle')} ({obligations.length}
+											)
+										</h4>
+
+										<div className='space-y-2 max-h-60 overflow-y-auto'>
+											{obligations.map((obligation, index) => {
+												const isEditing = editingKey === obligation._key
+												return (
+													<div
+														key={obligation._key ?? index}
+														className='bg-slate-50 p-3 rounded border'
+													>
+														{!isEditing ? (
+															<>
+																<div className='flex items-start justify-between mb-2'>
+																	<span className='font-medium text-slate-800 text-sm'>
+																		{obligation.description}
+																	</span>
+																	<div className='flex items-center gap-2'>
+																		<Badge
+																			className={getPriorityColor(
+																				obligation.priority
+																			)}
+																		>
+																			{obligation.priority ||
+																				'—'}
+																		</Badge>
+
+																		{/*<Button*/}
+																		{/*	onClick={() => {*/}
+																		{/*		setSelectedObligation(*/}
+																		{/*			obligation*/}
+																		{/*		)*/}
+																		{/*		setTimerModalOpen(*/}
+																		{/*			true*/}
+																		{/*		)*/}
+																		{/*	}}*/}
+																		{/*	variant='outline'*/}
+																		{/*	size='sm'*/}
+																		{/*	className='p-1 h-8 w-8 bg-amber-50 hover:bg-amber-100 text-amber-700 border-amber-300'*/}
+																		{/*>*/}
+																		{/*	🕐*/}
+																		{/*</Button>*/}
+
+																		<Button
+																			onClick={() =>
+																				startEdit(
+																					obligation._key
+																				)
+																			}
+																			variant='outline'
+																			size='sm'
+																			className='p-1 h-8 w-8'
+																			title={t(
+																				'obligation.edit'
+																			)}
+																		>
+																			<Pencil className='h-4 w-4' />
+																		</Button>
+
+																		<Button
+																			onClick={() =>
+																				deleteObligation(
+																					obligation._key
+																				)
+																			}
+																			variant='outline'
+																			size='sm'
+																			className='p-1 h-8 w-8 text-red-600 border-red-300 hover:bg-red-50'
+																			title={t(
+																				'obligation.delete'
+																			)}
+																		>
+																			<Trash2 className='h-4 w-4' />
+																		</Button>
+																	</div>
+																</div>
+
+																<div className='grid grid-cols-2 md:grid-cols-4 gap-2 text-xs text-slate-600'>
+																	<div>
+																		<span className='text-slate-500'>
+																			{t(
+																				'obligation.dueDate'
+																			)}
+																			:
+																		</span>{' '}
+																		{obligation.dueDate || '—'}
+																	</div>
+																	<div>
+																		<span className='text-slate-500'>
+																			{t(
+																				'obligation.category'
+																			)}
+																			:
+																		</span>{' '}
+																		{obligation.category || '—'}
+																	</div>
+																	<div>
+																		<span className='text-slate-500'>
+																			{t(
+																				'obligation.responsible'
+																			)}
+																			:
+																		</span>{' '}
+																		{obligation.responsibleParty ||
+																			'—'}
+																	</div>
+																	<div>
+																		<span className='text-slate-500'>
+																			{t(
+																				'obligation.requiresProof'
+																			)}
+																			:
+																		</span>{' '}
+																		{obligation.requiresProof
+																			? t('yes')
+																			: t('no')}
+																	</div>
+																</div>
+															</>
+														) : (
+															<div className='space-y-3'>
+																<div className='flex items-start justify-between'>
+																	<textarea
+																		value={
+																			obligation.description ||
+																			''
+																		}
+																		onChange={(e) =>
+																			updateObligation(
+																				obligation._key,
+																				{
+																					description:
+																						e.target
+																							.value,
+																				}
 																			)
-																			setTimerModalOpen(true)
-																		}}
-																		variant='outline'
-																		size='sm'
-																		className='p-1 h-8 w-8 bg-amber-50 hover:bg-amber-100 text-amber-700 border-amber-300'
+																		}
+																		rows={3}
+																		className='w-full text-sm border rounded p-2'
+																		placeholder='Description'
+																	/>
+																	<div className='flex items-center gap-2 ml-2'>
+																		<Button
+																			onClick={() =>
+																				saveObligation(
+																					obligation._key
+																				)
+																			}
+																			variant='outline'
+																			size='sm'
+																			className='p-1 h-8 w-8 text-green-700 border-green-300 hover:bg-green-50'
+																			title={t(
+																				'obligation.save'
+																			)}
+																		>
+																			<Save className='h-4 w-4' />
+																		</Button>
+																		<Button
+																			onClick={cancelEdit}
+																			variant='outline'
+																			size='sm'
+																			className='p-1 h-8 w-8'
+																			title={t(
+																				'obligation.cancel'
+																			)}
+																		>
+																			<X className='h-4 w-4' />
+																		</Button>
+																	</div>
+																</div>
+
+																<div className='grid grid-cols-1 md:grid-cols-5 gap-2'>
+																	<div className='flex flex-col gap-1'>
+																		<label className='text-xs text-slate-500'>
+																			{t(
+																				'obligation.priority'
+																			)}
+																		</label>
+																		<select
+																			value={
+																				obligation.priority ||
+																				''
+																			}
+																			onChange={(e) =>
+																				updateObligation(
+																					obligation._key,
+																					{
+																						priority:
+																							e.target
+																								.value ||
+																							null,
+																					}
+																				)
+																			}
+																			className='border rounded p-2 text-sm bg-white'
+																		>
+																			<option value=''>
+																				—
+																			</option>
+																			<option value='גבוהה'>
+																				גבוהה
+																			</option>
+																			<option value='בינונית'>
+																				בינונית
+																			</option>
+																			<option value='נמוכה'>
+																				נמוכה
+																			</option>
+																		</select>
+																	</div>
+
+																	<div className='flex flex-col gap-1'>
+																		<label className='text-xs text-slate-500'>
+																			{t(
+																				'obligation.dueDate'
+																			)}
+																		</label>
+																		<input
+																			type='date'
+																			value={
+																				obligation.dueDate ||
+																				''
+																			}
+																			onChange={(e) =>
+																				updateObligation(
+																					obligation._key,
+																					{
+																						dueDate:
+																							e.target
+																								.value ||
+																							null,
+																					}
+																				)
+																			}
+																			className='border rounded p-2 text-sm'
+																		/>
+																	</div>
+
+																	<div className='flex flex-col gap-1'>
+																		<label className='text-xs text-slate-500'>
+																			{t(
+																				'obligation.category'
+																			)}
+																		</label>
+																		<input
+																			type='text'
+																			value={
+																				obligation.category ||
+																				''
+																			}
+																			onChange={(e) =>
+																				updateObligation(
+																					obligation._key,
+																					{
+																						category:
+																							e.target
+																								.value ||
+																							null,
+																					}
+																				)
+																			}
+																			className='border rounded p-2 text-sm'
+																			placeholder={t(
+																				'obligation.placeholderCategory'
+																			)}
+																		/>
+																	</div>
+
+																	<div className='flex flex-col gap-1'>
+																		<label className='text-xs text-slate-500'>
+																			{t(
+																				'obligation.responsible'
+																			)}
+																		</label>
+																		<input
+																			type='text'
+																			value={
+																				obligation.responsibleParty ||
+																				''
+																			}
+																			onChange={(e) =>
+																				updateObligation(
+																					obligation._key,
+																					{
+																						responsibleParty:
+																							e.target
+																								.value ||
+																							null,
+																					}
+																				)
+																			}
+																			className='border rounded p-2 text-sm'
+																			placeholder={t(
+																				'obligation.placeholderResponsible'
+																			)}
+																		/>
+																	</div>
+
+																	<div className='flex flex-col gap-1'>
+																		<label className='text-xs text-slate-500'>
+																			{t('obligation.amount')}
+																		</label>
+																		<input
+																			type='number'
+																			step='0.01'
+																			value={
+																				obligation.amount ??
+																				''
+																			}
+																			onChange={(e) => {
+																				const v =
+																					e.target.value
+																				updateObligation(
+																					obligation._key,
+																					{
+																						amount:
+																							v === ''
+																								? null
+																								: Number(
+																										v
+																									),
+																					}
+																				)
+																			}}
+																			className='border rounded p-2 text-sm'
+																			placeholder='0'
+																		/>
+																	</div>
+																</div>
+
+																<div className='flex items-center gap-2 text-sm'>
+																	<input
+																		id={`requires-${obligation._key}`}
+																		type='checkbox'
+																		checked={Boolean(
+																			obligation.requiresProof
+																		)}
+																		onChange={(e) =>
+																			updateObligation(
+																				obligation._key,
+																				{
+																					requiresProof:
+																						e.target
+																							.checked,
+																				}
+																			)
+																		}
+																	/>
+																	<label
+																		htmlFor={`requires-${obligation._key}`}
+																		className='text-slate-700'
 																	>
-																		🕐
-																	</Button>
+																		{t(
+																			'obligation.requiresProof'
+																		)}
+																	</label>
 																</div>
 															</div>
-														</div>
-													))}
-												{contractAnalysis.obligations.length > 5 && (
-													<div className='text-center text-sm text-slate-600'>
-														ועוד{' '}
-														{contractAnalysis.obligations.length - 5}{' '}
-														התחייבויות...
+														)}
 													</div>
-												)}
-											</div>
+												)
+											})}
 										</div>
-									)}
+									</div>
+								)}
 
 								{/* Risk Factors */}
 								{contractAnalysis.riskFactors &&
@@ -1005,6 +1372,20 @@ export default function AddContractModal({ isOpen, onClose, onSave }: AddContrac
 				{/*	}}*/}
 				{/*	contractId={null}*/}
 				{/*/>*/}
+
+				<ManualObligationModal
+					isOpen={isManualObligationModalOpen}
+					onClose={() => setManualObligationModalOpen(false)}
+					locale='en'
+					onAdd={(ob) => {
+						setObligations((prev) => [...prev, ob])
+						setContractAnalysis((prev) =>
+							prev
+								? { ...prev, obligations: [...(prev.obligations || []), ob] }
+								: prev
+						)
+					}}
+				/>
 
 				{/* Obligation Timer Modal */}
 				{/*<ObligationTimerModal*/}

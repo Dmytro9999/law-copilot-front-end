@@ -119,5 +119,26 @@
 			"resendFailDesc": "לא ניתן לשלוח את הקוד",
 			"verifyFailDefault": "קוד שגוי או שפג תוקפו"
 		}
-	}
+	},
+  "obligation": {
+    "obligationsTitle": "התחייבויות שזוהו",
+    "edit": "ערוך",
+    "delete": "מחק",
+    "save": "שמור",
+    "cancel": "בטל",
+    "dueDate": "תאריך יעד",
+    "category": "קטגוריה",
+    "responsible": "אחראי",
+    "amount": "סכום",
+    "priority": "עדיפות",
+    "requiresProof": "נדרש אישור/הוכחה",
+    "yes": "כן",
+    "no": "לא",
+    "saved": "נשמר",
+    "updatedDesc": "ההתחייבות עודכנה",
+    "deleted": "נמחק",
+    "removedDesc": "ההתחייבות הוסרה מהרשימה",
+    "placeholderCategory": "תשלום / מסירה / ...",
+    "placeholderResponsible": "צד א / צד ב / שם"
+  }
 }
