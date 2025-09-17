@@ -24,9 +24,8 @@ export default function LayoutShell({ children }: { children: React.ReactNode })
 		<div className='flex h-screen bg-gradient-to-bl from-slate-50 via-blue-50 to-indigo-50'>
 			<Sidebar isCollapsed={isCollapsed} setIsCollapsed={setIsCollapsed} />
 			<div className='flex flex-col flex-1 overflow-hidden'>
-				{/* Header определяет активную страницу через usePathname() */}
 				<Header stats={stats} />
-				<main className='flex-1 overflow-y-auto p-10'>{children}</main>
+				<main className='flex-1 p-10'>{children}</main>
 			</div>
 		</div>
 	)

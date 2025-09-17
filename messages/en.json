@@ -120,25 +120,33 @@
 			"verifyFailDefault": "Invalid or expired code"
 		}
 	},
-  "obligation": {
-    "obligationsTitle": "Detected obligations",
-    "edit": "Edit",
-    "delete": "Delete",
-    "save": "Save",
-    "cancel": "Cancel",
-    "dueDate": "Due date",
-    "category": "Category",
-    "responsible": "Responsible",
-    "amount": "Amount",
-    "priority": "Priority",
-    "requiresProof": "Proof required",
-    "yes": "Yes",
-    "no": "No",
-    "saved": "Saved",
-    "updatedDesc": "Obligation updated",
-    "deleted": "Deleted",
-    "removedDesc": "Obligation removed from the list",
-    "placeholderCategory": "Payment / Delivery / ...",
-    "placeholderResponsible": "Party A / Party B / Name"
-  }
+	"obligation": {
+		"obligationsTitle": "Detected obligations",
+		"edit": "Edit",
+		"delete": "Delete",
+		"save": "Save",
+		"cancel": "Cancel",
+		"dueDate": "Due date",
+		"category": "Category",
+		"responsible": "Responsible",
+		"amount": "Amount",
+		"priority": "Priority",
+		"requiresProof": "Proof required",
+		"yes": "Yes",
+		"no": "No",
+		"saved": "Saved",
+		"updatedDesc": "Obligation updated",
+		"deleted": "Deleted",
+		"removedDesc": "Obligation removed from the list",
+		"placeholderCategory": "Payment / Delivery / ...",
+		"placeholderResponsible": "Party A / Party B / Name"
+	},
+	"nav": {
+		"contracts": "Contracts board",
+		"tasks": "Tasks",
+		"clients": "Clients",
+		"meetings": "Meeting summaries",
+		"notifications": "Notifications",
+		"settings": "Settings"
+	}
 }

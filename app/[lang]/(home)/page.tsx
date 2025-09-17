@@ -3,6 +3,7 @@
 import React, { useState } from 'react'
 import AddContractModal from '@/components/Modals/AddContractModal'
 import { Button } from '@/components/ui/button'
+import ContractList from '@/components/contracts/ContractList'
 
 const Page = () => {
 	const [isAddModalOpen, setAddModalOpen] = useState(false)
@@ -21,13 +22,14 @@ const Page = () => {
 
 	return (
 		<div>
-			<Button onClick={() => setAddModalOpen(true)}>Modal</Button>
+			{/*<Button onClick={() => setAddModalOpen(true)}>Modal</Button>*/}
 
-			<AddContractModal
-				isOpen={isAddModalOpen}
-				onClose={() => setAddModalOpen(false)}
-				onSave={handleAddContract}
-			/>
+			{/*<AddContractModal*/}
+			{/*	isOpen={isAddModalOpen}*/}
+			{/*	onClose={() => setAddModalOpen(false)}*/}
+			{/*	onSave={handleAddContract}*/}
+			{/*/>*/}
+			<ContractList />
 		</div>
 	)
 }

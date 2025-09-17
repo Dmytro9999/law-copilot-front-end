@@ -1,5 +1,12 @@
-import { LayoutGrid, Users, FileText, MessageSquare, Bell, Settings } from 'lucide-react'
-import type { LucideIcon } from 'lucide-react'
+import {
+	LayoutGrid,
+	Users,
+	FileText,
+	MessageSquare,
+	Bell,
+	Settings,
+	type LucideIcon,
+} from 'lucide-react'
 
 export enum TabKey {
 	Contracts = 'contracts',
@@ -10,14 +17,7 @@ export enum TabKey {
 	Settings = 'settings',
 }
 
-type NavItem = {
-	key: TabKey
-	name: string
-	icon: LucideIcon
-	href: string
-}
-
-export const TAB_ROUTE: Record<TabKey, string> = {
+export const BASE_ROUTES: Record<TabKey, string> = {
 	[TabKey.Contracts]: '/contracts',
 	[TabKey.Tasks]: '/tasks',
 	[TabKey.Clients]: '/clients',
@@ -26,26 +26,20 @@ export const TAB_ROUTE: Record<TabKey, string> = {
 	[TabKey.Settings]: '/settings',
 }
 
-export const NAV_ITEMS: NavItem[] = [
-	{
-		name: 'לוח חוזים',
-		icon: LayoutGrid,
-		key: TabKey.Contracts,
-		href: TAB_ROUTE[TabKey.Contracts],
-	},
-	{ name: 'משימות', icon: FileText, key: TabKey.Tasks, href: TAB_ROUTE[TabKey.Tasks] },
-	{ name: 'לקוחות', icon: Users, key: TabKey.Clients, href: TAB_ROUTE[TabKey.Clients] },
-	{
-		name: 'סיכומי פגישות',
-		icon: MessageSquare,
-		key: TabKey.Meetings,
-		href: TAB_ROUTE[TabKey.Meetings],
-	},
-	{
-		name: 'התראות',
-		icon: Bell,
-		key: TabKey.Notifications,
-		href: TAB_ROUTE[TabKey.Notifications],
-	},
-	{ name: 'הגדרות', icon: Settings, key: TabKey.Settings, href: TAB_ROUTE[TabKey.Settings] },
-]
+export const ICONS: Record<TabKey, LucideIcon> = {
+	[TabKey.Contracts]: LayoutGrid,
+	[TabKey.Tasks]: FileText,
+	[TabKey.Clients]: Users,
+	[TabKey.Meetings]: MessageSquare,
+	[TabKey.Notifications]: Bell,
+	[TabKey.Settings]: Settings,
+}
+
+export const I18N_KEYS: Record<TabKey, string> = {
+	[TabKey.Contracts]: 'nav.contracts',
+	[TabKey.Tasks]: 'nav.tasks',
+	[TabKey.Clients]: 'nav.clients',
+	[TabKey.Meetings]: 'nav.meetings',
+	[TabKey.Notifications]: 'nav.notifications',
+	[TabKey.Settings]: 'nav.settings',
+}

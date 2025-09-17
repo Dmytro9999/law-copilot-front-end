@@ -1,6 +1,10 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
 import environment from '@/config'
 import type { RootState } from '@/store/store'
+import {
+	ContractsIndexResponse,
+	QueryContractsParams,
+} from '@/store/features/contracts/contractsTypes'
 
 const MULTIPART_ENDPOINTS = new Set(['uploadDocument'])
 
@@ -119,6 +123,22 @@ export const contractsApi = createApi({
 				method: 'GET',
 			}),
 		}),
+
+		getContracts: builder.query<ContractsIndexResponse, QueryContractsParams | void>({
+			query: (params) => ({
+				url: 'contracts',
+				method: 'GET',
+				params: {
+					pageNumber: params?.pageNumber ?? 1,
+					countPerPage: params?.countPerPage ?? 6,
+					search: params?.search ?? '',
+					sortField: params?.sortField ?? 'id',
+					sortOrder: params?.sortOrder ?? 'DESC',
+					scope: params?.scope ?? 'all',
+					status: params?.status ?? undefined,
+				},
+			}),
+		}),
 	}),
 })
 
@@ -127,4 +147,5 @@ export const {
 	useAnalyzeContractMutation,
 	useMaterializeContractMutation,
 	useGetDocumentSignedUrlQuery,
+	useGetContractsQuery,
 } = contractsApi
