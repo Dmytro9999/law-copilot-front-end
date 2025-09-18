@@ -49,7 +49,7 @@ export default function SignUpByTokenPage() {
 	const lang = useLocale() as 'he' | 'en'
 
 	// 1) Загружаем инвайт по токену
-	const { data, isFetching } = useVerifyInvitationQuery(token, { skip: !token })
+	const { data, isFetching, isError } = useVerifyInvitationQuery(token, { skip: !token })
 
 	// 2) Локальное состояние формы — имена 1-в-1 с Invitation
 	const [email, setEmail] = useState('')
@@ -64,7 +64,7 @@ export default function SignUpByTokenPage() {
 	const [businessNumber, setBusinessNumber] = useState('')
 	const [notes, setNotes] = useState('')
 
-	const invitedByName = useMemo(() => data?.invitedByName ?? '', [data])
+	const invitedByName = useMemo(() => data?.invitedBy.name ?? '', [data])
 
 	useEffect(() => {
 		if (!data) return
@@ -146,23 +146,23 @@ export default function SignUpByTokenPage() {
 		)
 	}
 
-	// if (isError || !data) {
-	// 	return (
-	// 		<>
-	// 			<AuthBrand />
-	// 			<AuthCard title={t('signupInvite.title')} subtitle={t('signupInvite.subtitle')}>
-	// 				<Alert variant='destructive' className='mb-6'>
-	// 					<AlertDescription>{t('signupInvite.invalidOrExpired')}</AlertDescription>
-	// 				</Alert>
-	// 				<div className='text-sm'>
-	// 					<Link href={`/${lang}/login`} className='text-blue-600 hover:text-blue-700'>
-	// 						{t('signupInvite.goLogin')}
-	// 					</Link>
-	// 				</div>
-	// 			</AuthCard>
-	// 		</>
-	// 	)
-	// }
+	if (isError || !data) {
+		return (
+			<>
+				<AuthBrand />
+				<AuthCard title={t('signupInvite.title')} subtitle={t('signupInvite.subtitle')}>
+					<Alert variant='destructive' className='mb-6'>
+						<AlertDescription>{t('signupInvite.invalidOrExpired')}</AlertDescription>
+					</Alert>
+					<div className='text-sm'>
+						<Link href={`/${lang}/login`} className='text-blue-600 hover:text-blue-700'>
+							{t('signupInvite.goLogin')}
+						</Link>
+					</div>
+				</AuthCard>
+			</>
+		)
+	}
 
 	// 5) Форма
 	return (
@@ -173,13 +173,9 @@ export default function SignUpByTokenPage() {
 				{/* Инфо-блок */}
 				<Alert className='mb-6 bg-blue-50 border-blue-200'>
 					<AlertDescription className='text-blue-800'>
-						<div className='font-semibold'>
-							{/*{t('signupInvite.welcome', { name: fullName || email })}*/}
-						</div>
+						<div className='font-semibold'>{t('signupInvite.welcome')}</div>
 						<div className='text-sm mt-1'>
-							{/*{invitedByName*/}
-							{/*	? t('signupInvite.invitedBy', { lawyer: invitedByName })*/}
-							{/*	: t('signupInvite.invitedByUnknown')}*/}
+							{t('signupInvite.invitedBy')} {invitedByName}
 						</div>
 						<div className='text-sm mt-1'>{t('signupInvite.checkAndSetPassword')}</div>
 					</AlertDescription>

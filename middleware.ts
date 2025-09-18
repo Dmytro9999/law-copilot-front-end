@@ -41,7 +41,7 @@ const PUBLIC_EXACT = new Set<string>([
 	'/reset-password',
 ])
 
-const PUBLIC_PATTERNS: RegExp[] = [/^\/reset-password\/.+$/]
+const PUBLIC_PATTERNS: RegExp[] = [/^\/reset-password\/.+$/, /^\/signup\/[^/]+$/]
 
 const PROTECT_ALL_EXCEPT_PUBLIC = true
 

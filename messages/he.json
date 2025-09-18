@@ -163,7 +163,7 @@
 			"fullName": "שם מלא",
 			"email": "אימייל (לא ניתן לשינוי)",
 			"phone": "טלפון",
-          "companyName": "חברה",
+			"companyName": "חברה",
 			"position": "תפקיד",
 			"clientType": "סוג לקוח",
 			"address": "כתובת",
@@ -198,7 +198,48 @@
 			"errorTitle": "שגיאה בהרשמה",
 			"defaultError": "אירעה שגיאה. נסה/י שוב."
 		},
-      "footerLogin": "כבר יש לך חשבון? התחבר"
+		"footerLogin": "כבר יש לך חשבון? התחבר"
+	},
+	"inviteModal": {
+		"title": "הוספת לקוח חדש",
+		"clientTypeLabel": "סוג לקוח",
+		"clientTypePlaceholder": "בחר סוג לקוח",
+		"clientTypeIndividual": "לקוח פרטי",
+		"clientTypeCompany": "עסק / חברה",
 
-    }
+		"fullNameLabel": "שם מלא",
+		"fullNamePh": "הכנס שם מלא...",
+		"companyNameLabel": "שם החברה",
+		"companyNamePh": "הכנס שם החברה...",
+
+		"emailLabel": "אימייל",
+		"phoneLabel": "טלפון",
+		"phonePh": "050-1234567",
+
+		"positionLabel": "תפקיד איש הקשר",
+		"positionPh": "מנכ\"ל, מנהל כספים...",
+
+		"addressLabel": "כתובת",
+		"addressPh": "רחוב, מספר, עיר...",
+
+		"identificationCodeLabel": "מספר תעודת זהות",
+		"identificationCodePh": "123456789",
+
+		"businessNumberLabel": "מספר עסק / ח.פ",
+		"businessNumberPh": "123456789",
+
+		"notesLabel": "הערות",
+		"notesPh": "הערות נוספות על הלקוח...",
+
+		"submit": "שלח הזמנה",
+		"saving": "שולח הזמנה...",
+		"cancel": "ביטול",
+
+		"toast": {
+			"successTitle": "הזמנה נשלחה",
+			"successDesc": "נשלחה הזמנה ללקוח עם קישור הרשמה.",
+			"errorTitle": "שגיאה בשליחת ההזמנה",
+			"defaultError": "אירעה שגיאה, נסה שוב מאוחר יותר."
+		}
+	}
 }

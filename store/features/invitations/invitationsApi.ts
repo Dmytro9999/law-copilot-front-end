@@ -1,5 +1,9 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
 import environment from '@/config'
+import {
+	CreateInvitationRequest,
+	InvitationDto,
+} from '@/store/features/invitations/invitationsTypes'
 
 export const invitationsApi = createApi({
 	reducerPath: 'invitationsApi',
@@ -12,9 +16,13 @@ export const invitationsApi = createApi({
 		},
 	}),
 	endpoints: (builder) => ({
+		createInvitation: builder.mutation<InvitationDto, CreateInvitationRequest>({
+			query: (body) => ({ url: 'invitations', method: 'POST', body }),
+		}),
+
 		verifyInvitation: builder.query<any, string>({
 			query: (token) => ({
-				url: `invitations/verify?token=${encodeURIComponent(token)}`,
+				url: `invitations/verify/${encodeURIComponent(token)}`,
 				method: 'GET',
 			}),
 		}),
@@ -27,4 +35,8 @@ export const invitationsApi = createApi({
 	}),
 })
 
-export const { useVerifyInvitationQuery, useAcceptInvitationMutation } = invitationsApi
+export const {
+	useVerifyInvitationQuery,
+	useAcceptInvitationMutation,
+	useCreateInvitationMutation,
+} = invitationsApi

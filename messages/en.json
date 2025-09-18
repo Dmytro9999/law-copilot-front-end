@@ -149,55 +149,97 @@
 		"notifications": "Notifications",
 		"settings": "Settings"
 	},
-  "signupInvite": {
-    "title": "Complete your signup",
-    "subtitle": "Review details and set your password",
-    "loading": "Loading invitation...",
-    "invalidOrExpired": "The invitation link is invalid or expired. Please ask your lawyer to resend it.",
-    "goLogin": "Go to login",
-    "welcome": "Welcome, {{name}}!",
-    "invitedBy": "You were invited by {{lawyer}}",
-    "invitedByUnknown": "You were invited by a lawyer",
-    "checkAndSetPassword": "Please review the details below and set your password.",
-    "fields": {
-      "fullName": "Full name",
-      "email": "Email (read only)",
-      "phone": "Phone",
-      "position": "Position",
-      "clientType": "Client type",
-      "companyName": "Company",
-      "address": "Address",
-      "identificationCode": "Identification code",
-      "businessNumber": "Business number",
-      "notes": "Notes"
-    },
-    "placeholders": {
-      "fullName": "e.g., Nastya Cohen",
-      "phone": "050-0000000",
-      "companyName": "Company (optional)",
-      "position": "Position (optional)",
-      "clientType": "Select client type",
-      "address": "Street, number, city",
-      "identificationCode": "e.g., 123456789",
-      "businessNumber": "e.g., 515111111",
-      "notes": "Notes (optional)"
-    },
-    "clientTypes": {
-      "individual": "Individual",
-      "company": "Company"
-    },
-    "emailLockedHint": "Email is set by the invitation and cannot be changed now.",
-    "passwordHelper": "Use a strong password. You can change it later.",
-    "submit": "Finish & Sign up",
-    "submitting": "Creating account...",
-    "toast": {
-      "missingPasswordTitle": "Validation error",
-      "missingPasswordDesc": "Please enter a password.",
-      "successTitle": "Signed up successfully",
-      "successDesc": "You can now sign in.",
-      "errorTitle": "Sign up error",
-      "defaultError": "Something went wrong. Please try again."
-    },
-    "footerLogin": "Already have account? Login"
-  }
+	"signupInvite": {
+		"title": "Complete your signup",
+		"subtitle": "Review details and set your password",
+		"loading": "Loading invitation...",
+		"invalidOrExpired": "The invitation link is invalid or expired. Please ask your lawyer to resend it.",
+		"goLogin": "Go to login",
+		"welcome": "Welcome, {{name}}!",
+		"invitedBy": "You were invited by {{lawyer}}",
+		"invitedByUnknown": "You were invited by a lawyer",
+		"checkAndSetPassword": "Please review the details below and set your password.",
+		"fields": {
+			"fullName": "Full name",
+			"email": "Email (read only)",
+			"phone": "Phone",
+			"position": "Position",
+			"clientType": "Client type",
+			"companyName": "Company",
+			"address": "Address",
+			"identificationCode": "Identification code",
+			"businessNumber": "Business number",
+			"notes": "Notes"
+		},
+		"placeholders": {
+			"fullName": "e.g., Nastya Cohen",
+			"phone": "050-0000000",
+			"companyName": "Company (optional)",
+			"position": "Position (optional)",
+			"clientType": "Select client type",
+			"address": "Street, number, city",
+			"identificationCode": "e.g., 123456789",
+			"businessNumber": "e.g., 515111111",
+			"notes": "Notes (optional)"
+		},
+		"clientTypes": {
+			"individual": "Individual",
+			"company": "Company"
+		},
+		"emailLockedHint": "Email is set by the invitation and cannot be changed now.",
+		"passwordHelper": "Use a strong password. You can change it later.",
+		"submit": "Finish & Sign up",
+		"submitting": "Creating account...",
+		"toast": {
+			"missingPasswordTitle": "Validation error",
+			"missingPasswordDesc": "Please enter a password.",
+			"successTitle": "Signed up successfully",
+			"successDesc": "You can now sign in.",
+			"errorTitle": "Sign up error",
+			"defaultError": "Something went wrong. Please try again."
+		},
+		"footerLogin": "Already have account? Login"
+	},
+	"inviteModal": {
+		"title": "Add New Client",
+		"clientTypeLabel": "Client Type",
+		"clientTypePlaceholder": "Select client type",
+		"clientTypeIndividual": "Individual",
+		"clientTypeCompany": "Company",
+
+		"fullNameLabel": "Full Name",
+		"fullNamePh": "Enter full name...",
+		"companyNameLabel": "Company Name",
+		"companyNamePh": "Enter company name...",
+
+		"emailLabel": "Email",
+		"phoneLabel": "Phone",
+		"phonePh": "050-1234567",
+
+		"positionLabel": "Contact Position",
+		"positionPh": "CEO, CFO...",
+
+		"addressLabel": "Address",
+		"addressPh": "Street, number, city...",
+
+		"identificationCodeLabel": "ID Number",
+		"identificationCodePh": "123456789",
+
+		"businessNumberLabel": "Business Number",
+		"businessNumberPh": "123456789",
+
+		"notesLabel": "Notes",
+		"notesPh": "Additional notes about the client...",
+
+		"submit": "Send Invitation",
+		"saving": "Sending invitation...",
+		"cancel": "Cancel",
+
+		"toast": {
+			"successTitle": "Invitation sent",
+			"successDesc": "Client invitation with a signup link was sent.",
+			"errorTitle": "Invitation error",
+			"defaultError": "Something went wrong. Please try again later."
+		}
+	}
 }
