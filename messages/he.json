@@ -241,5 +241,55 @@
 			"errorTitle": "שגיאה בשליחת ההזמנה",
 			"defaultError": "אירעה שגיאה, נסה שוב מאוחר יותר."
 		}
+	},
+
+	"common": {
+		"loading": "טוען..."
+	},
+	"invitationsPage": {
+		"title": "הזמנות",
+		"actions": {
+			"new": "הזמנה חדשה",
+			"refresh": "רענן",
+			"refreshing": "מרענן..."
+		},
+		"filters": {
+			"searchPlaceholder": "חפש לפי שם/אימייל/חברה...",
+			"allStatuses": "כל הסטטוסים",
+			"allTypes": "כל הסוגים",
+			"perPage10": "10 בעמוד",
+			"perPage20": "20 בעמוד",
+			"perPage50": "50 בעמוד"
+		},
+		"status": { "pending": "ממתין", "activated": "אושר", "expired": "פג" },
+		"clientType": { "individual": "פרטי", "company": "חברה" },
+		"cards": {
+			"activated": "מאושרים",
+			"pending": "ממתינים",
+			"expired": "פגו",
+			"total": "סה״כ"
+		},
+		"table": {
+			"title": "רשימת הזמנות",
+			"columns": {
+				"name": "שם / חברה",
+				"type": "סוג",
+				"email": "אימייל",
+				"phone": "טלפון",
+				"status": "סטטוס",
+				"expires": "תוקף",
+				"actions": "פעולות"
+			}
+		},
+		"empty": "אין הזמנות עדיין",
+		"pagination": { "prev": "הקודם", "next": "הבא", "page": "עמוד", "of": "מתוך" },
+		"toasts": {
+			"createdTitle": "הזמנה נוצרה",
+			"createdDesc": "נשלח מייל אל",
+			"resentTitle": "נשלח מחדש",
+			"resentDesc": "נשלח שוב אל",
+			"cancelledTitle": "הזמנה בוטלה"
+		},
+		"confirm": { "cancel": "לבטל הזמנה זו?" }
 	}
 }

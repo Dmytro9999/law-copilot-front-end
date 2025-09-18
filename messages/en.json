@@ -241,5 +241,54 @@
 			"errorTitle": "Invitation error",
 			"defaultError": "Something went wrong. Please try again later."
 		}
+	},
+	"common": {
+		"loading": "Loading..."
+	},
+	"invitationsPage": {
+		"title": "Invitations",
+		"actions": {
+			"new": "New invitation",
+			"refresh": "Refresh",
+			"refreshing": "Refreshing..."
+		},
+		"filters": {
+			"searchPlaceholder": "Search by name/email/company...",
+			"allStatuses": "All statuses",
+			"allTypes": "All types",
+			"perPage10": "10 per page",
+			"perPage20": "20 per page",
+			"perPage50": "50 per page"
+		},
+		"status": { "pending": "Pending", "activated": "Activated", "expired": "Expired" },
+		"clientType": { "individual": "Individual", "company": "Company" },
+		"cards": {
+			"activated": "Activated",
+			"pending": "Pending",
+			"expired": "Expired",
+			"total": "Total"
+		},
+		"table": {
+			"title": "Invitation list",
+			"columns": {
+				"name": "Name / Company",
+				"type": "Type",
+				"email": "Email",
+				"phone": "Phone",
+				"status": "Status",
+				"expires": "Expires",
+				"actions": "Actions"
+			}
+		},
+		"empty": "No invitations yet",
+		"pagination": { "prev": "Prev", "next": "Next", "page": "Page", "of": "of" },
+		"toasts": {
+			"createdTitle": "Invitation created",
+			"createdDesc": "Email sent to",
+			"resentTitle": "Resent",
+			"resentDesc": "Resent to",
+			"cancelledTitle": "Invitation canceled"
+		},
+		"confirm": { "cancel": "Cancel this invitation?" }
 	}
 }

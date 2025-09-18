@@ -18,6 +18,14 @@ const Sidebar: React.FC<IPropsSidebar> = ({ isCollapsed, setIsCollapsed }) => {
 
 	const items = useNavItems()
 
+	const isActive = (pathname: string, href: string, isRoot = false) => {
+		const strip = (s: string) => s.replace(/\/+$/, '')
+		const p = strip(pathname)
+		const h = strip(href)
+
+		return isRoot ? p === h : p === h || p.startsWith(h + '/')
+	}
+
 	return (
 		<div
 			className={cn(
@@ -57,7 +65,8 @@ const Sidebar: React.FC<IPropsSidebar> = ({ isCollapsed, setIsCollapsed }) => {
 			<nav className='mt-10 px-6'>
 				<ul className='space-y-3'>
 					{items.map((item) => {
-						const active = pathname?.startsWith(item.href)
+						const active = isActive(pathname!, item.href, item.key === TabKey.Contracts)
+
 						return (
 							<li key={item.key}>
 								<Link

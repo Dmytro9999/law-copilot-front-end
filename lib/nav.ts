@@ -18,7 +18,7 @@ export enum TabKey {
 }
 
 export const BASE_ROUTES: Record<TabKey, string> = {
-	[TabKey.Contracts]: '/contracts',
+	[TabKey.Contracts]: '/',
 	[TabKey.Tasks]: '/tasks',
 	[TabKey.Clients]: '/clients',
 	[TabKey.Meetings]: '/meetings',

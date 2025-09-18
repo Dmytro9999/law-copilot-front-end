@@ -23,9 +23,10 @@ import { CreateInvitationRequest } from '@/store/features/invitations/invitation
 interface AddClientModalProps {
 	isOpen: boolean
 	onClose: () => void
+	refetchInvites?: () => Promise<any> | void
 }
 
-export default function AddClientModal({ isOpen, onClose }: AddClientModalProps) {
+export default function AddClientModal({ isOpen, onClose, refetchInvites }: AddClientModalProps) {
 	const { toast } = useToast()
 	const { t } = useI18n()
 
@@ -95,6 +96,7 @@ export default function AddClientModal({ isOpen, onClose }: AddClientModalProps)
 			})
 
 			onClose()
+			await refetchInvites?.()
 		} catch (err: any) {
 			const msg = err?.data?.message || err?.message || t('inviteModal.toast.defaultError')
 			toast({

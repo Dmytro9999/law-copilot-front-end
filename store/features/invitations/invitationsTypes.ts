@@ -65,3 +65,32 @@ export interface AcceptInvitationRequest {
 		notes: string | null
 	}>
 }
+
+export interface InvitationListItem {
+	id: number
+	email: string
+	clientType: 'individual' | 'company'
+	fullName?: string | null
+	phone?: string | null
+	companyName?: string | null
+	position?: string | null
+	address?: string | null
+	identificationCode?: string | null
+	businessNumber?: string | null
+	notes?: string | null
+	expiresAt: string
+	activatedAt?: string | null
+	created: string
+	status: 'Pending' | 'Activated' | 'Expired'
+}
+
+export interface InvitationListResponse {
+	count: number
+	list: InvitationListItem[]
+}
+export interface InvitationStats {
+	activated: number
+	pending: number
+	expired: number
+	total: number
+}
