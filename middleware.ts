@@ -35,6 +35,7 @@ const HOME_AFTER_LOGIN = '/'
 const PUBLIC_EXACT = new Set<string>([
 	'/login',
 	'/signup',
+	'/signup/1',
 	'/forgot-password',
 	'/two-factor',
 	'/reset-password',

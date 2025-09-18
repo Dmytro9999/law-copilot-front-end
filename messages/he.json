@@ -148,5 +148,57 @@
 		"meetings": "סיכומי פגישות",
 		"notifications": "התראות",
 		"settings": "הגדרות"
-	}
+	},
+	"signupInvite": {
+		"title": "השלמת הרשמה",
+		"subtitle": "בדוק את הפרטים וקבע סיסמה לחשבון",
+		"loading": "טוען הזמנה...",
+		"invalidOrExpired": "הקישור אינו תקף או שפג תוקפו. בקש הזמנה חדשה מהעורך דין.",
+		"goLogin": "לעמוד ההתחברות",
+		"welcome": "ברוך הבא, {{name}}!",
+		"invitedBy": "הוזמנת ע\"י {{lawyer}}",
+		"invitedByUnknown": "הוזמנת על ידי עו\"ד",
+		"checkAndSetPassword": "אנא בדוק/י את הפרטים מטה והגדר/י סיסמה.",
+		"fields": {
+			"fullName": "שם מלא",
+			"email": "אימייל (לא ניתן לשינוי)",
+			"phone": "טלפון",
+          "companyName": "חברה",
+			"position": "תפקיד",
+			"clientType": "סוג לקוח",
+			"address": "כתובת",
+			"identificationCode": "מספר זיהוי",
+			"businessNumber": "מספר עוסק/תאגיד",
+			"notes": "הערות"
+		},
+		"placeholders": {
+			"fullName": "לדוגמה: נסטיה כהן",
+			"phone": "050-0000000",
+			"companyName": "שם החברה (אופציונלי)",
+			"position": "תפקיד (אופציונלי)",
+			"clientType": "בחר/י סוג לקוח",
+			"address": "רחוב, מספר, עיר",
+			"identificationCode": "למשל: 123456789",
+			"businessNumber": "למשל: 515111111",
+			"notes": "הערות (אופציונלי)"
+		},
+		"clientTypes": {
+			"individual": "יחיד",
+			"company": "חברה"
+		},
+		"emailLockedHint": "האימייל נקבע על ידי ההזמנה ולא ניתן לשינוי בשלב זה.",
+		"passwordHelper": "השתמש/י בסיסמה חזקה. ניתן לשנות לאחר ההתחברות.",
+		"submit": "סיום והרשמה",
+		"submitting": "יוצר חשבון...",
+		"toast": {
+			"missingPasswordTitle": "שגיאת אימות",
+			"missingPasswordDesc": "נא להזין סיסמה.",
+			"successTitle": "נרשמת בהצלחה",
+			"successDesc": "כעת ניתן להתחבר למערכת.",
+			"errorTitle": "שגיאה בהרשמה",
+			"defaultError": "אירעה שגיאה. נסה/י שוב."
+		},
+      "footerLogin": "כבר יש לך חשבון? התחבר"
+
+    }
 }

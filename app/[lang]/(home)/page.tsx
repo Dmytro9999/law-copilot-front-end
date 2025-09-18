@@ -22,13 +22,13 @@ const Page = () => {
 
 	return (
 		<div>
-			{/*<Button onClick={() => setAddModalOpen(true)}>Modal</Button>*/}
+			<Button onClick={() => setAddModalOpen(true)}>Modal</Button>
 
-			{/*<AddContractModal*/}
-			{/*	isOpen={isAddModalOpen}*/}
-			{/*	onClose={() => setAddModalOpen(false)}*/}
-			{/*	onSave={handleAddContract}*/}
-			{/*/>*/}
+			<AddContractModal
+				isOpen={isAddModalOpen}
+				onClose={() => setAddModalOpen(false)}
+				onSave={handleAddContract}
+			/>
 			<ContractList />
 		</div>
 	)
