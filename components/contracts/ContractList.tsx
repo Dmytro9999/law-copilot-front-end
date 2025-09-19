@@ -188,10 +188,10 @@ export default function ContractList() {
 			{isFetching && list.length === 0 ? (
 				<div className='flex items-center justify-center py-20 text-slate-500'>
 					<Loader2 className='w-5 h-5 animate-spin mr-2' />
-					Загрузка контрактов...
+					Contracts loading...
 				</div>
 			) : list.length === 0 ? (
-				<div className='text-center py-16 text-slate-500'>Контракты не найдены</div>
+				<div className='text-center py-16 text-slate-500'>Contracts no found</div>
 			) : (
 				<div className='grid grid-cols-1 sm:grid-cols-2 gap-4'>
 					{list.map((item) => (
