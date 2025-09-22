@@ -206,35 +206,26 @@
 		"clientTypePlaceholder": "Select client type",
 		"clientTypeIndividual": "Individual",
 		"clientTypeCompany": "Company",
-
 		"fullNameLabel": "Full Name",
 		"fullNamePh": "Enter full name...",
 		"companyNameLabel": "Company Name",
 		"companyNamePh": "Enter company name...",
-
 		"emailLabel": "Email",
 		"phoneLabel": "Phone",
 		"phonePh": "050-1234567",
-
 		"positionLabel": "Contact Position",
 		"positionPh": "CEO, CFO...",
-
 		"addressLabel": "Address",
 		"addressPh": "Street, number, city...",
-
 		"identificationCodeLabel": "ID Number",
 		"identificationCodePh": "123456789",
-
 		"businessNumberLabel": "Business Number",
 		"businessNumberPh": "123456789",
-
 		"notesLabel": "Notes",
 		"notesPh": "Additional notes about the client...",
-
 		"submit": "Send Invitation",
 		"saving": "Sending invitation...",
 		"cancel": "Cancel",
-
 		"toast": {
 			"successTitle": "Invitation sent",
 			"successDesc": "Client invitation with a signup link was sent.",
@@ -260,8 +251,15 @@
 			"perPage20": "20 per page",
 			"perPage50": "50 per page"
 		},
-		"status": { "pending": "Pending", "activated": "Activated", "expired": "Expired" },
-		"clientType": { "individual": "Individual", "company": "Company" },
+		"status": {
+			"pending": "Pending",
+			"activated": "Activated",
+			"expired": "Expired"
+		},
+		"clientType": {
+			"individual": "Individual",
+			"company": "Company"
+		},
 		"cards": {
 			"activated": "Activated",
 			"pending": "Pending",
@@ -281,7 +279,12 @@
 			}
 		},
 		"empty": "No invitations yet",
-		"pagination": { "prev": "Prev", "next": "Next", "page": "Page", "of": "of" },
+		"pagination": {
+			"prev": "Prev",
+			"next": "Next",
+			"page": "Page",
+			"of": "of"
+		},
 		"toasts": {
 			"createdTitle": "Invitation created",
 			"createdDesc": "Email sent to",
@@ -289,6 +292,117 @@
 			"resentDesc": "Resent to",
 			"cancelledTitle": "Invitation canceled"
 		},
-		"confirm": { "cancel": "Cancel this invitation?" }
+		"confirm": {
+			"cancel": "Cancel this invitation?"
+		}
+	},
+	"tasks": {
+		"title": "Task management",
+		"subtitle": "Track and organize your legal tasks",
+		"add": "Add new task",
+		"addNew": "Add new task",
+		"loading": "Loading tasks...",
+		"listTitle": "Tasks list",
+		"emptyTitle": "No tasks yet",
+		"emptyDesc": "Start by adding your first task",
+		"forContract": "Contract",
+		"stats": {
+			"pending": "Pending",
+			"inProgress": "In progress",
+			"completed": "Completed",
+			"total": "Total tasks"
+		},
+		"filters": {
+			"search": "Search",
+			"searchPh": "Search by title or description",
+			"status": "Status",
+			"contract": "Contract",
+			"allContracts": "All contracts"
+		},
+		"status": {
+			"all": "All",
+			"pending": "Pending",
+			"inProgress": "In progress",
+			"in_progress": "In progress",
+			"completed": "Completed"
+		},
+		"th": {
+			"title": "Title",
+			"contract": "Contract",
+			"priority": "Priority",
+			"status": "Status",
+			"due": "Due",
+			"actions": "Actions"
+		},
+		"priority": {
+			"low": "Low",
+			"medium": "Medium",
+			"high": "High",
+			"urgent": "Urgent"
+		},
+		"toast": {
+			"deleted": "Task deleted",
+			"updated": "Task updated",
+			"error": "Action failed"
+		},
+		"confirm": {
+			"delete": "Delete this task?"
+		},
+		"pagination": {
+			"page": "Page",
+			"prev": "Prev",
+			"next": "Next"
+		},
+		"actions": {
+			"inProgress": "In progress",
+			"complete": "Mark as completed"
+		},
+		"sampleContract": "Sample contract"
+	},
+	"taskModal": {
+		"title": "Create a new task",
+		"contractLabel": "Contract",
+		"contractPlaceholder": "Select a contract",
+		"titleLabel": "Task title",
+		"titlePh": "Enter a title…",
+		"category": "Category",
+		"cat": {
+			"general": "General",
+			"legal": "Legal",
+			"client": "Client",
+			"contract": "Contract",
+			"research": "Research",
+			"admin": "Admin"
+		},
+		"description": "Task description",
+		"descriptionPh": "Describe the task…",
+		"priority": "Priority",
+		"dueDate": "Due date",
+		"pickDate": "Pick a date",
+		"estimatedHours": "Estimated hours",
+		"estimatedHoursPh": "Number of hours",
+		"tags": "Tags (comma-separated)",
+		"tagsPh": "urgent, important, new client…",
+		"subtasks": "Subtasks",
+		"subtaskPlaceholder": "Describe subtask…",
+		"addSubtask": "Add subtask",
+		"saving": "Saving…",
+		"submit": "Create task",
+		"cancel": "Cancel",
+		"createdTitle": "Task created",
+		"createdDesc": "The task was saved successfully",
+		"toastError": "Failed to create task"
+	},
+	"risks": {
+		"title": "Identified risks",
+		"empty": "No risks",
+		"edit": "Edit",
+		"delete": "Delete",
+		"save": "Save",
+		"cancel": "Cancel",
+		"placeholder": "Describe the risk...",
+		"addNew": "Add new risk",
+		"newPlaceholder": "Title / short description",
+		"add": "Add"
 	}
 }

@@ -25,7 +25,7 @@ export default function LayoutShell({ children }: { children: React.ReactNode })
 			<Sidebar isCollapsed={isCollapsed} setIsCollapsed={setIsCollapsed} />
 			<div className='flex flex-col flex-1 overflow-hidden'>
 				<Header stats={stats} />
-				<main className='flex-1 p-10'>{children}</main>
+				<main className='flex-1 p-10 overflow-auto'>{children}</main>
 			</div>
 		</div>
 	)

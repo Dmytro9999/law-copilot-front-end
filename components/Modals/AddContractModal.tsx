@@ -48,6 +48,8 @@ import {
 } from '@/store/features/contracts/contractsApi'
 import { useI18n, useLocale } from '@/providers/I18nProvider'
 import ManualObligationModal from '@/components/Modals/AddObligationModal'
+import ContractRisksEditor from '@/components/contracts/ContractRisksEditor'
+import { useCreateRiskArrayMutation, useCreateRiskMutation } from '@/store/features/risks/risksApi'
 
 interface AddContractModalProps {
 	isOpen: boolean
@@ -127,6 +129,7 @@ export default function AddContractModal({ isOpen, onClose, onSave }: AddContrac
 	const [uploadDocument] = useUploadDocumentMutation()
 	const [analyzeContract] = useAnalyzeContractMutation()
 	const [materializeContract] = useMaterializeContractMutation()
+	const [createRisk] = useCreateRiskArrayMutation()
 
 	const { t } = useI18n()
 
@@ -244,7 +247,7 @@ export default function AddContractModal({ isOpen, onClose, onSave }: AddContrac
 			})
 
 			// שלב 2: ניתוח עם AI
-			setProcessingStage('מנתח חוזה עם Google Gemini...')
+			setProcessingStage('Contract Analyst with OpenAi...')
 			setProcessingProgress(50)
 
 			await analyzeContractWithAI(processed.text, fileToProcess.name)
@@ -281,7 +284,7 @@ export default function AddContractModal({ isOpen, onClose, onSave }: AddContrac
 		}
 
 		try {
-			setProcessingStage('מנתח חוזה עם Google Gemini...')
+			setProcessingStage('Contract Analyst with OpenAi...')
 			setProcessingProgress(70)
 
 			const response = await fetch('http://localhost:3000/api/ai/analyze-contract', {
@@ -369,6 +372,14 @@ export default function AddContractModal({ isOpen, onClose, onSave }: AddContrac
 			dueDate: ob?.dueDate || null,
 			clientKey: ob?.id || `auto-${i + 1}`,
 			parentClientKey: null,
+		}))
+	}
+	const mapAnalysisToRisks = (analysis: any) => {
+		const list = Array.isArray(analysis?.riskFactors) ? analysis.riskFactors : []
+		console.log(list, 'list')
+		return list.map((ob: any, i: number) => ({
+			title: ob,
+			contractId: 1,
 		}))
 	}
 
@@ -465,6 +476,9 @@ export default function AddContractModal({ isOpen, onClose, onSave }: AddContrac
 
 			const created = await materializeContract(payload).unwrap()
 
+			const debug = contractAnalysis ? mapAnalysisToRisks(contractAnalysis) : []
+
+			await createRisk(debug).unwrap()
 			// onSave({
 			// 	name: formData.name,
 			// 	clientName: formData.client_name,
@@ -537,7 +551,7 @@ export default function AddContractModal({ isOpen, onClose, onSave }: AddContrac
 						<CardHeader>
 							<CardTitle className='flex items-center gap-2 text-blue-800'>
 								<Brain className='h-5 w-5' />
-								עיבוד וניתוח חכם עם Google Gemini
+								OpenAi
 							</CardTitle>
 						</CardHeader>
 						<CardContent className='space-y-4'>
@@ -1137,32 +1151,43 @@ export default function AddContractModal({ isOpen, onClose, onSave }: AddContrac
 									</div>
 								)}
 
-								{/* Risk Factors */}
-								{contractAnalysis.riskFactors &&
-									contractAnalysis.riskFactors.length > 0 && (
-										<div className='bg-red-50 p-4 rounded-lg border border-red-200'>
-											<h4 className='font-semibold text-red-800 mb-2 flex items-center gap-2'>
-												<AlertTriangle className='h-4 w-4' />
-												סיכונים שזוהו ({contractAnalysis.riskFactors.length}
-												)
-											</h4>
-											<ul className='space-y-1 text-sm'>
-												{contractAnalysis.riskFactors
-													.slice(0, 3)
-													.map((risk, index) => (
-														<li
-															key={index}
-															className='text-red-700 flex items-start gap-2'
-														>
-															<span className='text-red-500 mt-1'>
-																•
-															</span>
-															{risk}
-														</li>
-													))}
-											</ul>
-										</div>
-									)}
+								{contractAnalysis && (
+									<ContractRisksEditor
+										risks={contractAnalysis.riskFactors || []}
+										onChange={(next) =>
+											setContractAnalysis((prev) =>
+												prev ? { ...prev, riskFactors: next } : prev
+											)
+										}
+									/>
+								)}
+
+								{/*/!* Risk Factors *!/*/}
+								{/*{contractAnalysis.riskFactors &&*/}
+								{/*	contractAnalysis.riskFactors.length > 0 && (*/}
+								{/*		<div className='bg-red-50 p-4 rounded-lg border border-red-200'>*/}
+								{/*			<h4 className='font-semibold text-red-800 mb-2 flex items-center gap-2'>*/}
+								{/*				<AlertTriangle className='h-4 w-4' />*/}
+								{/*				סיכונים שזוהו ({contractAnalysis.riskFactors.length}*/}
+								{/*				)*/}
+								{/*			</h4>*/}
+								{/*			<ul className='space-y-1 text-sm'>*/}
+								{/*				{contractAnalysis.riskFactors*/}
+								{/*					.slice(0, 3)*/}
+								{/*					.map((risk, index) => (*/}
+								{/*						<li*/}
+								{/*							key={index}*/}
+								{/*							className='text-red-700 flex items-start gap-2'*/}
+								{/*						>*/}
+								{/*							<span className='text-red-500 mt-1'>*/}
+								{/*								•*/}
+								{/*							</span>*/}
+								{/*							{risk}*/}
+								{/*						</li>*/}
+								{/*					))}*/}
+								{/*			</ul>*/}
+								{/*		</div>*/}
+								{/*	)}*/}
 
 								<p className='text-sm text-green-700'>
 									💡 כל המידע ימולא אוטומטית בטופס ויתווסף לחוזה

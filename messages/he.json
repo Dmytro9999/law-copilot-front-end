@@ -206,35 +206,26 @@
 		"clientTypePlaceholder": "בחר סוג לקוח",
 		"clientTypeIndividual": "לקוח פרטי",
 		"clientTypeCompany": "עסק / חברה",
-
 		"fullNameLabel": "שם מלא",
 		"fullNamePh": "הכנס שם מלא...",
 		"companyNameLabel": "שם החברה",
 		"companyNamePh": "הכנס שם החברה...",
-
 		"emailLabel": "אימייל",
 		"phoneLabel": "טלפון",
 		"phonePh": "050-1234567",
-
 		"positionLabel": "תפקיד איש הקשר",
 		"positionPh": "מנכ\"ל, מנהל כספים...",
-
 		"addressLabel": "כתובת",
 		"addressPh": "רחוב, מספר, עיר...",
-
 		"identificationCodeLabel": "מספר תעודת זהות",
 		"identificationCodePh": "123456789",
-
 		"businessNumberLabel": "מספר עסק / ח.פ",
 		"businessNumberPh": "123456789",
-
 		"notesLabel": "הערות",
 		"notesPh": "הערות נוספות על הלקוח...",
-
 		"submit": "שלח הזמנה",
 		"saving": "שולח הזמנה...",
 		"cancel": "ביטול",
-
 		"toast": {
 			"successTitle": "הזמנה נשלחה",
 			"successDesc": "נשלחה הזמנה ללקוח עם קישור הרשמה.",
@@ -242,7 +233,6 @@
 			"defaultError": "אירעה שגיאה, נסה שוב מאוחר יותר."
 		}
 	},
-
 	"common": {
 		"loading": "טוען..."
 	},
@@ -261,8 +251,15 @@
 			"perPage20": "20 בעמוד",
 			"perPage50": "50 בעמוד"
 		},
-		"status": { "pending": "ממתין", "activated": "אושר", "expired": "פג" },
-		"clientType": { "individual": "פרטי", "company": "חברה" },
+		"status": {
+			"pending": "ממתין",
+			"activated": "אושר",
+			"expired": "פג"
+		},
+		"clientType": {
+			"individual": "פרטי",
+			"company": "חברה"
+		},
 		"cards": {
 			"activated": "מאושרים",
 			"pending": "ממתינים",
@@ -282,7 +279,12 @@
 			}
 		},
 		"empty": "אין הזמנות עדיין",
-		"pagination": { "prev": "הקודם", "next": "הבא", "page": "עמוד", "of": "מתוך" },
+		"pagination": {
+			"prev": "הקודם",
+			"next": "הבא",
+			"page": "עמוד",
+			"of": "מתוך"
+		},
 		"toasts": {
 			"createdTitle": "הזמנה נוצרה",
 			"createdDesc": "נשלח מייל אל",
@@ -290,6 +292,117 @@
 			"resentDesc": "נשלח שוב אל",
 			"cancelledTitle": "הזמנה בוטלה"
 		},
-		"confirm": { "cancel": "לבטל הזמנה זו?" }
+		"confirm": {
+			"cancel": "לבטל הזמנה זו?"
+		}
+	},
+	"tasks": {
+		"title": "ניהול משימות",
+		"subtitle": "נהל את המשימות האישיות והמקצועיות שלך",
+		"add": "הוסף משימה חדשה",
+		"addNew": "הוסף משימה חדשה",
+		"loading": "טוען משימות...",
+		"listTitle": "רשימת משימות",
+		"emptyTitle": "אין משימות עדיין",
+		"emptyDesc": "התחל בהוספת המשימה הראשונה שלך",
+		"forContract": "חוזה",
+		"stats": {
+			"pending": "משימות פעילות",
+			"inProgress": "בביצוע",
+			"completed": "הושלמו",
+			"total": "סה״כ משימות"
+		},
+		"filters": {
+			"search": "חיפוש",
+			"searchPh": "חפש לפי כותרת או תיאור",
+			"status": "סטטוס",
+			"contract": "חוזה",
+			"allContracts": "כל החוזים"
+		},
+		"status": {
+			"all": "כולם",
+			"pending": "ממתינה",
+			"inProgress": "בביצוע",
+			"in_progress": "בביצוע",
+			"completed": "הושלמה"
+		},
+		"th": {
+			"title": "כותרת",
+			"contract": "חוזה",
+			"priority": "עדיפות",
+			"status": "סטטוס",
+			"due": "יעד",
+			"actions": "פעולות"
+		},
+		"priority": {
+			"low": "נמוכה",
+			"medium": "בינונית",
+			"high": "גבוהה",
+			"urgent": "דחופה"
+		},
+		"toast": {
+			"deleted": "המשימה נמחקה",
+			"updated": "המשימה עודכנה",
+			"error": "שגיאה בפעולה"
+		},
+		"confirm": {
+			"delete": "למחוק את המשימה?"
+		},
+		"pagination": {
+			"page": "עמוד",
+			"prev": "הקודם",
+			"next": "הבא"
+		},
+		"actions": {
+			"inProgress": "בביצוע",
+			"complete": "סמן כהושלמה"
+		},
+		"sampleContract": "חוזה לדוגמה"
+	},
+	"taskModal": {
+		"title": "הוספת משימה חדשה",
+		"contractLabel": "חוזה",
+		"contractPlaceholder": "בחר חוזה",
+		"titleLabel": "כותרת המשימה",
+		"titlePh": "הכנס כותרת למשימה...",
+		"category": "קטגוריה",
+		"cat": {
+			"general": "כללי",
+			"legal": "משפטי",
+			"client": "לקוח",
+			"contract": "חוזה",
+			"research": "מחקר",
+			"admin": "אדמינ׳"
+		},
+		"description": "תיאור המשימה",
+		"descriptionPh": "תאר את המשימה בפירוט...",
+		"priority": "עדיפות",
+		"dueDate": "תאריך יעד",
+		"pickDate": "בחר תאריך",
+		"estimatedHours": "שעות משוערות",
+		"estimatedHoursPh": "מספר שעות",
+		"tags": "תגיות (מופרדות בפסיק)",
+		"tagsPh": "דחוף, חשוב, לקוח חדש...",
+		"subtasks": "תתי-משימות",
+		"subtaskPlaceholder": "תאר תת-משימה...",
+		"addSubtask": "הוסף תת-משימה",
+		"saving": "שומר...",
+		"submit": "צור משימה",
+		"cancel": "ביטול",
+		"createdTitle": "נוצרה משימה",
+		"createdDesc": "המשימה נשמרה בהצלחה",
+		"toastError": "נכשלה יצירת המשימה"
+	},
+	"risks": {
+		"title": "סיכונים שזוהו",
+		"empty": "אין סיכונים",
+		"edit": "ערוך",
+		"delete": "מחק",
+		"save": "שמור",
+		"cancel": "ביטול",
+		"placeholder": "תאר את הסיכון...",
+		"addNew": "הוסף סיכון חדש",
+		"newPlaceholder": "כותרת / תיאור קצר",
+		"add": "הוסף"
 	}
 }
