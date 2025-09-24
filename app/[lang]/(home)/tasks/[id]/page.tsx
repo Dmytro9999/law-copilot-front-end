@@ -377,6 +377,10 @@ export default function TaskDetailsPage() {
 
 	//const isParent = useMemo(() => !data.parentTaskId, [])
 
+	const parentId = data?.parentTaskId ?? data?.parent?.id ?? null
+	const backHref = parentId ? `/${lang}/tasks/${parentId}` : `/${lang}/tasks`
+	const backLabel = parentId ? t('taskView.backToParent') : t('taskView.back')
+
 	const isParent = !data?.parentTaskId
 	const requiresApproval = Boolean(data?.approval_required)
 	const hasSubmitted =
@@ -419,10 +423,10 @@ export default function TaskDetailsPage() {
 					</p>
 				</div>
 				<div className='flex items-center gap-2'>
-					<Link href={`/${lang}/tasks`}>
+					<Link href={backHref}>
 						<Button variant='outline' className='bg-transparent'>
 							<ArrowLeft className='h-4 w-4 ml-2' />
-							{t('taskView.back') || 'Back'}
+							{backLabel}
 						</Button>
 					</Link>
 				</div>

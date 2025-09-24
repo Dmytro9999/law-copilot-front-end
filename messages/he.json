@@ -421,6 +421,8 @@
 		"contract": "חוזה",
 		"contractDue": "תאריך יעד של החוזה",
 		"noSubtasks": "אין תתי־משימות",
+        "backToParent": "חזרה להורה",
+        "subtasks": "משימות משנה",
 		"evidence": {
 			"title": "הוכחות",
 			"submitted": "נשלחה",

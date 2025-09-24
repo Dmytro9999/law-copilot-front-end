@@ -421,6 +421,8 @@
 		"contract": "Contract",
 		"contractDue": "Contract due",
 		"noSubtasks": "No subtasks",
+		"backToParent": "Back to parent",
+		"subtasks": "Subtasks",
 		"evidence": {
 			"title": "Evidences",
 			"submitted": "Submitted",
