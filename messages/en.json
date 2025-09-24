@@ -404,5 +404,67 @@
 		"addNew": "Add new risk",
 		"newPlaceholder": "Title / short description",
 		"add": "Add"
+	},
+	"taskView": {
+		"title": "Task",
+		"subtitle": "Details and progress",
+		"back": "Back to tasks",
+		"description": "Description",
+		"status": "Status",
+		"due": "Due date",
+		"dueDate": "Due date",
+		"created": "Created",
+		"createdBy": "Created by",
+		"progress": "Progress",
+		"assignees": "Assignees",
+		"approvalRequired": "Approval required",
+		"contract": "Contract",
+		"contractDue": "Contract due",
+		"noSubtasks": "No subtasks",
+		"evidence": {
+			"title": "Evidences",
+			"submitted": "Submitted",
+			"approved": "Approved",
+			"rejected": "Rejected",
+			"submittedBy": "Submitted by",
+			"createdAt": "Created",
+			"openDoc": "Open document",
+			"document": "Document",
+			"noDocument": "No document attached",
+			"noMessage": "No message",
+			"approve": "Approve",
+			"reject": "Reject",
+			"form": {
+				"title": "Submit evidence for approval",
+				"messageLabel": "Message",
+				"messagePlaceholder": "Write a short note…",
+				"fileLabel": "Attachment",
+				"pickFile": "Choose file",
+				"removeFile": "Remove file",
+				"fileSelected": "File selected",
+				"submit": "Submit evidence",
+				"submitting": "Submitting…",
+				"cancel": "Cancel",
+				"hint": "Attach a file if needed. Message is required.",
+				"hiddenSubmitted": "Evidence already submitted and awaits review.",
+				"errors": {
+					"messageRequired": "Message is required",
+					"uploadFailed": "File upload failed",
+					"submitFailed": "Could not submit evidence"
+				},
+				"success": "Evidence submitted"
+			}
+		},
+		"statusMap": {},
+		"statusLabels": {},
+		"status": {
+			"todo": "To do",
+			"in_progress": "In progress",
+			"inProgress": "In progress",
+			"awaiting_approval": "Awaiting approval",
+			"awaitingApproval": "Awaiting approval",
+			"done": "Done",
+			"unknown": "Unknown"
+		}
 	}
 }

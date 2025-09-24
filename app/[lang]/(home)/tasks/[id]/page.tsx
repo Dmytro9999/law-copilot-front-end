@@ -21,6 +21,13 @@ import {
 } from 'lucide-react'
 import { useI18n, useLocale } from '@/providers/I18nProvider'
 import { toast } from 'sonner'
+import EvidenceSubmitForm from '@/components/task-evidences/EvidenceSubmitForm'
+import { useGetTaskByIdQuery } from '@/store/features/tasks/tasksApi'
+import {
+	useApproveEvidenceMutation,
+	useRejectEvidenceMutation,
+} from '@/store/features/task-evidences/taskEvidencesApi'
+import { useParams } from 'next/navigation'
 
 // ───────────────────────────────────────────────────────────────────────────────
 // MOCK: пока используем константу; потом подменишь на реальный API/RTK.
@@ -361,19 +368,43 @@ export default function TaskDetailsPage() {
 	const { t } = useI18n()
 	const lang = useLocale() as 'he' | 'en'
 
-	const isParent = useMemo(() => !data.parentTaskId, [])
+	const params = useParams<{ id: string }>()
+	const idNum = Number(params?.id)
+	const { data, isLoading, isError, refetch } = useGetTaskByIdQuery(idNum, { skip: !idNum })
 
-	const st = statusMeta(data.status)
-	const pr = priorityMeta(data.priority)
+	const [approveEvidence] = useApproveEvidenceMutation()
+	const [rejectEvidence] = useRejectEvidenceMutation()
 
-	const handleApproveEvidence = async (id: number) => {
-		// await api.tasks.approveEvidence({ evidenceId: id }).unwrap()
-		toast({ title: t('taskView.evidence.toastApproved') || 'Evidence approved' })
+	//const isParent = useMemo(() => !data.parentTaskId, [])
+
+	const isParent = !data?.parentTaskId
+	const requiresApproval = Boolean(data?.approval_required)
+	const hasSubmitted =
+		Array.isArray(data?.evidences) &&
+		data?.evidences.some((ev: any) => ev.status === 'submitted')
+	const hasApproved =
+		Array.isArray(data?.evidences) &&
+		data?.evidences.some((ev: any) => ev.status === 'approved')
+
+	const st = statusMeta(data?.status)
+	const pr = priorityMeta(data?.priority)
+
+	//const canShowEvidenceForm = isParent && requiresApproval
+	const canShowEvidenceForm = isParent && requiresApproval && !hasSubmitted && !hasApproved
+
+	async function handleApproveEvidence(evidenceId: number) {
+		await approveEvidence({ evidenceId }).unwrap()
+		await refetch()
 	}
-	const handleRejectEvidence = async (id: number) => {
-		// await api.tasks.rejectEvidence({ evidenceId: id }).unwrap()
-		toast({ title: t('taskView.evidence.toastRejected') || 'Evidence rejected' })
+	async function handleRejectEvidence(evidenceId: number) {
+		await rejectEvidence({ evidenceId }).unwrap()
+		await refetch()
 	}
+
+	if (!idNum) return <div className='p-6 text-red-600'>Bad task id</div>
+	if (isLoading) return <div className='p-6'>{t('tasks.loading') || 'Loading...'}</div>
+	if (isError || !data)
+		return <div className='p-6 text-red-600'>{t('common.error') || 'Failed to load'}</div>
 
 	return (
 		<div className='space-y-8'>
@@ -456,7 +487,7 @@ export default function TaskDetailsPage() {
 							{!!data.assignees?.length && (
 								<div className='text-sm text-slate-600 mt-1'>
 									{t('taskView.assignees') || 'Assignees'}:{' '}
-									{data.assignees.map((a) => a.user.name).join(', ')}
+									{data.assignees.map((a: any) => a.user.name).join(', ')}
 								</div>
 							)}
 						</div>
@@ -489,101 +520,115 @@ export default function TaskDetailsPage() {
 			</Card>
 
 			{/* Subtasks */}
-			<Card className='bg-white/70 backdrop-blur-sm border-0 shadow-xl'>
-				<CardHeader>
-					<CardTitle className='text-2xl font-bold text-slate-800 flex items-center gap-2'>
-						<Clock className='h-6 w-6 text-amber-600' />
-						{t('taskView.subtasks') || 'Subtasks'}
-						<span className='text-slate-500 text-base font-normal'>
-							({data.children?.length || 0})
-						</span>
-					</CardTitle>
-				</CardHeader>
-				<CardContent>
-					{data.children && data.children.length > 0 ? (
-						<div className='space-y-3'>
-							{data.children.map((child) => {
-								const cst = statusMeta(child.status)
-								const cpr = priorityMeta(child.priority)
-								return (
-									<Link
-										key={child.id}
-										className='block'
-										href={`/${lang}/tasks/${child.id}`}
-									>
-										<div className='p-4 rounded-lg border bg-slate-50 hover:bg-slate-100 transition-colors'>
-											<div className='flex items-start justify-between gap-4'>
-												<div className='flex-1'>
-													<div className='flex items-center gap-2 mb-1'>
-														<span className='font-semibold text-slate-900'>
-															{child.title}
-														</span>
-														<Badge className={cst.cls}>
-															<cst.icon className='h-3.5 w-3.5 ml-1' />
-															{t(cst.labelKey) || cst.fallback}
-														</Badge>
-														<Badge className={cpr.cls}>
-															{t(cpr.labelKey) || cpr.fallback}
-														</Badge>
-														{child.approval_required && (
-															<Badge className='bg-indigo-100 text-indigo-700 border-indigo-200'>
-																{t('taskView.approvalReqShort') ||
-																	'Approval'}
-															</Badge>
-														)}
-													</div>
-													{child.description && (
-														<div className='text-sm text-slate-700 line-clamp-2'>
-															{child.description}
-														</div>
-													)}
-
-													<div className='mt-3 grid grid-cols-1 md:grid-cols-3 gap-4'>
-														<div className='text-sm text-slate-600 flex items-center gap-2'>
-															<Calendar className='h-4 w-4' />
-															{t('taskView.dueDate') ||
-																'Due date'}: {fmtDate(child.due_at)}
-														</div>
-														<div className='text-sm text-slate-600 flex items-center gap-2'>
-															<User className='h-4 w-4' />
-															{t('taskView.createdBy') ||
-																'Created by'}
-															:{' '}
-															<span className='text-slate-800 font-medium'>
-																{child.createdBy?.name || '—'}
-															</span>
-														</div>
-														<div>
-															<div className='flex items-center justify-between mb-1 text-sm text-slate-600'>
-																<span>
-																	{t('taskView.progress') ||
-																		'Progress'}
+			{isParent && (
+				<>
+					<Card className='bg-white/70 backdrop-blur-sm border-0 shadow-xl'>
+						<CardHeader>
+							<CardTitle className='text-2xl font-bold text-slate-800 flex items-center gap-2'>
+								<Clock className='h-6 w-6 text-amber-600' />
+								{t('taskView.subtasks') || 'Subtasks'}
+								<span className='text-slate-500 text-base font-normal'>
+									({data.children?.length || 0})
+								</span>
+							</CardTitle>
+						</CardHeader>
+						<CardContent>
+							{data.children && data.children.length > 0 ? (
+								<div className='space-y-3'>
+									{data.children.map((child: any) => {
+										const cst = statusMeta(child.status)
+										const cpr = priorityMeta(child.priority)
+										return (
+											<Link
+												key={child.id}
+												className='block'
+												href={`/${lang}/tasks/${child.id}`}
+											>
+												<div className='p-4 rounded-lg border bg-slate-50 hover:bg-slate-100 transition-colors'>
+													<div className='flex items-start justify-between gap-4'>
+														<div className='flex-1'>
+															<div className='flex items-center gap-2 mb-1'>
+																<span className='font-semibold text-slate-900'>
+																	{child.title}
 																</span>
-																<span className='text-slate-800 font-medium'>
-																	{child.progressPct ?? 0}%
-																</span>
+																<Badge className={cst.cls}>
+																	<cst.icon className='h-3.5 w-3.5 ml-1' />
+																	{t(cst.labelKey) ||
+																		cst.fallback}
+																</Badge>
+																<Badge className={cpr.cls}>
+																	{t(cpr.labelKey) ||
+																		cpr.fallback}
+																</Badge>
+																{child.approval_required && (
+																	<Badge className='bg-indigo-100 text-indigo-700 border-indigo-200'>
+																		{t(
+																			'taskView.approvalRequired'
+																		) || 'Approval'}
+																	</Badge>
+																)}
 															</div>
-															<Progress
-																value={child.progressPct ?? 0}
-															/>
+															{child.description && (
+																<div className='text-sm text-slate-700 line-clamp-2'>
+																	{child.description}
+																</div>
+															)}
+
+															<div className='mt-3 grid grid-cols-1 md:grid-cols-3 gap-4'>
+																<div className='text-sm text-slate-600 flex items-center gap-2'>
+																	<Calendar className='h-4 w-4' />
+																	{t('taskView.dueDate') ||
+																		'Due date'}
+																	: {fmtDate(child.due_at)}
+																</div>
+																<div className='text-sm text-slate-600 flex items-center gap-2'>
+																	<User className='h-4 w-4' />
+																	{t('taskView.createdBy') ||
+																		'Created by'}
+																	:{' '}
+																	<span className='text-slate-800 font-medium'>
+																		{child.createdBy?.name ||
+																			'—'}
+																	</span>
+																</div>
+																<div>
+																	<div className='flex items-center justify-between mb-1 text-sm text-slate-600'>
+																		<span>
+																			{t(
+																				'taskView.progress'
+																			) || 'Progress'}
+																		</span>
+																		<span className='text-slate-800 font-medium'>
+																			{child.progressPct ?? 0}
+																			%
+																		</span>
+																	</div>
+																	<Progress
+																		value={
+																			child.progressPct ?? 0
+																		}
+																	/>
+																</div>
+															</div>
 														</div>
+														<ChevronRight className='h-5 w-5 text-slate-400 mt-1' />
 													</div>
 												</div>
-												<ChevronRight className='h-5 w-5 text-slate-400 mt-1' />
-											</div>
-										</div>
-									</Link>
-								)
-							})}
-						</div>
-					) : (
-						<div className='text-center py-16 text-slate-600'>
-							{t('taskView.noSubtasks') || 'No subtasks yet'}
-						</div>
-					)}
-				</CardContent>
-			</Card>
-			{isParent && Array.isArray(data.evidences) && (
+											</Link>
+										)
+									})}
+								</div>
+							) : (
+								<div className='text-center py-16 text-slate-600'>
+									{t('taskView.noSubtasks') || 'No subtasks yet'}
+								</div>
+							)}
+						</CardContent>
+					</Card>
+				</>
+			)}
+
+			{Array.isArray(data?.evidences) && requiresApproval && (
 				<Card className='bg-white/70 backdrop-blur-sm border-0 shadow-xl'>
 					<CardHeader>
 						<CardTitle className='text-2xl font-bold text-slate-800 flex items-center gap-2'>
@@ -595,7 +640,7 @@ export default function TaskDetailsPage() {
 						</CardTitle>
 					</CardHeader>
 					<CardContent className='space-y-3'>
-						{data.evidences.map((ev) => {
+						{data.evidences.map((ev: any) => {
 							const meta = evidenceMeta(ev.status as EvidenceStatus)
 							const doc = ev.document
 							const isHttp =
@@ -700,6 +745,21 @@ export default function TaskDetailsPage() {
 							)
 						})}
 					</CardContent>
+
+					{canShowEvidenceForm ? (
+						<EvidenceSubmitForm taskId={data.id} onSubmitted={() => refetch()} />
+					) : (
+						<div className='text-sm text-slate-500 mt-2'>
+							{/* если уже отправлено/апрувнуто — форму скрываем */}
+							{hasApproved
+								? t('taskView.evidence.form.hiddenApproved') ||
+									'Evidence approved — submission is closed.'
+								: hasSubmitted
+									? t('taskView.evidence.form.hiddenSubmitted') ||
+										'Evidence submitted — awaiting approval.'
+									: null}
+						</div>
+					)}
 				</Card>
 			)}
 		</div>

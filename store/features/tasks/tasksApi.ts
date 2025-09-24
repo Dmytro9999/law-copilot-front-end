@@ -1,7 +1,7 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
 import environment from '@/config'
 import { RootState } from '@/store/store'
-import { CreateTaskRequest, ITask, TaskStatus } from './tasksTypes'
+import { CreateTaskRequest, ITask, TaskStatus, TaskView } from './tasksTypes'
 
 export const tasksApi = createApi({
 	reducerPath: 'tasksApi',
@@ -36,6 +36,13 @@ export const tasksApi = createApi({
 		createTask: b.mutation<ITask, CreateTaskRequest>({
 			query: (body) => ({ url: 'tasks', method: 'POST', body }),
 			invalidatesTags: ['Tasks'],
+		}),
+
+		getTaskById: b.query<any, number>({
+			query: (id) => ({
+				url: `tasks/${id}`,
+				method: 'GET',
+			}),
 		}),
 
 		// PATCH /tasks/:id
@@ -91,4 +98,5 @@ export const {
 	useAddSubtaskMutation,
 	useToggleSubtaskMutation,
 	useDeleteSubtaskMutation,
+	useGetTaskByIdQuery,
 } = tasksApi

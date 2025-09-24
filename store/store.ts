@@ -5,6 +5,7 @@ import { contractsApi } from '@/store/features/contracts/contractsApi'
 import { invitationsApi } from '@/store/features/invitations/invitationsApi'
 import { tasksApi } from '@/store/features/tasks/tasksApi'
 import { risksApi } from '@/store/features/risks/risksApi'
+import { taskEvidencesApi } from '@/store/features/task-evidences/taskEvidencesApi'
 
 export const store = configureStore({
 	reducer: {
@@ -14,6 +15,7 @@ export const store = configureStore({
 		[invitationsApi.reducerPath]: invitationsApi.reducer,
 		[tasksApi.reducerPath]: tasksApi.reducer,
 		[risksApi.reducerPath]: risksApi.reducer,
+		[taskEvidencesApi.reducerPath]: taskEvidencesApi.reducer,
 	},
 	middleware: (getDefaultMiddleware) =>
 		getDefaultMiddleware().concat(
@@ -21,7 +23,8 @@ export const store = configureStore({
 			contractsApi.middleware,
 			invitationsApi.middleware,
 			tasksApi.middleware,
-			risksApi.middleware
+			risksApi.middleware,
+			taskEvidencesApi.middleware
 		),
 })
 
