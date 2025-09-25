@@ -1,7 +1,7 @@
 'use client'
 
 import Link from 'next/link'
-import { useMemo } from 'react'
+import { useMemo, useState } from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import Badge from '@/components/ui/badge'
 import { Progress } from '@/components/ui/progress'
@@ -28,6 +28,7 @@ import {
 	useRejectEvidenceMutation,
 } from '@/store/features/task-evidences/taskEvidencesApi'
 import { useParams } from 'next/navigation'
+import AddSubtaskModal from '@/components/Modals/AddSubtaskModal'
 
 // ───────────────────────────────────────────────────────────────────────────────
 // MOCK: пока используем константу; потом подменишь на реальный API/RTK.
@@ -368,6 +369,8 @@ export default function TaskDetailsPage() {
 	const { t } = useI18n()
 	const lang = useLocale() as 'he' | 'en'
 
+	const [isSubOpen, setSubOpen] = useState(false)
+
 	const params = useParams<{ id: string }>()
 	const idNum = Number(params?.id)
 	const { data, isLoading, isError, refetch } = useGetTaskByIdQuery(idNum, { skip: !idNum })
@@ -527,7 +530,7 @@ export default function TaskDetailsPage() {
 			{isParent && (
 				<>
 					<Card className='bg-white/70 backdrop-blur-sm border-0 shadow-xl'>
-						<CardHeader>
+						<CardHeader className={'flex-row justify-between'}>
 							<CardTitle className='text-2xl font-bold text-slate-800 flex items-center gap-2'>
 								<Clock className='h-6 w-6 text-amber-600' />
 								{t('taskView.subtasks') || 'Subtasks'}
@@ -535,6 +538,9 @@ export default function TaskDetailsPage() {
 									({data.children?.length || 0})
 								</span>
 							</CardTitle>
+							<Button onClick={() => setSubOpen(true)}>
+								{t('taskView.subtasksModal.createBtn')}
+							</Button>
 						</CardHeader>
 						<CardContent>
 							{data.children && data.children.length > 0 ? (
@@ -766,6 +772,13 @@ export default function TaskDetailsPage() {
 					)}
 				</Card>
 			)}
+
+			<AddSubtaskModal
+				isOpen={isSubOpen}
+				onClose={() => setSubOpen(false)}
+				parentTaskId={data.id}
+				onCreated={() => refetch()}
+			/>
 		</div>
 	)
 }

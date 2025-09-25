@@ -409,6 +409,7 @@
 		"title": "Task",
 		"subtitle": "Details and progress",
 		"back": "Back to tasks",
+		"backToParent": "Back to parent",
 		"description": "Description",
 		"status": "Status",
 		"due": "Due date",
@@ -421,7 +422,6 @@
 		"contract": "Contract",
 		"contractDue": "Contract due",
 		"noSubtasks": "No subtasks",
-		"backToParent": "Back to parent",
 		"subtasks": "Subtasks",
 		"evidence": {
 			"title": "Evidences",
@@ -457,16 +457,32 @@
 				"success": "Evidence submitted"
 			}
 		},
-		"statusMap": {},
-		"statusLabels": {},
 		"status": {
 			"todo": "To do",
 			"in_progress": "In progress",
-			"inProgress": "In progress",
 			"awaiting_approval": "Awaiting approval",
-			"awaitingApproval": "Awaiting approval",
 			"done": "Done",
 			"unknown": "Unknown"
+		},
+		"subtasksModal": {
+			"createTitle": "Create subtask",
+			"createBtn": "Create subtask",
+			"saving": "Saving...",
+			"submit": "Create",
+			"cancel": "Cancel",
+			"created": "Subtask created",
+			"createdDesc": "The subtask has been created.",
+			"createFailed": "Failed to create subtask",
+			"assigneesRequired": "Assignees required",
+			"assigneesRequiredDesc": "Add at least one assignee when approval is required.",
+			"fields": {
+				"title": "Title",
+				"titlePh": "Enter subtask title...",
+				"description": "Description",
+				"descriptionPh": "Describe the subtask...",
+				"priority": "Priority",
+				"assigneesPh": "Assignee IDs (comma-separated)"
+			}
 		}
 	}
 }

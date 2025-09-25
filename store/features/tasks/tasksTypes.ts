@@ -78,3 +78,12 @@ export interface TaskView {
 		Omit<TaskView, 'children' | 'evidences' | 'contract' | 'parentTaskId' | 'approval_required'>
 	>
 }
+
+export type CreateSubtaskPayload = {
+	title: string
+	description?: string | null
+	priority?: number | null // 1..4
+	due_at?: string | null // 'YYYY-MM-DD'
+	assigneeIds?: number[]
+	approval_required?: boolean
+}
