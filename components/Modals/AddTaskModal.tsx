@@ -23,7 +23,7 @@ import { useI18n } from '@/providers/I18nProvider'
 import { useToast } from '@/components/ui/use-toast'
 import { useCreateTaskMutation } from '@/store/features/tasks/tasksApi'
 
-type Priority = 'low' | 'medium' | 'high' | 'urgent'
+type Priority = 'low' | 'medium' | 'high'
 
 interface AddTaskModalProps {
 	isOpen: boolean
@@ -43,54 +43,23 @@ export default function AddTaskModal({ isOpen, onClose, contracts, onCreated }: 
 		contractId: undefined as number | undefined,
 		title: '',
 		description: '',
-		priority: 'medium' as Priority,
-		category: 'general',
+		priority: 'low' as Priority,
 		dueDate: undefined as Date | undefined,
-		estimatedHours: '',
-		tags: '',
-		subtasks: [] as { description: string }[],
+		approval_required: false,
+		assigneeIdsRaw: '',
 	})
 
-	const canSubmit = Boolean(formData.contractId && formData.title.trim())
-
-	const addSubtaskRow = () =>
-		setFormData((p) => ({ ...p, subtasks: [...p.subtasks, { description: '' }] }))
-
-	const updateSubtask = (i: number, v: string) =>
-		setFormData((p) => {
-			const copy = [...p.subtasks]
-			copy[i] = { description: v }
-			return { ...p, subtasks: copy }
-		})
-
-	const removeSubtask = (i: number) =>
-		setFormData((p) => {
-			const copy = [...p.subtasks]
-			copy.splice(i, 1)
-			return { ...p, subtasks: copy }
-		})
-
+	const canSubmit = Boolean(formData.title.trim())
 	async function handleSubmit(e: React.FormEvent) {
 		e.preventDefault()
 		if (!canSubmit) return
 
 		const payload = {
-			contractId: formData.contractId!.toString(), // уже проверили в canSubmit
+			contractId: formData.contractId ? Number(formData.contractId) : null,
 			title: formData.title.trim(),
 			description: formData.description.trim() || null,
-			priority: Number(formData.priority),
-			// если бек принимает category — уйдёт; если нет, можно убрать
-			category: formData.category,
-			dueDate: formData.dueDate ? formData.dueDate.toISOString().slice(0, 10) : null,
-			estimatedHours: formData.estimatedHours ? Number(formData.estimatedHours) : null,
-			tags: formData.tags
-				.split(',')
-				.map((s) => s.trim())
-				.filter(Boolean),
-			subtasks: formData.subtasks
-				.map((s) => s.description.trim())
-				.filter(Boolean)
-				.map((d) => ({ description: d })),
+			priority: formData.priority,
+			due_at: formData.dueDate ? formData.dueDate.toISOString().slice(0, 10) : null,
 		}
 
 		try {
@@ -106,12 +75,10 @@ export default function AddTaskModal({ isOpen, onClose, contracts, onCreated }: 
 				contractId: undefined,
 				title: '',
 				description: '',
-				priority: 'medium',
-				category: 'general',
+				priority: 'low',
 				dueDate: undefined,
-				estimatedHours: '',
-				tags: '',
-				subtasks: [],
+				approval_required: false,
+				assigneeIdsRaw: '',
 			})
 			onClose()
 			onCreated?.()
@@ -162,7 +129,7 @@ export default function AddTaskModal({ isOpen, onClose, contracts, onCreated }: 
 					</div>
 
 					{/* Заголовок + Категория */}
-					<div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
+					<div className='space-y-2'>
 						<div className='space-y-2'>
 							<Label htmlFor='title' className='text-lg font-medium'>
 								{t('taskModal.titleLabel') || 'כותרת המשימה'} *
@@ -177,42 +144,6 @@ export default function AddTaskModal({ isOpen, onClose, contracts, onCreated }: 
 								className='h-12 text-lg'
 								required
 							/>
-						</div>
-
-						<div className='space-y-2'>
-							<Label htmlFor='category' className='text-lg font-medium'>
-								{t('taskModal.category') || 'קטגוריה'}
-							</Label>
-							<Select
-								value={formData.category}
-								onValueChange={(value) =>
-									setFormData({ ...formData, category: value })
-								}
-							>
-								<SelectTrigger className='h-12 text-lg'>
-									<SelectValue />
-								</SelectTrigger>
-								<SelectContent>
-									<SelectItem value='general'>
-										{t('taskModal.cat.general') || 'כללי'}
-									</SelectItem>
-									<SelectItem value='legal'>
-										{t('taskModal.cat.legal') || 'משפטי'}
-									</SelectItem>
-									<SelectItem value='client'>
-										{t('taskModal.cat.client') || 'לקוח'}
-									</SelectItem>
-									<SelectItem value='contract'>
-										{t('taskModal.cat.contract') || 'חוזה'}
-									</SelectItem>
-									<SelectItem value='research'>
-										{t('taskModal.cat.research') || 'מחקר'}
-									</SelectItem>
-									<SelectItem value='admin'>
-										{t('taskModal.cat.admin') || 'אדמינ׳'}
-									</SelectItem>
-								</SelectContent>
-							</Select>
 						</div>
 					</div>
 
@@ -248,17 +179,14 @@ export default function AddTaskModal({ isOpen, onClose, contracts, onCreated }: 
 									<SelectValue />
 								</SelectTrigger>
 								<SelectContent>
-									<SelectItem value='1'>
+									<SelectItem value='low'>
 										{t('tasks.priority.low') || 'נמוכה'}
 									</SelectItem>
-									<SelectItem value='2'>
+									<SelectItem value='medium'>
 										{t('tasks.priority.medium') || 'בינונית'}
 									</SelectItem>
-									<SelectItem value='3'>
+									<SelectItem value='high'>
 										{t('tasks.priority.high') || 'גבוהה'}
-									</SelectItem>
-									<SelectItem value='4'>
-										{t('tasks.priority.urgent') || 'דחופה'}
 									</SelectItem>
 								</SelectContent>
 							</Select>
@@ -295,76 +223,34 @@ export default function AddTaskModal({ isOpen, onClose, contracts, onCreated }: 
 								</PopoverContent>
 							</Popover>
 						</div>
-
-						<div className='space-y-2'>
-							<Label htmlFor='estimatedHours' className='text-lg font-medium'>
-								{t('taskModal.estimatedHours') || 'שעות משוערות'}
-							</Label>
-							<Input
-								id='estimatedHours'
-								type='number'
-								value={formData.estimatedHours}
-								onChange={(e) =>
-									setFormData({ ...formData, estimatedHours: e.target.value })
-								}
-								placeholder={t('taskModal.estimatedHoursPh') || 'מספר שעות'}
-								className='h-12 text-lg'
-								min='0'
-								step='0.5'
-							/>
-						</div>
 					</div>
 
-					{/* Теги */}
 					<div className='space-y-2'>
-						<Label htmlFor='tags' className='text-lg font-medium'>
-							{t('taskModal.tags') || 'תגיות (מופרדות בפסיק)'}
+						<Label className='flex items-center gap-2'>
+							<input
+								type='checkbox'
+								checked={formData.approval_required}
+								onChange={(e) =>
+									setFormData((p) => ({
+										...p,
+										approval_required: e.target.checked,
+									}))
+								}
+							/>
+							{t('taskView.approvalRequired') || 'Approval required'}
 						</Label>
 						<Input
-							id='tags'
-							value={formData.tags}
-							onChange={(e) => setFormData({ ...formData, tags: e.target.value })}
-							placeholder={t('taskModal.tagsPh') || 'דחוף, חשוב, לקוח חדש...'}
-							className='h-12 text-lg'
+							disabled={!formData.approval_required}
+							value={formData.assigneeIdsRaw}
+							onChange={(e) =>
+								setFormData((p) => ({ ...p, assigneeIdsRaw: e.target.value }))
+							}
+							placeholder={
+								t('taskView.subtasksModal.fields.assigneesPh') ||
+								'Assignee IDs (comma-separated)'
+							}
+							className='h-12'
 						/>
-					</div>
-
-					{/* Сабтаски */}
-					<div className='space-y-2'>
-						<Label className='text-lg font-medium'>
-							{t('taskModal.subtasks') || 'תתי-משימות'}
-						</Label>
-						<div className='space-y-2'>
-							{formData.subtasks.map((s, i) => (
-								<div key={i} className='flex gap-2'>
-									<Input
-										value={s.description}
-										onChange={(e) => updateSubtask(i, e.target.value)}
-										placeholder={
-											t('taskModal.subtaskPlaceholder') || 'תאר תת-משימה...'
-										}
-										className='h-10'
-									/>
-									<Button
-										type='button'
-										variant='outline'
-										onClick={() => removeSubtask(i)}
-										className='px-3'
-										aria-label='Remove subtask'
-									>
-										×
-									</Button>
-								</div>
-							))}
-						</div>
-						<Button
-							type='button'
-							variant='outline'
-							onClick={addSubtaskRow}
-							className='mt-1'
-						>
-							+ {t('taskModal.addSubtask') || 'הוסף תת-משימה'}
-						</Button>
 					</div>
 
 					{/* Кнопки */}

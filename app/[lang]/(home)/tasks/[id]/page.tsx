@@ -311,7 +311,7 @@ function statusMeta(s: string) {
 			}
 		case 'awaiting_approval':
 			return {
-				labelKey: 'taskView.status.awaitingApproval',
+				labelKey: 'taskView.status.awaiting_approval',
 				fallback: 'Awaiting approval',
 				icon: AlertCircle,
 				cls: 'bg-amber-100 text-amber-800 border-amber-200',
@@ -333,21 +333,21 @@ function statusMeta(s: string) {
 	}
 }
 
-function priorityMeta(n?: number) {
+function priorityMeta(n?: string) {
 	switch (n) {
-		case 4:
+		case 'low':
 			return {
-				labelKey: 'tasks.priority.urgent',
-				fallback: 'Urgent',
-				cls: 'bg-red-100 text-red-700 border-red-200',
+				labelKey: 'tasks.priority.low',
+				fallback: 'Low',
+				cls: 'bg-green-100 text-green-700 border-green-200',
 			}
-		case 3:
+		case 'high':
 			return {
 				labelKey: 'tasks.priority.high',
 				fallback: 'High',
 				cls: 'bg-orange-100 text-orange-700 border-orange-200',
 			}
-		case 2:
+		case 'medium':
 			return {
 				labelKey: 'tasks.priority.medium',
 				fallback: 'Medium',
@@ -400,11 +400,11 @@ export default function TaskDetailsPage() {
 	const canShowEvidenceForm = isParent && requiresApproval && !hasSubmitted && !hasApproved
 
 	async function handleApproveEvidence(evidenceId: number) {
-		await approveEvidence({ evidenceId }).unwrap()
+		await approveEvidence({ evidenceId, taskId: idNum }).unwrap()
 		await refetch()
 	}
 	async function handleRejectEvidence(evidenceId: number) {
-		await rejectEvidence({ evidenceId }).unwrap()
+		await rejectEvidence({ evidenceId, taskId: idNum }).unwrap()
 		await refetch()
 	}
 
@@ -694,7 +694,7 @@ export default function TaskDetailsPage() {
 									</div>
 
 									{/* Документ / действия */}
-									<div className='mt-3 flex flex-wrap items-center gap-3'>
+									<div className='mt-3 flex flex-wrap justify-between items-center gap-3'>
 										{doc ? (
 											isHttp ? (
 												<a
@@ -755,22 +755,21 @@ export default function TaskDetailsPage() {
 							)
 						})}
 					</CardContent>
-
-					{canShowEvidenceForm ? (
-						<EvidenceSubmitForm taskId={data.id} onSubmitted={() => refetch()} />
-					) : (
-						<div className='text-sm text-slate-500 mt-2'>
-							{/* если уже отправлено/апрувнуто — форму скрываем */}
-							{hasApproved
-								? t('taskView.evidence.form.hiddenApproved') ||
-									'Evidence approved — submission is closed.'
-								: hasSubmitted
-									? t('taskView.evidence.form.hiddenSubmitted') ||
-										'Evidence submitted — awaiting approval.'
-									: null}
-						</div>
-					)}
 				</Card>
+			)}
+
+			{canShowEvidenceForm ? (
+				<EvidenceSubmitForm taskId={data.id} onSubmitted={() => refetch()} />
+			) : (
+				<div className='text-sm text-slate-500 mt-2'>
+					{/*{hasApproved*/}
+					{/*	? t('taskView.evidence.form.hiddenApproved') ||*/}
+					{/*		'Evidence approved — submission is closed.'*/}
+					{/*	: hasSubmitted*/}
+					{/*		? t('taskView.evidence.form.hiddenSubmitted') ||*/}
+					{/*			'Evidence submitted — awaiting approval.'*/}
+					{/*		: null}*/}
+				</div>
 			)}
 
 			<AddSubtaskModal

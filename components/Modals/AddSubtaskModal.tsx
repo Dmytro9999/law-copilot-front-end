@@ -41,10 +41,10 @@ export default function AddSubtaskModal({
 	const [form, setForm] = useState({
 		title: '',
 		description: '',
-		priority: 'low', // 1..4, по умолчанию medium=2
+		priority: 'low',
 		due_at: '',
 		approval_required: false,
-		assigneeIdsRaw: '', // строка: "1,2,3"
+		assigneeIdsRaw: '',
 	})
 
 	const canSubmit = form.title.trim().length > 0
@@ -80,7 +80,7 @@ export default function AddSubtaskModal({
 		const body: CreateSubtaskPayload = {
 			title: form.title.trim(),
 			description: form.description.trim() || undefined,
-			priority: form.priority ? Number(form.priority) : undefined,
+			priority: form.priority,
 			due_at: form.due_at || undefined, // формат YYYY-MM-DD из <input type="date" />
 			approval_required: form.approval_required,
 			assigneeIds: parseAssignees(form.assigneeIdsRaw || ''),

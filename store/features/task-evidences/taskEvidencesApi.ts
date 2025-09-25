@@ -34,16 +34,16 @@ export const taskEvidencesApi = createApi({
 				body: { message, file_id: fileId },
 			}),
 		}),
-		approveEvidence: builder.mutation<any, { evidenceId: number }>({
-			query: ({ evidenceId }) => ({
-				url: `task-evidences/${evidenceId}/approve`,
-				method: 'PATCH',
+		approveEvidence: builder.mutation<any, { evidenceId: number; taskId: number }>({
+			query: ({ evidenceId, taskId }) => ({
+				url: `task-evidences/${taskId}/evidence/${evidenceId}/approve`,
+				method: 'POST',
 			}),
 		}),
-		rejectEvidence: builder.mutation<any, { evidenceId: number }>({
-			query: ({ evidenceId }) => ({
-				url: `task-evidences/${evidenceId}/reject`,
-				method: 'PATCH',
+		rejectEvidence: builder.mutation<any, { evidenceId: number; taskId: number }>({
+			query: ({ evidenceId, taskId }) => ({
+				url: `task-evidences/${taskId}/evidence/${evidenceId}/reject`,
+				method: 'POST',
 			}),
 		}),
 	}),

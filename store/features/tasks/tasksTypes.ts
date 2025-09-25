@@ -1,4 +1,4 @@
-export type TaskPriority = 'low' | 'medium' | 'high' | 'urgent'
+export type TaskPriority = 'low' | 'medium' | 'high'
 export type TaskStatus = 'pending' | 'in_progress' | 'completed'
 
 export interface ISubtask {
@@ -9,21 +9,18 @@ export interface ISubtask {
 
 export interface ITask {
 	id: number
-	contractId: number
+	contractId: number | null
 	contractTitle?: string
 	title: string
 	description?: string | null
 	priority: TaskPriority
 	status: TaskStatus
-	dueDate?: string | null
-	estimatedHours?: number | null
-	tags?: string[]
-	subtasks?: ISubtask[]
+	due_at?: string | null
 	createdAt: string
 }
 
 export interface CreateTaskRequest {
-	contractId: number
+	contractId: number | null
 	title: string
 	description?: string | null
 	priority?: TaskPriority
@@ -82,7 +79,7 @@ export interface TaskView {
 export type CreateSubtaskPayload = {
 	title: string
 	description?: string | null
-	priority?: number | null // 1..4
+	priority?: string
 	due_at?: string | null // 'YYYY-MM-DD'
 	assigneeIds?: number[]
 	approval_required?: boolean
