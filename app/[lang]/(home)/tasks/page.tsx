@@ -50,8 +50,8 @@ import {
 	Filter,
 } from 'lucide-react'
 
-type TaskStatus = 'pending' | 'in_progress' | 'completed'
-type Priority = 'low' | 'medium' | 'high' | 'urgent'
+type TaskStatus = 'todo' | 'in_progress' | 'done' | 'awaiting_approval' | 'cancelled'
+type Priority = 'low' | 'medium' | 'high'
 
 export default function TasksPage() {
 	const { t } = useI18n()
@@ -115,8 +115,8 @@ export default function TasksPage() {
 	// --------- Helpers ----------
 	function priorityBadgeClass(p: Priority) {
 		switch (p) {
-			case 'urgent':
-				return 'bg-red-100 text-red-700 border-red-200'
+			case 'low':
+				return 'bg-green-100 text-green-700 border-green-200'
 			case 'high':
 				return 'bg-orange-100 text-orange-700 border-orange-200'
 			case 'medium':
@@ -127,25 +127,60 @@ export default function TasksPage() {
 	}
 
 	function statusBadge(s: TaskStatus) {
-		if (s === 'completed') {
-			return (
-				<Badge className='bg-green-100 text-green-700 border-green-200' variant='outline'>
-					{t('tasks.status.completed') || 'הושלמה'}
-				</Badge>
-			)
+		const tt = (key: string) => {
+			const v = t?.(key)
+			return typeof v === 'string' && v.length && v
 		}
-		if (s === 'in_progress') {
-			return (
-				<Badge className='bg-amber-100 text-amber-700 border-amber-200' variant='outline'>
-					{t('tasks.status.inProgress') || 'בביצוע'}
-				</Badge>
-			)
+
+		switch (s) {
+			case 'done':
+				return (
+					<Badge
+						className='bg-green-100 text-green-700 border-green-200'
+						variant='outline'
+					>
+						{tt('taskView.status.done')}
+					</Badge>
+				)
+
+			case 'in_progress':
+				return (
+					<Badge
+						className='bg-amber-100 text-amber-700 border-amber-200'
+						variant='outline'
+					>
+						{tt('taskView.status.in_progress')}
+					</Badge>
+				)
+
+			case 'awaiting_approval':
+				return (
+					<Badge
+						className='bg-indigo-100 text-indigo-700 border-indigo-200'
+						variant='outline'
+					>
+						{tt('taskView.status.awaiting_approval')}
+					</Badge>
+				)
+
+			case 'cancelled':
+				return (
+					<Badge className='bg-rose-100 text-rose-700 border-rose-200' variant='outline'>
+						{tt('taskView.status.cancelled')}
+					</Badge>
+				)
+
+			case 'todo':
+			default:
+				return (
+					<Badge
+						className='bg-slate-100 text-slate-700 border-slate-200'
+						variant='outline'
+					>
+						{tt('taskView.status.todo')}
+					</Badge>
+				)
 		}
-		return (
-			<Badge className='bg-slate-100 text-slate-700 border-slate-200' variant='outline'>
-				{t('tasks.status.pending') || 'ממתינה'}
-			</Badge>
-		)
 	}
 
 	// --------- Actions ----------
@@ -262,13 +297,14 @@ export default function TasksPage() {
 									<SelectItem value='all'>
 										{t('tasks.status.all') || 'כולם'}
 									</SelectItem>
-									<SelectItem value='pending'>
-										{t('tasks.status.pending') || 'ממתינה'}
+									<SelectItem value='todo'>Todo</SelectItem>
+									<SelectItem value='awaiting_approval'>
+										Awaiting Approval
 									</SelectItem>
 									<SelectItem value='in_progress'>
 										{t('tasks.status.inProgress') || 'בביצוע'}
 									</SelectItem>
-									<SelectItem value='completed'>
+									<SelectItem value='done'>
 										{t('tasks.status.completed') || 'הושלמה'}
 									</SelectItem>
 								</SelectContent>
@@ -410,28 +446,17 @@ export default function TasksPage() {
 										<TableRow key={task.id} className='hover:bg-blue-50/30'>
 											<TableCell className='font-semibold text-slate-800'>
 												<div className='flex flex-col'>
-													<span>{task.title}</span>
+													<Link href={`/${lang}/tasks/${task.id}`}>
+														<span>{task.title}</span>
+													</Link>
+
 													{task.description && (
-														<span className='text-xs text-slate-500 mt-1 line-clamp-2'>
-															{task.description}
-														</span>
+														<Link href={`/${lang}/tasks/${task.id}`}>
+															<span className='text-xs text-slate-500 mt-1 line-clamp-2'>
+																{task.description}
+															</span>
+														</Link>
 													)}
-													{Array.isArray(task.tags) &&
-														task.tags.length > 0 && (
-															<div className='flex gap-1 mt-2 flex-wrap'>
-																{task.tags.map(
-																	(tag: string, i: number) => (
-																		<Badge
-																			key={i}
-																			variant='outline'
-																			className='text-slate-700'
-																		>
-																			#{tag}
-																		</Badge>
-																	)
-																)}
-															</div>
-														)}
 												</div>
 											</TableCell>
 
@@ -472,8 +497,8 @@ export default function TasksPage() {
 											</TableCell>
 
 											<TableCell className='text-slate-700'>
-												{task.dueDate
-													? new Date(task.dueDate).toLocaleDateString()
+												{task.due_at
+													? new Date(task.due_at).toLocaleDateString()
 													: '—'}
 											</TableCell>
 
