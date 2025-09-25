@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import React, { useMemo, useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -14,159 +14,227 @@ import {
 } from '@/components/ui/select'
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Badge } from '@/components/ui/badge'
-import { Loader2, Sparkles, Brain, CheckCircle2, AlertTriangle, Clock } from 'lucide-react'
+import Badge from '@/components/ui/badge'
+import { Loader2, Sparkles, Brain, CheckCircle2, X, FileText } from 'lucide-react'
 import { useToast } from '@/components/ui/use-toast'
+
+/** ---- Типы ---- */
+type AISummary = { summary: string; keyPoints?: string[] }
+type LocalFile = {
+	id: string
+	file: File
+	status: 'selected' | 'analyzing' | 'done' | 'error'
+	url?: string | null // краткоживущая ссылка (под просмотр)
+	error?: string | null
+}
 
 interface MeetingSummaryModalProps {
 	isOpen: boolean
 	onClose: () => void
 	onSaveSummary: (summaryData: any) => void
-	contracts: any[]
+	contracts: Array<{ id: number; name: string; client_name?: string }>
 }
 
+/** ---- Конфиг эндпоинта ---- */
+const API_BASE = process.env.NEXT_PUBLIC_API_URL?.replace(/\/+$/, '') || '' // напр.: https://api.example.com
+const AI_ANALYZE_ENDPOINT = `${API_BASE}/ai/meeting-analyze` // Nest controller
+
+/** ---- Утилиты ---- */
+const formatBytes = (bytes: number) => {
+	if (bytes === 0) return '0 B'
+	const k = 1024
+	const sizes = ['B', 'KB', 'MB', 'GB']
+	const i = Math.floor(Math.log(bytes) / Math.log(k))
+	return `${parseFloat((bytes / Math.pow(k, i)).toFixed(2))} ${sizes[i]}`
+}
+
+/** ---- Компонент ---- */
 export default function MeetingSummaryModal({
 	isOpen,
 	onClose,
 	onSaveSummary,
 	contracts,
 }: MeetingSummaryModalProps) {
-	const [formData, setFormData] = useState({
-		contractId: '',
-		meetingDate: '',
-		participants: '',
-		summary: '',
-	})
-	const [isProcessing, setIsProcessing] = useState(false)
-	const [aiSummary, setAiSummary] = useState(null)
 	const { toast } = useToast()
 
-	const handleInputChange = (field: string, value: string) => {
+	const [formData, setFormData] = useState({
+		contractId: '',
+		title: '',
+		meetingDate: '',
+		notes: '',
+	})
+
+	const [file, setFile] = useState<LocalFile | null>(null)
+	const [isProcessing, setIsProcessing] = useState(false)
+	const [aiSummary, setAiSummary] = useState<AISummary | null>(null)
+
+	const handleInputChange = (field: keyof typeof formData, value: string) =>
 		setFormData((prev) => ({ ...prev, [field]: value }))
+
+	/** ---- Выбор одного файла ---- */
+	const onSelectFile = (fl: FileList | null) => {
+		if (!fl || fl.length === 0) return
+		const f = fl[0]
+		setFile({ id: 'local-1', file: f, status: 'selected', url: null })
+		// сбросим предыдущий анализ
+		setAiSummary(null)
 	}
 
-	const generateAISummary = async () => {
-		if (!formData.summary.trim()) {
-			toast({
-				title: 'שגיאה',
-				description: 'נא להזין רשימות פגישה לפני יצירת סיכום AI',
-				variant: 'destructive',
-			})
+	const removeFile = () => {
+		if (isProcessing) return
+		setFile(null)
+		setAiSummary(null)
+	}
+
+	/** ---- AI Analyze: один POST multipart на бэк ---- */
+	const handleAnalyze = async () => {
+		if (!formData.title.trim()) {
+			toast({ title: 'שגיאה', description: 'יש להזין כותרת', variant: 'destructive' })
+			return
+		}
+		if (!formData.meetingDate) {
+			toast({ title: 'שגיאה', description: 'בחר תאריך פגישה', variant: 'destructive' })
+			return
+		}
+		if (!file) {
+			toast({ title: 'שגיאה', description: 'בחר קובץ לפני ניתוח AI', variant: 'destructive' })
 			return
 		}
 
 		setIsProcessing(true)
+		setFile((prev) => (prev ? { ...prev, status: 'analyzing', error: null } : prev))
+
 		try {
-			const selectedContract = contracts.find(
-				(c) => c.id === Number.parseInt(formData.contractId)
-			)
-			const contractContext = selectedContract
-				? `חוזה: ${selectedContract.name}, לקוח: ${selectedContract.client_name}, סוג: ${selectedContract.contract_type}`
-				: 'אין הקשר חוזה'
+			const fd = new FormData()
+			fd.append('file', file.file) // <-- ключ 'file' ждёт ваш контроллер
+			fd.append('title', formData.title.trim())
+			fd.append('meetingDate', formData.meetingDate)
+			fd.append('notes', formData.notes)
+			if (formData.contractId) fd.append('contractId', formData.contractId)
 
-			const response = await fetch('/api/meeting-summary', {
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json',
-				},
-				body: JSON.stringify({
-					meetingNotes: formData.summary,
-					contractContext,
-				}),
-			})
+			const resp = await fetch(AI_ANALYZE_ENDPOINT, { method: 'POST', body: fd })
 
-			if (!response.ok) {
-				throw new Error('Failed to generate AI summary')
+			if (!resp.ok) throw new Error(`AI analyze failed: ${resp.status}`)
+			const data = (await resp.json()) as {
+				document?: {
+					storageKey: string
+					name: string
+					size: number
+					mime: string
+					signedUrl?: string
+				}
+				ai?: AISummary
 			}
 
-			const data = await response.json()
-			setAiSummary(data.aiSummary)
+			// Обновим «файл» видимыми метаданными
+			setFile((prev) =>
+				prev
+					? {
+							...prev,
+							status: 'done',
+							url: data.document?.signedUrl || null, // краткоживущая ссылка от сервера (если дали)
+						}
+					: prev
+			)
+
+			// Сохраним анализ
+			if (data.ai?.summary) setAiSummary(data.ai)
+			else {
+				// если сервер не вернул ai — подстрахуемся
+				setAiSummary({
+					summary: formData.notes.trim()
+						? formData.notes.trim()
+						: `סיכום קצר לפגישה "${formData.title}" (ללא ניתוח AI).`,
+					keyPoints: [],
+				})
+			}
 
 			toast({
-				title: 'סיכום AI נוצר בהצלחה! 🤖',
-				description: 'Google Gemini ניתח את הפגישה וזיהה פעולות נדרשות',
+				title: 'הניתוח הושלם',
+				description: 'סיכום AI נוצר',
 				className: 'bg-gradient-to-l from-blue-600 to-purple-600 text-white border-none',
 			})
-		} catch (error) {
-			console.error('Error generating AI summary:', error)
+		} catch (e) {
+			// Fallback: mock, чтобы можно было тестировать до готовности бэка
+			const base = formData.notes.trim()
+				? formData.notes.trim().slice(0, 200) + (formData.notes.length > 200 ? '…' : '')
+				: 'התקבל מסמך אחד, מופק סיכום כללי (Mock).'
+
+			setAiSummary({
+				summary: `סיכום קצר לפגישה "${formData.title}": ${base}`,
+				keyPoints: ['Mock: נקודה 1', 'Mock: נקודה 2', 'Mock: נקודה 3'],
+			})
+			setFile((prev) => (prev ? { ...prev, status: 'done' } : prev))
 			toast({
-				title: 'שגיאה ביצירת סיכום',
-				description: 'נסה שוב או צור סיכום ידני',
-				variant: 'destructive',
+				title: 'Mock פועל',
+				description: 'הבקו״נד לא השיב / לא קיים — הוחזר מענה מדומה',
 			})
 		} finally {
 			setIsProcessing(false)
 		}
 	}
 
+	/** ---- Сохранение в систему ---- */
 	const handleSave = () => {
-		if (!formData.contractId || !formData.meetingDate || !formData.participants) {
+		if (!formData.title.trim()) {
+			toast({ title: 'שגיאה בטופס', description: 'נא למלא כותרת', variant: 'destructive' })
+			return
+		}
+		if (!formData.meetingDate) {
 			toast({
 				title: 'שגיאה בטופס',
-				description: 'נא למלא את כל השדות הנדרשים',
+				description: 'נא לבחור תאריך פגישה',
 				variant: 'destructive',
 			})
 			return
 		}
 
+		const fallback: AISummary = {
+			summary: formData.notes.trim()
+				? formData.notes.trim()
+				: `סיכום קצר לפגישה "${formData.title}" (ללא ניתוח AI).`,
+			keyPoints: [],
+		}
+
 		const summaryData = {
-			...formData,
-			contractId: Number.parseInt(formData.contractId),
-			participants: formData.participants.split(',').map((p) => p.trim()),
-			aiSummary: aiSummary || {
-				summary: formData.summary,
-				mainTopics: [],
-				decisions: [],
-				actionItems: [],
-				legalRisks: [],
-				recommendations: [],
-			},
+			contractId: formData.contractId ? Number.parseInt(formData.contractId) : null,
+			title: formData.title.trim(),
+			meetingDate: formData.meetingDate,
+			notes: formData.notes,
+			document: file
+				? {
+						url: file.url || null, // краткоживущая ссылка (если сервер прислал)
+						name: file.file.name,
+						size: file.file.size,
+						mime: file.file.type,
+						status: file.status,
+					}
+				: null,
+			ai: aiSummary || fallback,
 		}
 
 		onSaveSummary(summaryData)
 	}
 
-	const getPriorityColor = (priority: string) => {
-		switch (priority) {
-			case 'גבוהה':
-				return 'bg-red-100 text-red-800 border-red-200'
-			case 'בינונית':
-				return 'bg-amber-100 text-amber-800 border-amber-200'
-			case 'נמוכה':
-				return 'bg-green-100 text-green-800 border-green-200'
-			default:
-				return 'bg-gray-100 text-gray-800 border-gray-200'
-		}
-	}
-
-	const getPriorityIcon = (priority: string) => {
-		switch (priority) {
-			case 'גבוהה':
-				return <AlertTriangle className='h-3 w-3' />
-			case 'בינונית':
-				return <Clock className='h-3 w-3' />
-			case 'נמוכה':
-				return <CheckCircle2 className='h-3 w-3' />
-			default:
-				return <Clock className='h-3 w-3' />
-		}
-	}
+	const fileSelected = Boolean(file)
+	const canAnalyze = fileSelected && !isProcessing
+	const uploaded = useMemo(() => (file?.status === 'done' ? 1 : 0), [file])
 
 	return (
 		<Dialog open={isOpen} onOpenChange={onClose}>
-			<DialogContent className='max-w-4xl max-h-[90vh] overflow-y-auto'>
+			<DialogContent className='max-w-3xl max-h-[90vh] overflow-y-auto'>
 				<DialogHeader>
 					<DialogTitle className='text-2xl font-bold text-slate-800 flex items-center gap-2'>
 						<Brain className='h-6 w-6 text-blue-600' />
-						סיכום פגישה חכם - LAWCOPILOT
+						סיכום פגישה
 					</DialogTitle>
 				</DialogHeader>
 
 				<div className='space-y-6'>
-					{/* Form Section */}
+					{/* ---- Форма ---- */}
 					<div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
 						<div>
-							<Label htmlFor='contractId'>חוזה קשור *</Label>
+							<Label htmlFor='contractId'>חוזה קשור (לא חובה)</Label>
 							<Select
 								value={formData.contractId}
 								onValueChange={(value) => handleInputChange('contractId', value)}
@@ -175,12 +243,10 @@ export default function MeetingSummaryModal({
 									<SelectValue placeholder='בחר חוזה' />
 								</SelectTrigger>
 								<SelectContent>
-									{contracts.map((contract) => (
-										<SelectItem
-											key={contract.id}
-											value={contract.id.toString()}
-										>
-											{contract.name} - {contract.client_name}
+									{contracts.map((c) => (
+										<SelectItem key={c.id} value={c.id.toString()}>
+											{c.name}
+											{c.client_name ? ` — ${c.client_name}` : ''}
 										</SelectItem>
 									))}
 								</SelectContent>
@@ -198,56 +264,125 @@ export default function MeetingSummaryModal({
 						</div>
 
 						<div className='md:col-span-2'>
-							<Label htmlFor='participants'>משתתפים *</Label>
+							<Label htmlFor='title'>כותרת *</Label>
 							<Input
-								id='participants'
-								placeholder='הזן שמות המשתתפים מופרדים בפסיקים'
-								value={formData.participants}
-								onChange={(e) => handleInputChange('participants', e.target.value)}
+								id='title'
+								placeholder='לדוגמה: פגישה עם הלקוח X'
+								value={formData.title}
+								onChange={(e) => handleInputChange('title', e.target.value)}
 							/>
 						</div>
 
 						<div className='md:col-span-2'>
-							<Label htmlFor='summary'>רשימות פגישה *</Label>
+							<Label htmlFor='notes'>הערות / מה חשוב להדגיש (אופציונלי)</Label>
 							<Textarea
-								id='summary'
-								placeholder='הזן את רשימות הפגישה כאן... Google Gemini ינתח אותן ויצור סיכום מקצועי'
-								value={formData.summary}
-								onChange={(e) => handleInputChange('summary', e.target.value)}
-								rows={6}
+								id='notes'
+								placeholder='כתוב בקצרה מה עלה בפגישה או מה חשוב להוציא מהמסמך...'
+								value={formData.notes}
+								onChange={(e) => handleInputChange('notes', e.target.value)}
+								rows={5}
 								className='resize-none'
 							/>
 						</div>
 					</div>
 
-					{/* AI Analysis Button */}
+					{/* ---- Один файл (без отдельной кнопки Upload) ---- */}
+					<div className='space-y-3'>
+						<Label>מסמך אחד (כל סוג קובץ)</Label>
+						<Input
+							type='file'
+							onChange={(e) => onSelectFile(e.target.files)}
+							className='max-w-lg'
+						/>
+
+						{file && (
+							<div className='space-y-2'>
+								<div className='flex items-center justify-between rounded-md border bg-white p-3'>
+									<div className='flex items-center gap-3'>
+										<FileText className='h-4 w-4 text-slate-500' />
+										<div className='text-sm'>
+											<div className='font-medium text-slate-800'>
+												{file.file.name}
+											</div>
+											<div className='text-slate-500 text-xs'>
+												{file.file.type || 'unknown'} ·{' '}
+												{formatBytes(file.file.size)}
+											</div>
+										</div>
+									</div>
+									<div className='flex items-center gap-2'>
+										<Badge
+											className={
+												file.status === 'done'
+													? 'bg-green-100 text-green-800 border-green-200'
+													: file.status === 'analyzing'
+														? 'bg-amber-100 text-amber-800 border-amber-200'
+														: file.status === 'error'
+															? 'bg-red-100 text-red-800 border-red-200'
+															: 'bg-slate-100 text-slate-800 border-slate-200'
+											}
+										>
+											{file.status === 'done'
+												? 'נותח'
+												: file.status === 'analyzing'
+													? 'מנתח...'
+													: file.status === 'error'
+														? 'שגיאה'
+														: 'נבחר'}
+										</Badge>
+										<Button
+											size='icon'
+											variant='ghost'
+											onClick={removeFile}
+											disabled={file.status === 'analyzing'}
+											className='h-8 w-8'
+											title='הסר קובץ'
+										>
+											<X className='h-4 w-4' />
+										</Button>
+									</div>
+								</div>
+								{file.url && (
+									<div className='text-xs text-slate-500'>
+										קישור זמני לצפייה:{' '}
+										<a className='underline' href={file.url} target='_blank'>
+											פתח
+										</a>
+									</div>
+								)}
+								<div className='text-xs text-slate-500'>{uploaded}/1 הסתיים</div>
+							</div>
+						)}
+					</div>
+
+					{/* ---- Кнопка AI Analyze ---- */}
 					<div className='flex justify-center'>
 						<Button
-							onClick={generateAISummary}
-							disabled={isProcessing || !formData.summary.trim()}
+							onClick={handleAnalyze}
+							disabled={!canAnalyze}
 							className='bg-gradient-to-l from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-8 py-3 text-lg'
 						>
 							{isProcessing ? (
 								<>
 									<Loader2 className='ml-2 h-5 w-5 animate-spin' />
-									Google Gemini מנתח...
+									AI מנתח...
 								</>
 							) : (
 								<>
 									<Sparkles className='ml-2 h-5 w-5' />
-									צור סיכום AI חכם
+									AI Analyze
 								</>
 							)}
 						</Button>
 					</div>
 
-					{/* AI Summary Results */}
+					{/* ---- Результат AI ---- */}
 					{aiSummary && (
 						<div className='space-y-4'>
-							<div className='flex items-center gap-2 mb-4'>
+							<div className='flex items-center gap-2 mb-2'>
 								<Brain className='h-5 w-5 text-blue-600' />
 								<h3 className='text-lg font-bold text-slate-800'>
-									תוצאות ניתוח Google Gemini
+									תוצאות ניתוח AI
 								</h3>
 								<Badge className='bg-green-100 text-green-800 border-green-200'>
 									<CheckCircle2 className='h-3 w-3 ml-1' />
@@ -255,182 +390,35 @@ export default function MeetingSummaryModal({
 								</Badge>
 							</div>
 
-							<div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
-								{/* Summary */}
-								<Card className='bg-blue-50/50 border-blue-200'>
-									<CardHeader className='pb-3'>
-										<CardTitle className='text-sm font-semibold text-blue-800'>
-											סיכום כללי
-										</CardTitle>
-									</CardHeader>
-									<CardContent>
-										<p className='text-sm text-slate-700'>
-											{aiSummary.summary}
-										</p>
-									</CardContent>
-								</Card>
+							<Card className='bg-blue-50/50 border-blue-200'>
+								<CardHeader className='pb-3'>
+									<CardTitle className='text-sm font-semibold text-blue-800'>
+										סיכום
+									</CardTitle>
+								</CardHeader>
+								<CardContent>
+									<p className='text-sm text-slate-700'>{aiSummary.summary}</p>
+								</CardContent>
+							</Card>
 
-								{/* Main Topics */}
+							{aiSummary.keyPoints && aiSummary.keyPoints.length > 0 && (
 								<Card className='bg-purple-50/50 border-purple-200'>
 									<CardHeader className='pb-3'>
 										<CardTitle className='text-sm font-semibold text-purple-800'>
-											נושאים עיקריים
+											נקודות עיקריות
 										</CardTitle>
 									</CardHeader>
 									<CardContent>
 										<ul className='space-y-1'>
-											{aiSummary.mainTopics?.map((topic, index) => (
+											{aiSummary.keyPoints.map((p, i) => (
 												<li
-													key={index}
+													key={i}
 													className='text-sm text-slate-700 flex items-start gap-2'
 												>
 													<span className='text-purple-600'>•</span>
-													{topic}
+													{p}
 												</li>
 											))}
-										</ul>
-									</CardContent>
-								</Card>
-
-								{/* Decisions */}
-								<Card className='bg-green-50/50 border-green-200'>
-									<CardHeader className='pb-3'>
-										<CardTitle className='text-sm font-semibold text-green-800'>
-											החלטות
-										</CardTitle>
-									</CardHeader>
-									<CardContent>
-										<ul className='space-y-1'>
-											{aiSummary.decisions?.map((decision, index) => (
-												<li
-													key={index}
-													className='text-sm text-slate-700 flex items-start gap-2'
-												>
-													<CheckCircle2 className='h-3 w-3 text-green-600 mt-0.5 flex-shrink-0' />
-													{decision}
-												</li>
-											))}
-										</ul>
-									</CardContent>
-								</Card>
-
-								{/* Legal Risks */}
-								<Card className='bg-red-50/50 border-red-200'>
-									<CardHeader className='pb-3'>
-										<CardTitle className='text-sm font-semibold text-red-800'>
-											סיכונים משפטיים
-										</CardTitle>
-									</CardHeader>
-									<CardContent>
-										<ul className='space-y-1'>
-											{aiSummary.legalRisks?.map((risk, index) => (
-												<li
-													key={index}
-													className='text-sm text-slate-700 flex items-start gap-2'
-												>
-													<AlertTriangle className='h-3 w-3 text-red-600 mt-0.5 flex-shrink-0' />
-													{risk}
-												</li>
-											))}
-										</ul>
-									</CardContent>
-								</Card>
-							</div>
-
-							{/* Action Items */}
-							{aiSummary.actionItems && aiSummary.actionItems.length > 0 && (
-								<Card className='bg-amber-50/50 border-amber-200'>
-									<CardHeader className='pb-3'>
-										<CardTitle className='text-sm font-semibold text-amber-800'>
-											פעולות נדרשות ({aiSummary.actionItems.length})
-										</CardTitle>
-									</CardHeader>
-									<CardContent>
-										<div className='space-y-3'>
-											{aiSummary.actionItems.map((item, index) => (
-												<div
-													key={index}
-													className='bg-white p-3 rounded-lg border border-amber-200'
-												>
-													<div className='flex items-start justify-between mb-2'>
-														<h4 className='font-medium text-slate-800'>
-															{item.description}
-														</h4>
-														<Badge
-															className={getPriorityColor(
-																item.priority
-															)}
-														>
-															{getPriorityIcon(item.priority)}
-															{item.priority}
-														</Badge>
-													</div>
-													<div className='grid grid-cols-2 gap-2 text-xs text-slate-600'>
-														<div>
-															<span className='font-medium'>
-																אחראי:
-															</span>{' '}
-															{item.responsibleParty}
-														</div>
-														<div>
-															<span className='font-medium'>
-																תאריך יעד:
-															</span>{' '}
-															{new Date(
-																item.dueDate
-															).toLocaleDateString('he-IL')}
-														</div>
-														<div>
-															<span className='font-medium'>
-																קטגוריה:
-															</span>{' '}
-															{item.category}
-														</div>
-														<div>
-															<span className='font-medium'>
-																הוכחת ביצוע:
-															</span>{' '}
-															{item.requiresProof
-																? 'נדרש'
-																: 'לא נדרש'}
-														</div>
-													</div>
-													{item.amount && (
-														<div className='mt-2 text-xs text-slate-600'>
-															<span className='font-medium'>
-																סכום:
-															</span>{' '}
-															{item.amount}
-														</div>
-													)}
-												</div>
-											))}
-										</div>
-									</CardContent>
-								</Card>
-							)}
-
-							{/* Recommendations */}
-							{aiSummary.recommendations && aiSummary.recommendations.length > 0 && (
-								<Card className='bg-indigo-50/50 border-indigo-200'>
-									<CardHeader className='pb-3'>
-										<CardTitle className='text-sm font-semibold text-indigo-800'>
-											המליצות
-										</CardTitle>
-									</CardHeader>
-									<CardContent>
-										<ul className='space-y-1'>
-											{aiSummary.recommendations.map(
-												(recommendation, index) => (
-													<li
-														key={index}
-														className='text-sm text-slate-700 flex items-start gap-2'
-													>
-														<Sparkles className='h-3 w-3 text-indigo-600 mt-0.5 flex-shrink-0' />
-														{recommendation}
-													</li>
-												)
-											)}
 										</ul>
 									</CardContent>
 								</Card>
@@ -438,7 +426,7 @@ export default function MeetingSummaryModal({
 						</div>
 					)}
 
-					{/* Action Buttons */}
+					{/* ---- Сохранить ---- */}
 					<div className='flex justify-end gap-3 pt-4 border-t'>
 						<Button variant='outline' onClick={onClose}>
 							ביטול
