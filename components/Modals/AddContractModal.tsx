@@ -43,6 +43,7 @@ import ObligationTimerModal from '@/components/obligation-timer-modal'
 import {
 	TaskFromAnalysisDto,
 	useAnalyzeContractMutation,
+	useExtractDocumentTextMutation,
 	useMaterializeContractMutation,
 	useUploadDocumentMutation,
 } from '@/store/features/contracts/contractsApi'
@@ -131,6 +132,7 @@ export default function AddContractModal({ isOpen, onClose, onSave }: AddContrac
 	const [analyzeContract] = useAnalyzeContractMutation()
 	const [materializeContract] = useMaterializeContractMutation()
 	const [createRisk] = useCreateRiskArrayMutation()
+	const [extractDoc] = useExtractDocumentTextMutation()
 
 	const { t } = useI18n()
 
@@ -238,17 +240,86 @@ export default function AddContractModal({ isOpen, onClose, onSave }: AddContrac
 		await processFileContent(selectedFile)
 	}
 
+	function splitIntoChunks(text: string) {
+		const chunks: {
+			id: string
+			text: string
+			startIndex: number
+			endIndex: number
+			type: 'paragraph' | 'header' | 'list' | 'table'
+			confidence: number
+		}[] = []
+		const maxChunkSize = 1200
+		const overlap = 120
+		const paragraphs = text.split(/\n\s*\n/).filter((p) => p.trim().length > 0)
+
+		let current = ''
+		let chunkIndex = 0
+		let startIndex = 0
+
+		const detectType = (t: string): 'paragraph' | 'header' | 'list' | 'table' => {
+			if (t.length < 100 && (/^[A-Za-zА-Яа-яЁёא-ת\d.\s-]+$/.test(t) || /^\d+\./.test(t)))
+				return 'header'
+			if (
+				/^[\d\u2022\u2023\u25E6\u25AA\u25AB-]/.test(t) ||
+				t.includes('\n• ') ||
+				t.includes('\n- ')
+			)
+				return 'list'
+			if ((t.match(/\t/g) || []).length > 3 || (t.match(/\|/g) || []).length > 3)
+				return 'table'
+			return 'paragraph'
+		}
+
+		for (const p of paragraphs) {
+			if (current.length + p.length > maxChunkSize && current.length > 0) {
+				chunks.push({
+					id: `chunk-${chunkIndex}`,
+					text: current.trim(),
+					startIndex,
+					endIndex: startIndex + current.length,
+					type: detectType(current),
+					confidence: 0.9,
+				})
+				const overlapText = current.slice(-overlap)
+				startIndex += current.length - overlapText.length
+				current = overlapText + '\n' + p
+				chunkIndex++
+			} else {
+				current += (current ? '\n' : '') + p
+			}
+		}
+		if (current.trim()) {
+			chunks.push({
+				id: `chunk-${chunkIndex}`,
+				text: current.trim(),
+				startIndex,
+				endIndex: startIndex + current.length,
+				type: detectType(current),
+				confidence: 0.9,
+			})
+		}
+		return chunks
+	}
+
 	const processFileContent = async (fileToProcess: File) => {
 		setIsProcessing(true)
 		setProcessingProgress(0)
 		setProcessingStage('מעבד קובץ...')
 
 		try {
-			// שלב 1: עיבוד הקובץ וחילוץ טקסט
+			// שלב 1: עיבוד הקובץ וחילוץ טקסט (теперь на бэке через RTK)
 			setProcessingStage('חולץ טקסט מהקובץ...')
 			setProcessingProgress(20)
 
-			const processed = await processFile(fileToProcess)
+			const { text, metadata } = await extractDoc({ file: fileToProcess }).unwrap()
+
+			// собираем объект как раньше (добавляем chunks на фронте)
+			const processed = {
+				text,
+				metadata,
+				chunks: splitIntoChunks(text),
+			}
 			setProcessedFile(processed)
 			setContractText(processed.text)
 
@@ -263,11 +334,11 @@ export default function AddContractModal({ isOpen, onClose, onSave }: AddContrac
 			setProcessingProgress(50)
 
 			await analyzeContractWithAI(processed.text, fileToProcess.name)
-		} catch (error) {
+		} catch (error: any) {
 			console.error('Error processing file:', error)
 			toast({
 				title: 'שגיאה בעיבוד הקובץ',
-				description: error.message || 'נסה שוב או הזן טקסט ידנית',
+				description: error?.data?.message || error?.message || 'נסה שוב או הזן טקסט ידנית',
 				variant: 'destructive',
 			})
 		} finally {

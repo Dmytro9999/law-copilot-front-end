@@ -6,7 +6,7 @@ import {
 	QueryContractsParams,
 } from '@/store/features/contracts/contractsTypes'
 
-const MULTIPART_ENDPOINTS = new Set(['uploadDocument'])
+const MULTIPART_ENDPOINTS = new Set(['uploadDocument', 'extractDocumentText'])
 
 export interface UploadDocumentResponse {
 	id: number
@@ -62,10 +62,13 @@ export const contractsApi = createApi({
 			if (accessToken) {
 				headers.set('Authorization', `Bearer ${accessToken}`)
 			}
-			// multipart эндпоинтам НЕ ставим JSON Content-Type
-			if (!MULTIPART_ENDPOINTS.has(endpoint)) {
+
+			if (MULTIPART_ENDPOINTS.has(endpoint)) {
+				headers.delete('Content-Type')
+			} else {
 				headers.set('Content-Type', 'application/json')
 			}
+
 			return headers
 		},
 	}),
@@ -139,6 +142,31 @@ export const contractsApi = createApi({
 				},
 			}),
 		}),
+
+		extractDocumentText: builder.mutation<
+			{
+				text: string
+				metadata: {
+					fileName: string
+					fileSize: number
+					fileType: string
+					pageCount?: number
+					wordCount: number
+					extractedAt: string
+				}
+			},
+			{ file: File }
+		>({
+			query: ({ file }) => {
+				const fd = new FormData()
+				fd.append('file', file)
+				return {
+					url: 'documents/extract-text',
+					method: 'POST',
+					body: fd,
+				}
+			},
+		}),
 	}),
 })
 
@@ -148,4 +176,5 @@ export const {
 	useMaterializeContractMutation,
 	useGetDocumentSignedUrlQuery,
 	useGetContractsQuery,
+	useExtractDocumentTextMutation,
 } = contractsApi
