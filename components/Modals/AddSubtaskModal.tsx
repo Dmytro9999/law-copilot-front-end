@@ -83,7 +83,8 @@ export default function AddSubtaskModal({
 			priority: form.priority,
 			due_at: form.due_at || undefined, // формат YYYY-MM-DD из <input type="date" />
 			approval_required: form.approval_required,
-			assigneeIds: parseAssignees(form.assigneeIdsRaw || ''),
+			// assigneeIds: parseAssignees(form.assigneeIdsRaw || ''),
+			assigneeIds: [2],
 		}
 
 		try {

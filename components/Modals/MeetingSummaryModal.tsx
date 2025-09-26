@@ -17,6 +17,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import Badge from '@/components/ui/badge'
 import { Loader2, Sparkles, Brain, CheckCircle2, X, FileText } from 'lucide-react'
 import { useToast } from '@/components/ui/use-toast'
+import { useMeetingAnalyzeMutation } from '@/store/features/meeting-summary/meeting-summary'
 
 /** ---- Типы ---- */
 type AISummary = { summary: string; keyPoints?: string[] }
@@ -68,6 +69,8 @@ export default function MeetingSummaryModal({
 	const [isProcessing, setIsProcessing] = useState(false)
 	const [aiSummary, setAiSummary] = useState<AISummary | null>(null)
 
+	const [meetingAnalyze, { isLoading: isAnalyzing }] = useMeetingAnalyzeMutation()
+
 	const handleInputChange = (field: keyof typeof formData, value: string) =>
 		setFormData((prev) => ({ ...prev, [field]: value }))
 
@@ -101,76 +104,44 @@ export default function MeetingSummaryModal({
 			return
 		}
 
-		setIsProcessing(true)
+		// визуально покажем статус
 		setFile((prev) => (prev ? { ...prev, status: 'analyzing', error: null } : prev))
+		setAiSummary(null)
 
 		try {
-			const fd = new FormData()
-			fd.append('file', file.file) // <-- ключ 'file' ждёт ваш контроллер
-			fd.append('title', formData.title.trim())
-			fd.append('meetingDate', formData.meetingDate)
-			fd.append('notes', formData.notes)
-			if (formData.contractId) fd.append('contractId', formData.contractId)
+			const resp = await meetingAnalyze({
+				file: file.file,
+				title: formData.title.trim(),
+				meetingDate: formData.meetingDate,
+				notes: formData.notes || undefined,
+				contractId: formData.contractId || undefined,
+			}).unwrap()
 
-			const resp = await fetch(AI_ANALYZE_ENDPOINT, { method: 'POST', body: fd })
-
-			if (!resp.ok) throw new Error(`AI analyze failed: ${resp.status}`)
-			const data = (await resp.json()) as {
-				document?: {
-					storageKey: string
-					name: string
-					size: number
-					mime: string
-					signedUrl?: string
-				}
-				ai?: AISummary
-			}
-
-			// Обновим «файл» видимыми метаданными
 			setFile((prev) =>
 				prev
 					? {
 							...prev,
 							status: 'done',
-							url: data.document?.signedUrl || null, // краткоживущая ссылка от сервера (если дали)
+							url: resp.document?.signedUrl || null, // если сервер вернул временную ссылку
 						}
 					: prev
 			)
-
-			// Сохраним анализ
-			if (data.ai?.summary) setAiSummary(data.ai)
-			else {
-				// если сервер не вернул ai — подстрахуемся
-				setAiSummary({
-					summary: formData.notes.trim()
-						? formData.notes.trim()
-						: `סיכום קצר לפגישה "${formData.title}" (ללא ניתוח AI).`,
-					keyPoints: [],
-				})
-			}
+			setAiSummary(resp.ai)
 
 			toast({
 				title: 'הניתוח הושלם',
 				description: 'סיכום AI נוצר',
 				className: 'bg-gradient-to-l from-blue-600 to-purple-600 text-white border-none',
 			})
-		} catch (e) {
-			// Fallback: mock, чтобы можно было тестировать до готовности бэка
-			const base = formData.notes.trim()
-				? formData.notes.trim().slice(0, 200) + (formData.notes.length > 200 ? '…' : '')
-				: 'התקבל מסמך אחד, מופק סיכום כללי (Mock).'
-
-			setAiSummary({
-				summary: `סיכום קצר לפגישה "${formData.title}": ${base}`,
-				keyPoints: ['Mock: נקודה 1', 'Mock: נקודה 2', 'Mock: נקודה 3'],
-			})
-			setFile((prev) => (prev ? { ...prev, status: 'done' } : prev))
+		} catch (e: any) {
+			setFile((prev) =>
+				prev ? { ...prev, status: 'error', error: String(e?.message || e) } : prev
+			)
 			toast({
-				title: 'Mock פועל',
-				description: 'הבקו״נד לא השיב / לא קיים — הוחזר מענה מדומה',
+				title: 'שגיאה בניתוח',
+				description: 'לא ניתן לבצע ניתוח AI. נסה שוב.',
+				variant: 'destructive',
 			})
-		} finally {
-			setIsProcessing(false)
 		}
 	}
 
@@ -359,10 +330,10 @@ export default function MeetingSummaryModal({
 					<div className='flex justify-center'>
 						<Button
 							onClick={handleAnalyze}
-							disabled={!canAnalyze}
+							disabled={!file || isAnalyzing}
 							className='bg-gradient-to-l from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-8 py-3 text-lg'
 						>
-							{isProcessing ? (
+							{isAnalyzing ? (
 								<>
 									<Loader2 className='ml-2 h-5 w-5 animate-spin' />
 									AI מנתח...

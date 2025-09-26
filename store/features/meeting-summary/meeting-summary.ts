@@ -56,7 +56,7 @@ export const meetingSummaryApi = createApi({
 					fd.append('contractId', String(contractId))
 				}
 				return {
-					url: 'meeting-summary',
+					url: 'meeting-summary/analyze',
 					method: 'POST',
 					body: fd,
 				}

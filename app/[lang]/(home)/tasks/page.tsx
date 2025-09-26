@@ -105,9 +105,9 @@ export default function TasksPage() {
 
 	// --------- Счётчики (по загруженному списку) ----------
 	const stats = useMemo(() => {
-		const pending = tasks.filter((t) => t.status === 'pending').length
+		const pending = tasks.filter((t) => t.status === 'todo').length
 		const inProgress = tasks.filter((t) => t.status === 'in_progress').length
-		const completed = tasks.filter((t) => t.status === 'completed').length
+		const completed = tasks.filter((t) => t.status === 'done').length
 		const total = tasks.length
 		return { pending, inProgress, completed, total }
 	}, [tasks])
@@ -518,12 +518,12 @@ export default function TasksPage() {
 																'בביצוע'}
 														</Button>
 													)}
-													{task.status !== 'completed' && (
+													{task.status !== 'done' && (
 														<Button
 															variant='outline'
 															size='sm'
 															onClick={() =>
-																handleStatus(task.id, 'completed')
+																handleStatus(task.id, 'done')
 															}
 															disabled={updating}
 														>

@@ -30,9 +30,6 @@ import {
 import { useParams } from 'next/navigation'
 import AddSubtaskModal from '@/components/Modals/AddSubtaskModal'
 
-// ───────────────────────────────────────────────────────────────────────────────
-// MOCK: пока используем константу; потом подменишь на реальный API/RTK.
-// ───────────────────────────────────────────────────────────────────────────────
 const data = {
 	id: 3,
 	created: '2025-09-23T12:01:04.508Z',
@@ -396,9 +393,7 @@ export default function TaskDetailsPage() {
 	const st = statusMeta(data?.status)
 	const pr = priorityMeta(data?.priority)
 
-	//const canShowEvidenceForm = isParent && requiresApproval
-	const canShowEvidenceForm = isParent && requiresApproval && !hasSubmitted && !hasApproved
-
+	const canShowEvidenceForm = requiresApproval && !hasSubmitted && !hasApproved
 	async function handleApproveEvidence(evidenceId: number) {
 		await approveEvidence({ evidenceId, taskId: idNum }).unwrap()
 		await refetch()
@@ -457,7 +452,7 @@ export default function TaskDetailsPage() {
 							</Badge>
 						)}
 					</div>
-
+					вот тут надо добавить селект
 					{/* progress */}
 					<div>
 						<div className='flex items-center justify-between mb-2'>
@@ -470,7 +465,6 @@ export default function TaskDetailsPage() {
 						</div>
 						<Progress value={data.progressPct} />
 					</div>
-
 					{/* meta grid */}
 					<div className='grid grid-cols-1 md:grid-cols-3 gap-6'>
 						<div className='p-4 rounded-lg bg-slate-50'>
@@ -513,7 +507,6 @@ export default function TaskDetailsPage() {
 							</div>
 						</div>
 					</div>
-
 					{/* description */}
 					{data.description && (
 						<div className='p-4 rounded-lg border bg-white'>
