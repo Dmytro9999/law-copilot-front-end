@@ -1,6 +1,5 @@
 export type TaskPriority = 'low' | 'medium' | 'high'
-export type TaskStatus = 'pending' | 'in_progress' | 'completed'
-
+export type TaskStatus = 'cancelled' | 'in_progress' | 'done' | 'todo' | 'awaiting_approval'
 export interface ISubtask {
 	id?: number
 	description: string

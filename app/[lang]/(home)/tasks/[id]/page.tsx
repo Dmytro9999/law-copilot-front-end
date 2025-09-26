@@ -30,6 +30,15 @@ import {
 import { useParams } from 'next/navigation'
 import AddSubtaskModal from '@/components/Modals/AddSubtaskModal'
 
+import {
+	Select,
+	SelectContent,
+	SelectItem,
+	SelectTrigger,
+	SelectValue,
+} from '@/components/ui/select'
+import { useUpdateTaskMutation } from '@/store/features/tasks/tasksApi'
+
 const data = {
 	id: 3,
 	created: '2025-09-23T12:01:04.508Z',
@@ -394,6 +403,20 @@ export default function TaskDetailsPage() {
 	const pr = priorityMeta(data?.priority)
 
 	const canShowEvidenceForm = requiresApproval && !hasSubmitted && !hasApproved
+
+	type TaskStatus = 'todo' | 'in_progress' | 'done' | 'awaiting_approval' | 'cancelled'
+
+	const [updateTask, { isLoading: isUpdating }] = useUpdateTaskMutation()
+
+	const statusOptions: TaskStatus[] = [
+		'todo',
+		'in_progress',
+		'awaiting_approval',
+		'done',
+		'cancelled',
+	]
+	const statusLabel = (s: TaskStatus) => t(`taskView.status.${s}`) || s.replace('_', ' ')
+
 	async function handleApproveEvidence(evidenceId: number) {
 		await approveEvidence({ evidenceId, taskId: idNum }).unwrap()
 		await refetch()
@@ -440,19 +463,60 @@ export default function TaskDetailsPage() {
 				</CardHeader>
 				<CardContent className='space-y-6'>
 					{/* status / priority / progress */}
-					<div className='flex flex-wrap items-center gap-3'>
-						<Badge className={st.cls}>
-							<st.icon className='h-4 w-4 ml-1' />
-							{t(st.labelKey) || st.fallback}
-						</Badge>
-						<Badge className={pr.cls}>{t(pr.labelKey) || pr.fallback}</Badge>
-						{data.approval_required && (
-							<Badge className='bg-indigo-100 text-indigo-700 border-indigo-200'>
-								{t('taskView.approvalRequired') || 'Approval required'}
+
+					<div className='flex justify-between'>
+						<div className='flex flex-wrap items-center gap-3'>
+							<Badge className={st.cls}>
+								<st.icon className='h-4 w-4 ml-1' />
+								{t(st.labelKey) || st.fallback}
 							</Badge>
-						)}
+							<Badge className={pr.cls}>{t(pr.labelKey) || pr.fallback}</Badge>
+							{data.approval_required && (
+								<Badge className='bg-indigo-100 text-indigo-700 border-indigo-200'>
+									{t('taskView.approvalRequired') || 'Approval required'}
+								</Badge>
+							)}
+						</div>
+
+						<div className='flex items-center gap-3'>
+							<Select
+								disabled={isUpdating}
+								value={data.status as TaskStatus}
+								onValueChange={async (next: TaskStatus) => {
+									if (next === data.status) return
+									try {
+										await updateTask({
+											id: idNum,
+											patch: { status: next },
+										}).unwrap()
+
+										await refetch()
+									} catch (err: any) {
+										toast.error(
+											err?.data?.message ||
+												err?.message ||
+												t('tasks.toast.error') ||
+												'Error'
+										)
+									}
+								}}
+							>
+								<SelectTrigger className='w-56 h-9 text-sm'>
+									<SelectValue
+										placeholder={statusLabel(data.status as TaskStatus)}
+									/>
+								</SelectTrigger>
+								<SelectContent>
+									{statusOptions.map((s) => (
+										<SelectItem key={s} value={s}>
+											{statusLabel(s)}
+										</SelectItem>
+									))}
+								</SelectContent>
+							</Select>
+						</div>
 					</div>
-					вот тут надо добавить селект
+
 					{/* progress */}
 					<div>
 						<div className='flex items-center justify-between mb-2'>
