@@ -233,7 +233,7 @@ export default function MeetingSummaryModal({
 									<SelectValue placeholder='בחר חוזה' />
 								</SelectTrigger>
 								<SelectContent>
-									{contracts.map((c) => (
+									{contracts?.map((c) => (
 										<SelectItem key={c.id} value={c.id.toString()}>
 											{c.name}
 											{c.client_name ? ` — ${c.client_name}` : ''}
