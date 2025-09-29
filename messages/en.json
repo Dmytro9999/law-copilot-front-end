@@ -483,5 +483,103 @@
 				"assigneesPh": "Assignee IDs (comma-separated)"
 			}
 		}
-	}
+	},
+  "meetingSummaries": {
+    "title": "Meeting Summaries",
+    "subtitle": "Search by title and filter by contract",
+    "new": "New Meeting",
+    "search": {
+      "label": "Search by title",
+      "placeholder": "Type a meeting title…"
+    },
+    "contract": {
+      "label": "Contract",
+      "all": "All contracts"
+    },
+    "filters": {
+      "clear": "Clear filters"
+    },
+    "loading": "Loading…",
+    "empty": {
+      "title": "No summaries yet",
+      "text": "Try changing filters or create a new summary."
+    },
+    "summary": "Summary:",
+    "keyPoints": "Key points:",
+    "docBadge": "Document",
+    "keyPoints.more": "+{n} more",
+    "actions": {
+      "open": "Open",
+      "openDesc": "Coming soon: summary details page"
+    },
+    "pagination": {
+      "prev": "Previous",
+      "next": "Next",
+      "pageOf": "Page {page} of {total}"
+    }
+  },
+
+  "meetingSummaryModal": {
+    "title": "Meeting summary",
+    "fields": {
+      "contract": "Related contract (optional)",
+      "contractPh": "Select a contract",
+      "date": "Meeting date",
+      "title": "Title",
+      "titlePh": "e.g., Meeting with client X",
+      "notes": "Notes / focus (optional)",
+      "notesPh": "Briefly write what was discussed or what should be extracted..."
+    },
+    "file": {
+      "label": "Single document (any file type)",
+      "remove": "Remove file",
+      "tempLink": "Temporary view link:",
+      "open": "Open",
+      "progress": "{done}/1 completed",
+      "status": {
+        "selected": "Selected",
+        "analyzing": "Analyzing…",
+        "done": "Analyzed",
+        "error": "Error"
+      }
+    },
+    "actions": {
+      "analyze": "AI Analyze",
+      "analyzing": "AI analyzing…",
+      "save": "Save summary",
+      "saving": "Saving...",
+      "cancel": "Cancel"
+    },
+    "ai": {
+      "resultTitle": "AI analysis results",
+      "completed": "Completed",
+      "summaryTitle": "Summary",
+      "keyPointsTitle": "Key points"
+    },
+    "errors": {
+      "titleRequired": "Title is required",
+      "dateRequired": "Meeting date is required",
+      "fileRequired": "Select a file first"
+    },
+    "fallback": {
+      "summary": "Short summary for \"{title}\""
+    },
+    "toasts": {
+      "analyzeSuccess": {
+        "title": "Analysis complete",
+        "desc": "AI summary generated"
+      },
+      "analyzeFailed": {
+        "title": "Analysis failed",
+        "desc": "Could not analyze the file. Try again."
+      },
+      "saveSuccess": {
+        "title": "Saved",
+        "desc": "ID: {id}"
+      },
+      "saveFailed": {
+        "title": "Save failed"
+      }
+    }
+  }
 }
