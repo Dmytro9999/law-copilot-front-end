@@ -38,8 +38,6 @@ import { useToast } from '@/components/ui/use-toast'
 import { processFile, isSupportedFile, type ProcessedFile } from '@/lib/file-processor'
 import { Pencil, Save, Trash2 } from 'lucide-react'
 
-import ObligationTimerModal from '@/components/obligation-timer-modal'
-// import { createContract, createObligation } from '@/lib/supabase-queries'
 import {
 	TaskFromAnalysisDto,
 	useAnalyzeContractMutation,
@@ -52,6 +50,7 @@ import ManualObligationModal from '@/components/Modals/AddObligationModal'
 import ContractRisksEditor from '@/components/contracts/ContractRisksEditor'
 import { useCreateRiskArrayMutation, useCreateRiskMutation } from '@/store/features/risks/risksApi'
 import { TaskPriority } from '@/store/features/tasks/tasksTypes'
+import UserSearchSelect from '@/components/contracts/UserSearchSelect'
 
 interface AddContractModalProps {
 	isOpen: boolean
@@ -134,6 +133,9 @@ export default function AddContractModal({ isOpen, onClose, onSave }: AddContrac
 	const [createRisk] = useCreateRiskArrayMutation()
 	const [extractDoc] = useExtractDocumentTextMutation()
 
+	const [actorMap, setActorMap] = useState({})
+	const [customActors, setCustomActors] = useState<string[]>([])
+
 	const { t } = useI18n()
 
 	useEffect(() => {
@@ -148,6 +150,12 @@ export default function AddContractModal({ isOpen, onClose, onSave }: AddContrac
 			setObligations([])
 		}
 		setEditingKey('')
+		const keys = extractActorKeys(contractAnalysis)
+		setActorMap((prev) => {
+			const next = { ...prev }
+			for (const k of keys) if (!(k in next)) next[k] = null
+			return next
+		})
 	}, [contractAnalysis])
 
 	const startEdit = (key: string) => setEditingKey(key)
@@ -183,6 +191,26 @@ export default function AddContractModal({ isOpen, onClose, onSave }: AddContrac
 	}
 
 	type Priority = 'low' | 'medium' | 'high' | null | undefined
+	function extractActorKeys(analysis?: ContractAnalysis | null) {
+		const s = new Set<string>()
+		if (!analysis) return []
+
+		// из обязанностей
+		for (const ob of analysis.obligations || []) {
+			const k = String(ob?.responsibleParty || '').trim()
+			if (k) s.add(k)
+		}
+
+		// иногда полезно добавить традиционные “Party A/B”, если их нет в обязанностях:
+		// (не имя, а именно "Party A"/"Сторона А", зависит от твоего промпта ИИ)
+		// если твой ИИ кладёт реальные имена в partyA.name — не добавляем их сюда.
+		return Array.from(s).sort((a, b) => a.localeCompare(b))
+	}
+
+	// нормализация ключа-сопоставления (регистронезависимая)
+	function normActorKey(k?: string | null) {
+		return (k || '').trim().toLowerCase()
+	}
 
 	const priorityLabel = (p: Priority, t: (k: string) => string) =>
 		p ? t(`tasks.priority.${p}`) || p : '—'
@@ -441,11 +469,38 @@ export default function AddContractModal({ isOpen, onClose, onSave }: AddContrac
 		return isNaN(+d) ? undefined : d.toISOString() // полный RFC3339
 	}
 
+	// function mapAnalysisToTasks(analysis: any): TaskFromAnalysisDto[] {
+	// 	const list = Array.isArray(analysis?.obligations) ? analysis.obligations : []
+	//
+	// 	return list.map((ob: any, i: number) => {
+	// 		const pr = normalizePriority(ob?.priority) ?? 'medium'
+	// 		return {
+	// 			title: (ob?.title || ob?.description || `Task #${i + 1}`).toString().slice(0, 255),
+	// 			description:
+	// 				[
+	// 					ob?.description ? String(ob.description) : '',
+	// 					ob?.responsibleParty ? `Responsible: ${ob.responsibleParty}` : '',
+	// 				]
+	// 					.filter(Boolean)
+	// 					.join('\n') || undefined,
+	// 			dueDate: toIsoOrUndefined(ob?.dueDate),
+	// 			clientKey: ob?.id ? String(ob.id) : `auto-${i + 1}`,
+	// 			parentClientKey: undefined,
+	// 			priority: pr,
+	// 			// approval_required не заполняем, чтобы не триггерить валидатор assigneeIds
+	// 		}
+	// 	})
+	// }
+
 	function mapAnalysisToTasks(analysis: any): TaskFromAnalysisDto[] {
 		const list = Array.isArray(analysis?.obligations) ? analysis.obligations : []
 
 		return list.map((ob: any, i: number) => {
 			const pr = normalizePriority(ob?.priority) ?? 'medium'
+			const rpKey = normActorKey(ob?.responsibleParty)
+			const matched = Object.entries(actorMap).find(([k]) => normActorKey(k) === rpKey)
+			const user = matched ? actorMap[matched[0]] : null
+
 			return {
 				title: (ob?.title || ob?.description || `Task #${i + 1}`).toString().slice(0, 255),
 				description:
@@ -459,10 +514,11 @@ export default function AddContractModal({ isOpen, onClose, onSave }: AddContrac
 				clientKey: ob?.id ? String(ob.id) : `auto-${i + 1}`,
 				parentClientKey: undefined,
 				priority: pr,
-				// approval_required не заполняем, чтобы не триггерить валидатор assigneeIds
+				assigneeIds: user?.id ? [Number(user.id)] : undefined,
 			}
 		})
 	}
+
 	const mapAnalysisToRisks = (analysis: any, contractId: number) => {
 		const list = Array.isArray(analysis?.riskFactors) ? analysis.riskFactors : []
 		return list
@@ -1235,6 +1291,54 @@ export default function AddContractModal({ isOpen, onClose, onSave }: AddContrac
 										}
 									/>
 								)}
+
+								<div className='bg-white p-4 rounded-lg border border-green-200'>
+									<h4 className='font-semibold text-slate-800 mb-3'>
+										Связать участников (responsibleParty → пользователь)
+									</h4>
+
+									{extractActorKeys(contractAnalysis).length === 0 &&
+									customActors.length === 0 ? (
+										<p className='text-sm text-slate-600'>
+											В обязанностях не найдено ролей для сопоставления.
+										</p>
+									) : (
+										<div className='space-y-3'>
+											{[
+												...extractActorKeys(contractAnalysis),
+												...customActors,
+											].map((key) => (
+												<div
+													key={key}
+													className='grid grid-cols-1 md:grid-cols-3 gap-2 items-center'
+												>
+													<div className='text-sm font-medium text-slate-700'>
+														{key}
+													</div>
+													<div className='md:col-span-2'>
+														<UserSearchSelect
+															value={actorMap[key] ?? null}
+															onChange={(u) =>
+																setActorMap((prev) => ({
+																	...prev,
+																	[key]: u,
+																}))
+															}
+															placeholder='Найти по email или имени…'
+														/>
+													</div>
+												</div>
+											))}
+											{/* Кнопка добавления кастомной роли — по желанию */}
+											{/* AddActorInline из прошлого сообщения можно оставить как есть */}
+										</div>
+									)}
+
+									<p className='text-xs text-slate-500 mt-2'>
+										Маппинг применяется при сохранении: если responsibleParty
+										совпадает с ключом, добавим assigneeIds.
+									</p>
+								</div>
 
 								{/*/!* Risk Factors *!/*/}
 								{/*{contractAnalysis.riskFactors &&*/}
