@@ -135,6 +135,7 @@ export default function MeetingSummaryModal({
 				meetingDate: formData.meetingDate,
 				notes: formData.notes || undefined,
 				contractId: formData.contractId || undefined,
+				language: locale,
 			}).unwrap()
 
 			setFile((prev) =>

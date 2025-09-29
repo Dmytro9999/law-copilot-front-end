@@ -24,6 +24,7 @@ export interface MeetingAnalyzeRequest {
 	meetingDate: string // YYYY-MM-DD
 	notes?: string
 	contractId?: number | string | null
+	language?: string
 }
 
 export interface CreateMeetingSummaryRequest {
