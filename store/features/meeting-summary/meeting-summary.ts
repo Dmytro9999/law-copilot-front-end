@@ -26,6 +26,26 @@ export interface MeetingAnalyzeRequest {
 	contractId?: number | string | null
 }
 
+export interface CreateMeetingSummaryRequest {
+	contractId?: number | string | null
+	documentId?: number | string | null
+	title: string
+	meetingDate: string // YYYY-MM-DD
+	notes?: string | null
+	summary: string
+	keyPoints?: string[]
+}
+
+export interface CreateMeetingSummaryResponse {
+	id: string
+	title: string
+	meetingDate: string
+	notes?: string | null
+	summary: string
+	keyPoints?: string[]
+	// document/contract могут прийти, если вы вернёте relations
+}
+
 export const meetingSummaryApi = createApi({
 	reducerPath: 'meetingSummaryApi',
 	baseQuery: fetchBaseQuery({
@@ -34,7 +54,6 @@ export const meetingSummaryApi = createApi({
 		prepareHeaders: (headers, { getState, endpoint }) => {
 			const accessToken = (getState() as RootState).auth?.accessToken
 			if (accessToken) headers.set('Authorization', `Bearer ${accessToken}`)
-			// ⚠️ multipart-эндпоинтам НЕ ставим JSON Content-Type
 			if (!MULTIPART_ENDPOINTS.has(endpoint)) {
 				headers.set('Content-Type', 'application/json')
 			}
@@ -62,10 +81,19 @@ export const meetingSummaryApi = createApi({
 				}
 			},
 		}),
+
+		createMeetingSummary: builder.mutation<
+			CreateMeetingSummaryResponse,
+			CreateMeetingSummaryRequest
+		>({
+			query: (body) => ({
+				url: 'meeting-summary',
+				method: 'POST',
+				body,
+				headers: { 'Content-Type': 'application/json' },
+			}),
+		}),
 	}),
 })
 
-export const {
-	// ...ваши уже экспортируемые хуки
-	useMeetingAnalyzeMutation,
-} = meetingSummaryApi
+export const { useMeetingAnalyzeMutation, useCreateMeetingSummaryMutation } = meetingSummaryApi

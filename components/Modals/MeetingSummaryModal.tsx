@@ -17,7 +17,10 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import Badge from '@/components/ui/badge'
 import { Loader2, Sparkles, Brain, CheckCircle2, X, FileText } from 'lucide-react'
 import { useToast } from '@/components/ui/use-toast'
-import { useMeetingAnalyzeMutation } from '@/store/features/meeting-summary/meeting-summary'
+import {
+	useCreateMeetingSummaryMutation,
+	useMeetingAnalyzeMutation,
+} from '@/store/features/meeting-summary/meeting-summary'
 
 /** ---- Типы ---- */
 type AISummary = { summary: string; keyPoints?: string[] }
@@ -70,6 +73,7 @@ export default function MeetingSummaryModal({
 	const [aiSummary, setAiSummary] = useState<AISummary | null>(null)
 
 	const [meetingAnalyze, { isLoading: isAnalyzing }] = useMeetingAnalyzeMutation()
+	const [createMeetingRecord, { isLoading: isSaving }] = useCreateMeetingSummaryMutation()
 
 	const handleInputChange = (field: keyof typeof formData, value: string) =>
 		setFormData((prev) => ({ ...prev, [field]: value }))
@@ -146,7 +150,7 @@ export default function MeetingSummaryModal({
 	}
 
 	/** ---- Сохранение в систему ---- */
-	const handleSave = () => {
+	const handleSave = async () => {
 		if (!formData.title.trim()) {
 			toast({ title: 'שגיאה בטופס', description: 'נא למלא כותרת', variant: 'destructive' })
 			return
@@ -159,32 +163,47 @@ export default function MeetingSummaryModal({
 			})
 			return
 		}
-
-		const fallback: AISummary = {
+		// Если AI ещё не вызывали — сделаем минимальный фоллбек
+		const fallbackAI = {
 			summary: formData.notes.trim()
 				? formData.notes.trim()
-				: `סיכום קצר לפגישה "${formData.title}" (ללא ניתוח AI).`,
-			keyPoints: [],
+				: `סיכום קצר לפגישה "${formData.title}"`,
+			keyPoints: [] as string[],
 		}
 
-		const summaryData = {
-			contractId: formData.contractId ? Number.parseInt(formData.contractId) : null,
-			title: formData.title.trim(),
-			meetingDate: formData.meetingDate,
-			notes: formData.notes,
-			document: file
-				? {
-						url: file.url || null, // краткоживущая ссылка (если сервер прислал)
-						name: file.file.name,
-						size: file.file.size,
-						mime: file.file.type,
-						status: file.status,
-					}
-				: null,
-			ai: aiSummary || fallback,
-		}
+		try {
+			const payload = {
+				contractId: formData.contractId ? Number(formData.contractId) : null,
+				// documentId: <передадите когда будет создан Document>
+				title: formData.title.trim(),
+				meetingDate: formData.meetingDate,
+				notes: formData.notes || null,
+				summary: (
+					aiSummary?.summary ||
+					formData.notes ||
+					`סיכום קצר לפגישה "${formData.title}"`
+				).trim(),
+				keyPoints: aiSummary?.keyPoints || [],
+			}
 
-		onSaveSummary(summaryData)
+			const saved = await createMeetingRecord(payload).unwrap()
+
+			toast({
+				title: 'נשמר בהצלחה',
+				description: `ID: ${saved.id}`,
+				className: 'bg-gradient-to-l from-green-600 to-emerald-600 text-white border-none',
+			})
+
+			// прокинем наружу, если нужно обновить список на странице
+			onSaveSummary?.(saved)
+			onClose()
+		} catch (e: any) {
+			toast({
+				title: 'שגיאה בשמירה',
+				description: String(e?.data?.message || e?.message || 'Cannot save'),
+				variant: 'destructive',
+			})
+		}
 	}
 
 	const fileSelected = Boolean(file)
@@ -404,10 +423,20 @@ export default function MeetingSummaryModal({
 						</Button>
 						<Button
 							onClick={handleSave}
+							disabled={isSaving}
 							className='bg-gradient-to-l from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white'
 						>
-							<CheckCircle2 className='ml-2 h-4 w-4' />
-							שמור סיכום
+							{isSaving ? (
+								<>
+									<Loader2 className='ml-2 h-4 w-4 animate-spin' />
+									שומר...
+								</>
+							) : (
+								<>
+									<CheckCircle2 className='ml-2 h-4 w-4' />
+									שמור סיכום
+								</>
+							)}
 						</Button>
 					</div>
 				</div>
