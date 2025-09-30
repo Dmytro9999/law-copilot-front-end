@@ -150,10 +150,19 @@ export default function AddContractModal({ isOpen, onClose, onSave }: AddContrac
 			setObligations([])
 		}
 		setEditingKey('')
+	}, [contractAnalysis])
+
+	useEffect(() => {
+		if (!contractAnalysis) {
+			setActorMap({})
+			return
+		}
 		const keys = extractActorKeys(contractAnalysis)
 		setActorMap((prev) => {
 			const next = { ...prev }
-			for (const k of keys) if (!(k in next)) next[k] = null
+			for (const label of keys) {
+				if (!(label in next)) next[label] = null
+			}
 			return next
 		})
 	}, [contractAnalysis])
@@ -191,25 +200,36 @@ export default function AddContractModal({ isOpen, onClose, onSave }: AddContrac
 	}
 
 	type Priority = 'low' | 'medium' | 'high' | null | undefined
-	function extractActorKeys(analysis?: ContractAnalysis | null) {
-		const s = new Set<string>()
-		if (!analysis) return []
-
-		// из обязанностей
-		for (const ob of analysis.obligations || []) {
-			const k = String(ob?.responsibleParty || '').trim()
-			if (k) s.add(k)
+	function extractActorKeys(analysis: any): string[] {
+		if (!analysis?.obligations) return []
+		const set = new Set<string>()
+		for (const ob of analysis.obligations) {
+			const raw = String(ob?.responsibleParty || '').trim()
+			if (!raw) continue
+			const k = normActorKey(raw)
+			if (!k) continue
+			// храним «как есть» исходную метку, но уникализируем по нормализованному ключу
+			if (![...set].some((s) => normActorKey(s) === k)) set.add(raw)
 		}
-
-		// иногда полезно добавить традиционные “Party A/B”, если их нет в обязанностях:
-		// (не имя, а именно "Party A"/"Сторона А", зависит от твоего промпта ИИ)
-		// если твой ИИ кладёт реальные имена в partyA.name — не добавляем их сюда.
-		return Array.from(s).sort((a, b) => a.localeCompare(b))
+		return [...set]
 	}
 
-	// нормализация ключа-сопоставления (регистронезависимая)
-	function normActorKey(k?: string | null) {
-		return (k || '').trim().toLowerCase()
+	const actorOptions = React.useMemo(() => {
+		const fromAi = extractActorKeys(contractAnalysis)
+		const all = [...fromAi, ...customActors]
+		const uniq: string[] = []
+		for (const v of all) {
+			if (!uniq.some((u) => normActorKey(u) === normActorKey(v))) uniq.push(v)
+		}
+		// на вкус: сортировка по алфавиту
+		return uniq.sort((a, b) => a.localeCompare(b))
+	}, [contractAnalysis, customActors])
+
+	function normActorKey(x?: string | null) {
+		return String(x || '')
+			.toLowerCase()
+			.replace(/\s+/g, ' ')
+			.trim()
 	}
 
 	const priorityLabel = (p: Priority, t: (k: string) => string) =>
@@ -266,6 +286,82 @@ export default function AddContractModal({ isOpen, onClose, onSave }: AddContrac
 
 		// עיבוד הקובץ מיידי
 		await processFileContent(selectedFile)
+	}
+
+	function AddActorInline({
+		onAdd,
+		suggestionBase = 'Сторона',
+	}: {
+		onAdd: (label: string) => void
+		suggestionBase?: string
+	}) {
+		const [val, setVal] = useState('')
+
+		// простая подсказка следующей буквы, если уже есть А/Б/В...
+		const nextSuggestions = ['А', 'Б', 'В', 'Г', 'Д', 'E', 'F', 'G'].map(
+			(ch) => `${suggestionBase} ${ch}`
+		)
+
+		return (
+			<div className='flex items-center gap-2'>
+				<input
+					className='flex-1 border rounded-md px-3 py-2 text-sm'
+					placeholder='Новая персона (например, «Сторона В»)'
+					value={val}
+					onChange={(e) => setVal(e.target.value)}
+				/>
+				<Button
+					type='button'
+					onClick={() => {
+						const label = val.trim()
+						if (!label) return
+						onAdd(label)
+						setVal('')
+					}}
+				>
+					Добавить
+				</Button>
+				{/* быстрые подсказки (опционально) */}
+				<div className='hidden md:flex items-center gap-1'>
+					{nextSuggestions.map((s) => (
+						<button
+							key={s}
+							type='button'
+							className='text-xs px-2 py-1 border rounded hover:bg-slate-50'
+							onClick={() => {
+								onAdd(s)
+							}}
+						>
+							{s}
+						</button>
+					))}
+				</div>
+			</div>
+		)
+	}
+
+	function addCustomActor(label: string) {
+		// запретим дубли по нормализованному ключу
+		if (actorOptions.some((x) => normActorKey(x) === normActorKey(label))) return
+		setCustomActors((prev) => [...prev, label])
+		setActorMap((prev) => ({ ...prev, [label]: null }))
+	}
+
+	function removeCustomActor(label: string) {
+		setCustomActors((prev) => prev.filter((x) => normActorKey(x) !== normActorKey(label)))
+		setActorMap((prev) => {
+			const copy = { ...prev }
+			delete copy[label]
+			return copy
+		})
+		// было: responsibleParty: ''
+		setObligations((prev) =>
+			prev.map((ob) =>
+				normActorKey(ob.responsibleParty) === normActorKey(label)
+					? { ...ob, responsibleParty: null }
+					: ob
+			)
+		)
 	}
 
 	function splitIntoChunks(text: string) {
@@ -494,12 +590,11 @@ export default function AddContractModal({ isOpen, onClose, onSave }: AddContrac
 
 	function mapAnalysisToTasks(analysis: any): TaskFromAnalysisDto[] {
 		const list = Array.isArray(analysis?.obligations) ? analysis.obligations : []
-
 		return list.map((ob: any, i: number) => {
 			const pr = normalizePriority(ob?.priority) ?? 'medium'
 			const rpKey = normActorKey(ob?.responsibleParty)
-			const matched = Object.entries(actorMap).find(([k]) => normActorKey(k) === rpKey)
-			const user = matched ? actorMap[matched[0]] : null
+			const matched = actorOptions.find((label) => normActorKey(label) === rpKey)
+			const user = matched ? actorMap[matched] : null
 
 			return {
 				title: (ob?.title || ob?.description || `Task #${i + 1}`).toString().slice(0, 255),
@@ -944,6 +1039,11 @@ export default function AddContractModal({ isOpen, onClose, onSave }: AddContrac
 											{obligations.map((obligation, index) => {
 												const isEditing = editingKey === obligation._key
 												const p: Priority = obligation.priority as any
+												const currentLabel = actorOptions.find(
+													(x) =>
+														normActorKey(x) ===
+														normActorKey(obligation.responsibleParty)
+												)
 
 												return (
 													<div
@@ -1211,28 +1311,62 @@ export default function AddContractModal({ isOpen, onClose, onSave }: AddContrac
 																				'obligation.responsible'
 																			)}
 																		</label>
-																		<input
-																			type='text'
+																		<Select
+																			// undefined => показывается <SelectValue placeholder='—' />
 																			value={
-																				obligation.responsibleParty ||
-																				''
+																				currentLabel ??
+																				undefined
 																			}
-																			onChange={(e) =>
-																				updateObligation(
-																					obligation._key,
-																					{
-																						responsibleParty:
-																							e.target
-																								.value ||
-																							null,
-																					}
-																				)
-																			}
-																			className='border rounded p-2 text-sm'
-																			placeholder={t(
-																				'obligation.placeholderResponsible'
-																			)}
-																		/>
+																			onValueChange={(
+																				value
+																			) => {
+																				if (
+																					value ===
+																					'__clear__'
+																				) {
+																					updateObligation(
+																						obligation._key,
+																						{
+																							responsibleParty:
+																								null,
+																						}
+																					)
+																				} else {
+																					updateObligation(
+																						obligation._key,
+																						{
+																							responsibleParty:
+																								value,
+																						}
+																					)
+																				}
+																			}}
+																		>
+																			<SelectTrigger className='border rounded p-2 text-sm bg-white'>
+																				<SelectValue placeholder='—' />
+																			</SelectTrigger>
+																			<SelectContent>
+																				{actorOptions.map(
+																					(opt) => (
+																						<SelectItem
+																							key={
+																								opt
+																							}
+																							value={
+																								opt
+																							}
+																						>
+																							{opt}
+																						</SelectItem>
+																					)
+																				)}
+
+																				{/* опционально: пункт для очистки */}
+																				<SelectItem value='__clear__'>
+																					Очистить выбор
+																				</SelectItem>
+																			</SelectContent>
+																		</Select>
 																	</div>
 
 																	{/* Requires proof */}
@@ -1297,17 +1431,39 @@ export default function AddContractModal({ isOpen, onClose, onSave }: AddContrac
 										Связать участников (responsibleParty → пользователь)
 									</h4>
 
-									{extractActorKeys(contractAnalysis).length === 0 &&
-									customActors.length === 0 ? (
+									<div className='mb-3'>
+										<AddActorInline onAdd={addCustomActor} />
+									</div>
+
+									{/* Чипы созданных вручную персон с удалением */}
+									{customActors.length > 0 && (
+										<div className='flex flex-wrap gap-2 mb-3'>
+											{customActors.map((c) => (
+												<span
+													key={c}
+													className='inline-flex items-center gap-2 text-sm px-2 py-1 border rounded bg-slate-50'
+												>
+													{c}
+													<button
+														type='button'
+														className='text-slate-500 hover:text-red-600'
+														onClick={() => removeCustomActor(c)}
+														title='Удалить'
+													>
+														×
+													</button>
+												</span>
+											))}
+										</div>
+									)}
+
+									{actorOptions.length === 0 ? (
 										<p className='text-sm text-slate-600'>
 											В обязанностях не найдено ролей для сопоставления.
 										</p>
 									) : (
 										<div className='space-y-3'>
-											{[
-												...extractActorKeys(contractAnalysis),
-												...customActors,
-											].map((key) => (
+											{actorOptions.map((key) => (
 												<div
 													key={key}
 													className='grid grid-cols-1 md:grid-cols-3 gap-2 items-center'
@@ -1329,8 +1485,6 @@ export default function AddContractModal({ isOpen, onClose, onSave }: AddContrac
 													</div>
 												</div>
 											))}
-											{/* Кнопка добавления кастомной роли — по желанию */}
-											{/* AddActorInline из прошлого сообщения можно оставить как есть */}
 										</div>
 									)}
 
