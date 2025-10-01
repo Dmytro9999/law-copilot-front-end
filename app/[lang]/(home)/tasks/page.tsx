@@ -504,7 +504,12 @@ export default function TasksPage() {
 
 											<TableCell>
 												<div className='flex gap-2'>
-													{task.status !== 'in_progress' && (
+													{![
+														'in_progress',
+														'done',
+														'cancelled',
+														'awaiting_approval',
+													].includes(task.status) && (
 														<Button
 															variant='outline'
 															size='sm'
@@ -518,7 +523,10 @@ export default function TasksPage() {
 																'בביצוע'}
 														</Button>
 													)}
-													{task.status !== 'done' && (
+
+													{!['done', 'cancelled'].includes(
+														task.status
+													) && (
 														<Button
 															variant='outline'
 															size='sm'
