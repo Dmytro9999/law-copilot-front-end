@@ -142,7 +142,7 @@
 		"placeholderResponsible": "Party A / Party B / Name"
 	},
 	"nav": {
-		"contracts": "Contracts board",
+		"contracts": "Contracts",
 		"tasks": "Tasks",
 		"clients": "Clients",
 		"meetings": "Meeting summaries",
@@ -581,5 +581,10 @@
         "title": "Save failed"
       }
     }
+  },
+  "contracts": {
+    "title": "Legal Contracts",
+    "subtitle": "Centralize, organize, and analyze all your agreements",
+    "addNew": "Create Contract"
   }
 }

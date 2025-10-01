@@ -6,29 +6,8 @@ import { Button } from '@/components/ui/button'
 import ContractList from '@/components/contracts/ContractList'
 
 const Page = () => {
-	const [isAddModalOpen, setAddModalOpen] = useState(false)
-
-	const handleAddContract = async (contractForm: {
-		name: string
-		clientName: string
-		clientEmail: string
-		clientPhone?: string
-		clientId?: string
-		signingDate: string
-		contractType?: string
-		value?: string
-		file: File | null
-	}) => {}
-
 	return (
 		<div>
-			<Button onClick={() => setAddModalOpen(true)}>Modal</Button>
-
-			<AddContractModal
-				isOpen={isAddModalOpen}
-				onClose={() => setAddModalOpen(false)}
-				onSave={handleAddContract}
-			/>
 			<ContractList />
 		</div>
 	)

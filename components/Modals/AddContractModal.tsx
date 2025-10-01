@@ -42,6 +42,7 @@ import {
 	TaskFromAnalysisDto,
 	useAnalyzeContractMutation,
 	useExtractDocumentTextMutation,
+	useGetContractsQuery,
 	useMaterializeContractMutation,
 	useUploadDocumentMutation,
 } from '@/store/features/contracts/contractsApi'
@@ -55,7 +56,7 @@ import UserSearchSelect from '@/components/contracts/UserSearchSelect'
 interface AddContractModalProps {
 	isOpen: boolean
 	onClose: () => void
-	onSave: (contractData: any) => void
+	onSave: () => void
 }
 
 interface ContractAnalysis {
@@ -298,9 +299,7 @@ export default function AddContractModal({ isOpen, onClose, onSave }: AddContrac
 		const [val, setVal] = useState('')
 
 		// простая подсказка следующей буквы, если уже есть А/Б/В...
-		const nextSuggestions = ['А', 'Б', 'В', 'Г', 'Д', 'E', 'F', 'G'].map(
-			(ch) => `${suggestionBase} ${ch}`
-		)
+		const nextSuggestions = ['D', 'E', 'F', 'G'].map((ch) => `${suggestionBase} ${ch}`)
 
 		return (
 			<div className='flex items-center gap-2'>
@@ -757,6 +756,7 @@ export default function AddContractModal({ isOpen, onClose, onSave }: AddContrac
 			setProcessedFile(null)
 			setContractText('')
 			setContractAnalysis(null)
+			onSave()
 		} catch (error) {
 			console.error('[v0] Error saving contract:', error)
 			toast({
@@ -954,12 +954,12 @@ export default function AddContractModal({ isOpen, onClose, onSave }: AddContrac
 													{contractAnalysis.contractName}
 												</span>
 											</div>
-											<div>
-												<span className='text-slate-600'>סוג:</span>{' '}
-												<span className='font-medium'>
-													{contractAnalysis.contractType}
-												</span>
-											</div>
+											{/*<div>*/}
+											{/*	<span className='text-slate-600'>סוג:</span>{' '}*/}
+											{/*	<span className='font-medium'>*/}
+											{/*		{contractAnalysis.contractType}*/}
+											{/*	</span>*/}
+											{/*</div>*/}
 											{contractAnalysis.value && (
 												<div>
 													<span className='text-slate-600'>ערך:</span>{' '}
@@ -1487,11 +1487,6 @@ export default function AddContractModal({ isOpen, onClose, onSave }: AddContrac
 											))}
 										</div>
 									)}
-
-									<p className='text-xs text-slate-500 mt-2'>
-										Маппинг применяется при сохранении: если responsibleParty
-										совпадает с ключом, добавим assigneeIds.
-									</p>
 								</div>
 
 								{/*/!* Risk Factors *!/*/}
@@ -1565,62 +1560,62 @@ export default function AddContractModal({ isOpen, onClose, onSave }: AddContrac
 								/>
 							</div>
 
-							<div>
-								<Label htmlFor='client_email'>אימייל לקוח</Label>
-								<Input
-									id='client_email'
-									type='email'
-									placeholder='client@example.com'
-									value={formData.client_email}
-									onChange={(e) =>
-										handleInputChange('client_email', e.target.value)
-									}
-								/>
-							</div>
+							{/*<div>*/}
+							{/*	<Label htmlFor='client_email'>אימייל לקוח</Label>*/}
+							{/*	<Input*/}
+							{/*		id='client_email'*/}
+							{/*		type='email'*/}
+							{/*		placeholder='client@example.com'*/}
+							{/*		value={formData.client_email}*/}
+							{/*		onChange={(e) =>*/}
+							{/*			handleInputChange('client_email', e.target.value)*/}
+							{/*		}*/}
+							{/*	/>*/}
+							{/*</div>*/}
 
-							<div>
-								<Label htmlFor='client_phone'>טלפון לקוח</Label>
-								<Input
-									id='client_phone'
-									placeholder='050-1234567'
-									value={formData.client_phone}
-									onChange={(e) =>
-										handleInputChange('client_phone', e.target.value)
-									}
-								/>
-							</div>
+							{/*<div>*/}
+							{/*	<Label htmlFor='client_phone'>טלפון לקוח</Label>*/}
+							{/*	<Input*/}
+							{/*		id='client_phone'*/}
+							{/*		placeholder='050-1234567'*/}
+							{/*		value={formData.client_phone}*/}
+							{/*		onChange={(e) =>*/}
+							{/*			handleInputChange('client_phone', e.target.value)*/}
+							{/*		}*/}
+							{/*	/>*/}
+							{/*</div>*/}
 						</div>
 
 						<div className='space-y-4'>
-							<div>
-								<Label htmlFor='contract_type' className='flex items-center gap-2'>
-									<Users className='h-4 w-4 text-purple-600' />
-									סוג החוזה *
-								</Label>
-								<Select
-									value={formData.contract_type}
-									onValueChange={(value) =>
-										handleInputChange('contract_type', value)
-									}
-								>
-									<SelectTrigger
-										className={
-											contractAnalysis ? 'border-green-300 bg-green-50' : ''
-										}
-									>
-										<SelectValue placeholder='בחר סוג חוזה' />
-									</SelectTrigger>
-									<SelectContent>
-										<SelectItem value='שירותים'>שירותים</SelectItem>
-										<SelectItem value='אספקה'>אספקה</SelectItem>
-										<SelectItem value='נדלן'>נדלן</SelectItem>
-										<SelectItem value='עבודה'>עבודה</SelectItem>
-										<SelectItem value='שותפות'>שותפות</SelectItem>
-										<SelectItem value='רישוי'>רישוי</SelectItem>
-										<SelectItem value='אחר'>אחר</SelectItem>
-									</SelectContent>
-								</Select>
-							</div>
+							{/*<div>*/}
+							{/*	<Label htmlFor='contract_type' className='flex items-center gap-2'>*/}
+							{/*		<Users className='h-4 w-4 text-purple-600' />*/}
+							{/*		סוג החוזה **/}
+							{/*	</Label>*/}
+							{/*	<Select*/}
+							{/*		value={formData.contract_type}*/}
+							{/*		onValueChange={(value) =>*/}
+							{/*			handleInputChange('contract_type', value)*/}
+							{/*		}*/}
+							{/*	>*/}
+							{/*		<SelectTrigger*/}
+							{/*			className={*/}
+							{/*				contractAnalysis ? 'border-green-300 bg-green-50' : ''*/}
+							{/*			}*/}
+							{/*		>*/}
+							{/*			<SelectValue placeholder='בחר סוג חוזה' />*/}
+							{/*		</SelectTrigger>*/}
+							{/*		<SelectContent>*/}
+							{/*			<SelectItem value='שירותים'>שירותים</SelectItem>*/}
+							{/*			<SelectItem value='אספקה'>אספקה</SelectItem>*/}
+							{/*			<SelectItem value='נדלן'>נדלן</SelectItem>*/}
+							{/*			<SelectItem value='עבודה'>עבודה</SelectItem>*/}
+							{/*			<SelectItem value='שותפות'>שותפות</SelectItem>*/}
+							{/*			<SelectItem value='רישוי'>רישוי</SelectItem>*/}
+							{/*			<SelectItem value='אחר'>אחר</SelectItem>*/}
+							{/*		</SelectContent>*/}
+							{/*	</Select>*/}
+							{/*</div>*/}
 
 							<div>
 								<Label htmlFor='start_date' className='flex items-center gap-2'>
@@ -1691,7 +1686,29 @@ export default function AddContractModal({ isOpen, onClose, onSave }: AddContrac
 
 					{/* Action Buttons */}
 					<div className='flex justify-end gap-3 pt-4 border-t'>
-						<Button variant='outline' onClick={onClose} disabled={isSubmitting}>
+						<Button
+							variant='outline'
+							onClick={() => (
+								onClose(),
+								setFormData({
+									name: '',
+									client_name: '',
+									client_email: '',
+									client_phone: '',
+									contract_type: '',
+									start_date: '',
+									end_date: '',
+									total_value: '',
+									description: '',
+									status: 'active',
+								}),
+								setFile(null),
+								setProcessedFile(null),
+								setContractText(''),
+								setContractAnalysis(null)
+							)}
+							disabled={isSubmitting}
+						>
 							ביטול
 						</Button>
 						<Button

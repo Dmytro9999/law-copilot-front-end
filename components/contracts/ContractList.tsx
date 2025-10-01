@@ -13,10 +13,16 @@ import {
 import { useGetContractsQuery } from '@/store/features/contracts/contractsApi'
 import { ContractsScope, SortOrder } from '@/store/features/contracts/contractsTypes'
 import ContractCard from '@/components/contracts/ContractCard'
-import { Loader2, Search, ChevronLeft, ChevronRight, RefreshCcw } from 'lucide-react'
+import { Loader2, Search, ChevronLeft, ChevronRight, RefreshCcw, Plus } from 'lucide-react'
 import { Card } from '@/components/ui/card'
+import AddContractModal from '@/components/Modals/AddContractModal'
+import { useI18n, useLocale } from '@/providers/I18nProvider'
+import { useToast } from '@/components/ui/use-toast'
 
 export default function ContractList() {
+	const { t } = useI18n()
+	const lang = useLocale() as 'he' | 'en'
+
 	const [pageNumber, setPageNumber] = useState(1)
 	const [countPerPage, setCountPerPage] = useState(6)
 	const [search, setSearch] = useState('')
@@ -24,6 +30,7 @@ export default function ContractList() {
 	const [status, setStatus] = useState<string | undefined>(undefined)
 	const [sortField, setSortField] = useState('id')
 	const [sortOrder, setSortOrder] = useState<SortOrder>('DESC')
+	const [isAddModalOpen, setAddModalOpen] = useState(false)
 
 	const params = useMemo(
 		() => ({
@@ -47,10 +54,29 @@ export default function ContractList() {
 
 	return (
 		<div className='max-w-7xl p-4 space-y-6'>
+			{/* Header */}
+			<div className='flex items-center justify-between'>
+				<div>
+					<h1 className='text-4xl font-bold text-slate-800 mb-3'>
+						{t('contracts.title') || 'ניהול משימות'}
+					</h1>
+					<p className='text-xl text-slate-600'>
+						{t('contracts.subtitle') || 'נהל את המשימות האישיות והמקצועיות שלך'}
+					</p>
+				</div>
+				<Button
+					onClick={() => setAddModalOpen(true)}
+					className='bg-gradient-to-l from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-8 py-4 text-lg'
+				>
+					<Plus className='ml-2 h-5 w-5' />
+					{t('contracts.addNew') || 'הוסף משימה חדשה'}
+				</Button>
+			</div>
+
 			{/* Фильтры */}
 			<Card className='p-4 space-y-3'>
 				<div className='grid grid-cols-1 md:grid-cols-6 gap-3'>
-					<div className='col-span-2 flex gap-2'>
+					<div className='col-span-3 flex gap-2'>
 						<Input
 							placeholder='Поиск по названию...'
 							value={search}
@@ -103,43 +129,43 @@ export default function ContractList() {
 						</Select>
 					</div>
 
-					<div>
-						<Select
-							value={sortField}
-							onValueChange={(v) => {
-								setPageNumber(1)
-								setSortField(v)
-							}}
-						>
-							<SelectTrigger>
-								<SelectValue placeholder='Sort field' />
-							</SelectTrigger>
-							<SelectContent>
-								<SelectItem value='id'>id</SelectItem>
-								<SelectItem value='title'>title</SelectItem>
-								<SelectItem value='effectiveDate'>effectiveDate</SelectItem>
-								<SelectItem value='dueDate'>dueDate</SelectItem>
-								<SelectItem value='created'>created</SelectItem>
-							</SelectContent>
-						</Select>
-					</div>
+					{/*<div>*/}
+					{/*	<Select*/}
+					{/*		value={sortField}*/}
+					{/*		onValueChange={(v) => {*/}
+					{/*			setPageNumber(1)*/}
+					{/*			setSortField(v)*/}
+					{/*		}}*/}
+					{/*	>*/}
+					{/*		<SelectTrigger>*/}
+					{/*			<SelectValue placeholder='Sort field' />*/}
+					{/*		</SelectTrigger>*/}
+					{/*		<SelectContent>*/}
+					{/*			<SelectItem value='id'>id</SelectItem>*/}
+					{/*			<SelectItem value='title'>title</SelectItem>*/}
+					{/*			<SelectItem value='effectiveDate'>effectiveDate</SelectItem>*/}
+					{/*			<SelectItem value='dueDate'>dueDate</SelectItem>*/}
+					{/*			<SelectItem value='created'>created</SelectItem>*/}
+					{/*		</SelectContent>*/}
+					{/*	</Select>*/}
+					{/*</div>*/}
 
 					<div className='flex gap-2'>
-						<Select
-							value={sortOrder}
-							onValueChange={(v: SortOrder) => {
-								setPageNumber(1)
-								setSortOrder(v)
-							}}
-						>
-							<SelectTrigger>
-								<SelectValue placeholder='Order' />
-							</SelectTrigger>
-							<SelectContent>
-								<SelectItem value='ASC'>ASC</SelectItem>
-								<SelectItem value='DESC'>DESC</SelectItem>
-							</SelectContent>
-						</Select>
+						{/*<Select*/}
+						{/*	value={sortOrder}*/}
+						{/*	onValueChange={(v: SortOrder) => {*/}
+						{/*		setPageNumber(1)*/}
+						{/*		setSortOrder(v)*/}
+						{/*	}}*/}
+						{/*>*/}
+						{/*	<SelectTrigger>*/}
+						{/*		<SelectValue placeholder='Order' />*/}
+						{/*	</SelectTrigger>*/}
+						{/*	<SelectContent>*/}
+						{/*		<SelectItem value='ASC'>ASC</SelectItem>*/}
+						{/*		<SelectItem value='DESC'>DESC</SelectItem>*/}
+						{/*	</SelectContent>*/}
+						{/*</Select>*/}
 						<Select
 							value={String(countPerPage)}
 							onValueChange={(v) => {
@@ -207,6 +233,12 @@ export default function ContractList() {
 					))}
 				</div>
 			)}
+
+			<AddContractModal
+				isOpen={isAddModalOpen}
+				onClose={() => setAddModalOpen(false)}
+				onSave={() => (refetch(), setAddModalOpen(false))}
+			/>
 		</div>
 	)
 }
