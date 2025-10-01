@@ -423,7 +423,6 @@
 		"contractDue": "תוקף החוזה",
 		"noSubtasks": "אין תתי-משימות",
 		"subtasks": "תתי-משימות",
-
 		"evidence": {
 			"title": "אסמכתאות",
 			"submitted": "הוגש",
@@ -458,7 +457,6 @@
 				"success": "האסמכתא נשלחה"
 			}
 		},
-
 		"status": {
 			"todo": "לביצוע",
 			"in_progress": "בתהליך",
@@ -466,7 +464,6 @@
 			"done": "הושלם",
 			"unknown": "לא ידוע"
 		},
-
 		"subtasksModal": {
 			"createTitle": "יצירת תת־משימה",
 			"createBtn": "צור תת־משימה",
@@ -488,106 +485,133 @@
 			}
 		}
 	},
-  "meetingSummaries": {
-    "title": "סיכומי פגישות",
-    "subtitle": "חיפוש לפי כותרת וסינון לפי חוזה",
-    "new": "פגישה חדשה",
-    "search": {
-      "label": "חפש לפי כותרת",
-      "placeholder": "הקלד שם פגישה…"
-    },
-    "contract": {
-      "label": "חוזה",
-      "all": "כל החוזים"
-    },
-    "filters": {
-      "clear": "נקה מסננים"
-    },
-    "loading": "טוען נתונים…",
-    "empty": {
-      "title": "אין סיכומים",
-      "text": "נסה לשנות מסננים או צור סיכום חדש."
-    },
-    "summary": "סיכום:",
-    "keyPoints": "נקודות עיקריות:",
-    "docBadge": "מסמך",
-    "keyPoints.more": "+{n} נוספים",
-    "actions": {
-      "open": "פתח",
-      "openDesc": "בקרוב: מסך פרטי הסיכום"
-    },
-    "pagination": {
-      "prev": "הקודם",
-      "next": "הבא",
-      "pageOf": "עמוד {page} מתוך {total}"
-    }
-  },
-  "meetingSummaryModal": {
-    "title": "סיכום פגישה",
-    "fields": {
-      "contract": "חוזה קשור (לא חובה)",
-      "contractPh": "בחר חוזה",
-      "date": "תאריך פגישה",
-      "title": "כותרת",
-      "titlePh": "לדוגמה: פגישה עם הלקוח X",
-      "notes": "הערות / מה חשוב להדגיש (אופציונלי)",
-      "notesPh": "כתוב בקצרה מה עלה בפגישה או מה חשוב להוציא..."
-    },
-    "file": {
-      "label": "מסמך אחד (כל סוג קובץ)",
-      "remove": "הסר קובץ",
-      "tempLink": "קישור זמני לצפייה:",
-      "open": "פתח",
-      "progress": "{done}/1 הסתיים",
-      "status": {
-        "selected": "נבחר",
-        "analyzing": "מנתח...",
-        "done": "נותח",
-        "error": "שגיאה"
-      }
-    },
-    "actions": {
-      "analyze": "AI Analyze",
-      "analyzing": "AI מנתח...",
-      "save": "שמור סיכום",
-      "saving": "שומר...",
-      "cancel": "ביטול"
-    },
-    "ai": {
-      "resultTitle": "תוצאות ניתוח AI",
-      "completed": "הושלם",
-      "summaryTitle": "סיכום",
-      "keyPointsTitle": "נקודות עיקריות"
-    },
-    "errors": {
-      "titleRequired": "יש להזין כותרת",
-      "dateRequired": "בחר תאריך פגישה",
-      "fileRequired": "בחר קובץ לפני ניתוח AI"
-    },
-    "fallback": {
-      "summary": "סיכום קצר לפגישה \"{title}\""
-    },
-    "toasts": {
-      "analyzeSuccess": {
-        "title": "הניתוח הושלם",
-        "desc": "סיכום AI נוצר"
-      },
-      "analyzeFailed": {
-        "title": "שגיאה בניתוח",
-        "desc": "לא ניתן לבצע ניתוח AI. נסה שוב."
-      },
-      "saveSuccess": {
-        "title": "נשמר בהצלחה",
-        "desc": "ID: {id}"
-      },
-      "saveFailed": {
-        "title": "שגיאה בשמירה"
-      }
-    }
-  },
-  "contracts": {
-    "title": "חוזים משפטיים",
-    "subtitle": "מרכז, ארגן ונתח את כל ההסכמים שלך",
-    "addNew": "צור חוזה"
-  }
+	"meetingSummaries": {
+		"title": "סיכומי פגישות",
+		"subtitle": "חיפוש לפי כותרת וסינון לפי חוזה",
+		"new": "פגישה חדשה",
+		"search": {
+			"label": "חפש לפי כותרת",
+			"placeholder": "הקלד שם פגישה…"
+		},
+		"contract": {
+			"label": "חוזה",
+			"all": "כל החוזים"
+		},
+		"filters": {
+			"clear": "נקה מסננים"
+		},
+		"loading": "טוען נתונים…",
+		"empty": {
+			"title": "אין סיכומים",
+			"text": "נסה לשנות מסננים או צור סיכום חדש."
+		},
+		"summary": "סיכום:",
+		"keyPoints": "נקודות עיקריות:",
+		"docBadge": "מסמך",
+		"keyPoints.more": "+{n} נוספים",
+		"actions": {
+			"open": "פתח",
+			"openDesc": "בקרוב: מסך פרטי הסיכום"
+		},
+		"pagination": {
+			"prev": "הקודם",
+			"next": "הבא",
+			"pageOf": "עמוד {page} מתוך {total}"
+		}
+	},
+	"meetingSummaryModal": {
+		"title": "סיכום פגישה",
+		"fields": {
+			"contract": "חוזה קשור (לא חובה)",
+			"contractPh": "בחר חוזה",
+			"date": "תאריך פגישה",
+			"title": "כותרת",
+			"titlePh": "לדוגמה: פגישה עם הלקוח X",
+			"notes": "הערות / מה חשוב להדגיש (אופציונלי)",
+			"notesPh": "כתוב בקצרה מה עלה בפגישה או מה חשוב להוציא..."
+		},
+		"file": {
+			"label": "מסמך אחד (כל סוג קובץ)",
+			"remove": "הסר קובץ",
+			"tempLink": "קישור זמני לצפייה:",
+			"open": "פתח",
+			"progress": "{done}/1 הסתיים",
+			"status": {
+				"selected": "נבחר",
+				"analyzing": "מנתח...",
+				"done": "נותח",
+				"error": "שגיאה"
+			}
+		},
+		"actions": {
+			"analyze": "AI Analyze",
+			"analyzing": "AI מנתח...",
+			"save": "שמור סיכום",
+			"saving": "שומר...",
+			"cancel": "ביטול"
+		},
+		"ai": {
+			"resultTitle": "תוצאות ניתוח AI",
+			"completed": "הושלם",
+			"summaryTitle": "סיכום",
+			"keyPointsTitle": "נקודות עיקריות"
+		},
+		"errors": {
+			"titleRequired": "יש להזין כותרת",
+			"dateRequired": "בחר תאריך פגישה",
+			"fileRequired": "בחר קובץ לפני ניתוח AI"
+		},
+		"fallback": {
+			"summary": "סיכום קצר לפגישה \"{title}\""
+		},
+		"toasts": {
+			"analyzeSuccess": {
+				"title": "הניתוח הושלם",
+				"desc": "סיכום AI נוצר"
+			},
+			"analyzeFailed": {
+				"title": "שגיאה בניתוח",
+				"desc": "לא ניתן לבצע ניתוח AI. נסה שוב."
+			},
+			"saveSuccess": {
+				"title": "נשמר בהצלחה",
+				"desc": "ID: {id}"
+			},
+			"saveFailed": {
+				"title": "שגיאה בשמירה"
+			}
+		}
+	},
+	"contracts": {
+		"title": "חוזים משפטיים",
+		"subtitle": "מרכז, ארגן ונתח את כל ההסכמים שלך",
+		"addNew": "צור חוזה"
+	},
+	"notifications": {
+		"title": "התראות",
+		"markAll": "סמן הכל כנקרא",
+		"markingAll": "מסמן…",
+		"toast": {
+			"errorTitle": "שגיאה",
+			"markOneFail": "לא ניתן לסמן את ההתראה",
+			"markAllFail": "לא ניתן לסמן את כל ההתראות"
+		},
+		"empty": "אין התראות בשלב זה",
+		"groups": {
+			"unread": "חדשות (לא נקראו)",
+			"all": "הכל"
+		},
+		"paginate": {
+			"prev": "חזרה",
+			"next": "קדימה",
+			"page": "עמ׳"
+		},
+		"types": {
+			"default": "התראה",
+			"taskAssignedPrefix": "הוקצתה לך משימה",
+			"taskEvidencePrefix": "נתבקשו ראיות עבור המשימה",
+			"until": "עד"
+		},
+		"markReadTitle": "סמן כנקרא"
+	}
 }
