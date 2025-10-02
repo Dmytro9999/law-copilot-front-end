@@ -20,6 +20,7 @@ import { authApi, useLogoutMutation } from '@/store/features/auth/authApi'
 import { resetAuth } from '@/store/features/auth/authSlice'
 import LocaleSelect from '@/components/Layouts/LocaleSelect'
 import { useLocale } from '@/providers/I18nProvider'
+import { useState } from 'react'
 
 type Stats = {
 	activeContracts: number
@@ -29,11 +30,17 @@ type Stats = {
 }
 
 type Props = {
-	stats: Stats
 	onOpenSettings?: () => void
 }
 
-export default function Header({ stats, onOpenSettings }: Props) {
+export default function Header({ onOpenSettings }: Props) {
+	const [stats, setStats] = useState({
+		activeContracts: 0,
+		pendingObligations: 0,
+		overdueObligations: 0,
+		completedThisWeek: 0,
+	})
+
 	const user = useAppSelector(authSelectors.selectUser)
 
 	const router = useRouter()

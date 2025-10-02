@@ -12,11 +12,12 @@ type NavItem = { key: TabKey; name: string; icon: React.ComponentType<any>; href
 interface IPropsSidebar {
 	isCollapsed: boolean
 	setIsCollapsed: (v: boolean) => void
+	allowedTabs?: TabKey[]
 }
-const Sidebar: React.FC<IPropsSidebar> = ({ isCollapsed, setIsCollapsed }) => {
+const Sidebar: React.FC<IPropsSidebar> = ({ isCollapsed, setIsCollapsed, allowedTabs }) => {
 	const pathname = usePathname()
 
-	const items = useNavItems()
+	const items = useNavItems(allowedTabs)
 
 	const isActive = (pathname: string, href: string, isRoot = false) => {
 		const strip = (s: string) => s.replace(/\/+$/, '')
@@ -100,11 +101,14 @@ const Sidebar: React.FC<IPropsSidebar> = ({ isCollapsed, setIsCollapsed }) => {
 
 export default Sidebar
 
-export function useNavItems(): NavItem[] {
+export function useNavItems(allowedTabs?: TabKey[]): NavItem[] {
 	const { t } = useI18n()
 	const lang = useLocale() as 'he' | 'en'
 
-	return (Object.values(TabKey) as TabKey[]).map((key) => ({
+	const keys =
+		allowedTabs && allowedTabs.length ? allowedTabs : (Object.values(TabKey) as TabKey[]) // fallback: если ролей нет
+
+	return keys.map((key) => ({
 		key,
 		name: t(I18N_KEYS[key]),
 		icon: ICONS[key],

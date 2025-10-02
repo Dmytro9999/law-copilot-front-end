@@ -18,6 +18,7 @@ import { Card } from '@/components/ui/card'
 import AddContractModal from '@/components/Modals/AddContractModal'
 import { useI18n, useLocale } from '@/providers/I18nProvider'
 import { useToast } from '@/components/ui/use-toast'
+import { Can } from '@/components/rbac/Can'
 
 export default function ContractList() {
 	const { t } = useI18n()
@@ -54,7 +55,6 @@ export default function ContractList() {
 
 	return (
 		<div className='max-w-7xl p-4 space-y-6'>
-			{/* Header */}
 			<div className='flex items-center justify-between'>
 				<div>
 					<h1 className='text-4xl font-bold text-slate-800 mb-3'>
@@ -64,16 +64,18 @@ export default function ContractList() {
 						{t('contracts.subtitle') || 'נהל את המשימות האישיות והמקצועיות שלך'}
 					</p>
 				</div>
-				<Button
-					onClick={() => setAddModalOpen(true)}
-					className='bg-gradient-to-l from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-8 py-4 text-lg'
-				>
-					<Plus className='ml-2 h-5 w-5' />
-					{t('contracts.addNew') || 'הוסף משימה חדשה'}
-				</Button>
+
+				<Can action='contracts.create'>
+					<Button
+						onClick={() => setAddModalOpen(true)}
+						className='bg-gradient-to-l from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-8 py-4 text-lg'
+					>
+						<Plus className='ml-2 h-5 w-5' />
+						{t('contracts.addNew') || 'הוסף משימה חדשה'}
+					</Button>
+				</Can>
 			</div>
 
-			{/* Фильтры */}
 			<Card className='p-4 space-y-3'>
 				<div className='grid grid-cols-1 md:grid-cols-6 gap-3'>
 					<div className='col-span-3 flex gap-2'>

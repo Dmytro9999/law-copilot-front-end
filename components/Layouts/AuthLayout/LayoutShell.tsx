@@ -1,32 +1,26 @@
-'use client'
-
-import { useState } from 'react'
-import Sidebar from '@/components/Layouts/AuthLayout/Sidebar'
+import { ReactNode } from 'react'
+import { getServerUser } from '@/lib/auth/server/getServerUser'
+import { tabsForRoles } from '@/lib/rbac'
+import { AuthSessionProvider } from '@/providers/AuthSessionProvider'
+import SidebarShell from '@/components/Layouts/AuthLayout/SidebarShell'
 import Header from '@/components/Layouts/AuthLayout/Header'
 
-export default function LayoutShell({ children }: { children: React.ReactNode }) {
-	const [isCollapsed, setIsCollapsed] = useState(false)
+import { TabKey } from '@/lib/nav'
 
-	const [stats, setStats] = useState({
-		activeContracts: 0,
-		pendingObligations: 0,
-		overdueObligations: 0,
-		completedThisWeek: 0,
-	})
-
-	// useEffect(() => {
-	// 	(async () => {
-	// 		try { setStats(await getContractStats()) } catch {}
-	// 	})()
-	// }, [])
+export default async function HomeLayout({ children }: { children: ReactNode }) {
+	const user = await getServerUser()
+	const roles = user?.roles ?? []
+	const allowedTabs: TabKey[] = roles.length ? tabsForRoles(roles) : []
 
 	return (
-		<div className='flex h-screen bg-gradient-to-bl from-slate-50 via-blue-50 to-indigo-50'>
-			<Sidebar isCollapsed={isCollapsed} setIsCollapsed={setIsCollapsed} />
-			<div className='flex flex-col flex-1 overflow-hidden'>
-				<Header stats={stats} />
-				<main className='flex-1 p-10 overflow-auto'>{children}</main>
+		<AuthSessionProvider value={user}>
+			<div className='flex h-screen bg-gradient-to-bl from-slate-50 via-blue-50 to-indigo-50'>
+				<SidebarShell allowedTabs={allowedTabs} />
+				<div className='flex flex-col flex-1 overflow-hidden'>
+					<Header />
+					<main className='flex-1 p-10 overflow-auto'>{children}</main>
+				</div>
 			</div>
-		</div>
+		</AuthSessionProvider>
 	)
 }

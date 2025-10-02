@@ -125,3 +125,27 @@ export type TwoFaResp = {
 	cooldownSec?: number
 	maskedEmail?: string
 }
+
+export enum RolesEnum {
+	ADMIN = 'admin',
+	LAWYER = 'lawyer',
+	CLIENT = 'client',
+}
+export interface Role {
+	id: number
+	name: string
+	slug: RolesEnum
+}
+
+export interface CurrentUser {
+	id: number | string
+	name: string
+	email: string
+	roles: Role[]
+}
+export type RoleSlug = 'admin' | 'lawyer' | 'client'
+
+export type UserMinimal = {
+	id: number | string
+	roles: RoleSlug[]
+} | null
