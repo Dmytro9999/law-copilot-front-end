@@ -613,5 +613,103 @@
 			"until": "עד"
 		},
 		"markReadTitle": "סמן כנקרא"
+	},
+	"contractsAdd": {
+		"dialogTitle": "הוספת חוזה חדש — LAWCOPILOT AI",
+		"ai": {
+			"title": "OpenAI",
+			"dropTitle": "העלה חוזה לעיבוד אוטומטי מלא",
+			"dropHint": "PDF, Word, RTF או טקסט — נחלץ וננתח הכל",
+			"chooseFile": "בחר קובץ",
+			"manualLabel": "או הזן טקסט חוזה ידנית",
+			"manualPh": "הדבק כאן את טקסט החוזה המלא לניתוח…",
+			"analyze": "נתח טקסט עם AI",
+			"analyzing": "מנתח...",
+			"processedToastTitle": "קובץ עובד בהצלחה! 📄",
+			"processedToastDescPrefix": "חולצו",
+			"units": { "words": "מילים", "chunks": "קטעים" },
+			"stage": {
+				"processing": "מעבד קובץ...",
+				"extracting": "חולץ טקסט מהקובץ...",
+				"analyzing": "Contract Analyst with OpenAI...",
+				"autofill": "ממלא טופס אוטומטית..."
+			},
+			"errors": {
+				"tooBigTitle": "קובץ גדול מדי",
+				"tooBigDesc": "גודל הקובץ לא יכול לעלות על 10MB",
+				"unsupportedTitle": "סוג קובץ לא נתמך",
+				"unsupportedDesc": "נא להעלות קובץ PDF, Word או טקסט",
+				"processTitle": "שגיאה בעיבוד הקובץ",
+				"processDesc": "נסה שוב או הזן טקסט ידנית",
+				"emptyTextTitle": "שגיאה",
+				"emptyTextDesc": "נא להעלות קובץ או להזין טקסט חוזה",
+				"aiTitle": "שגיאה בניתוח AI",
+				"aiDesc": "נסה שוב או מלא את הטופס ידנית"
+			}
+		},
+		"analysis": {
+			"title": "תוצאות ניתוח החוזה",
+			"addObligation": "הוסף התחייבות ידנית",
+			"details": "פרטי החוזה",
+			"fields": {
+				"name": "שם",
+				"value": "ערך",
+				"start": "התחלה",
+				"end": "סיום"
+			},
+			"parties": "צדדים לחוזה",
+			"hint": "💡 כל המידע ימולא אוטומטית בטופס ויתווסף לחוזה"
+		},
+		"map": {
+			"title": "נציגים",
+			"addActorPlaceholder": "גורם נָצִיג (לדוגמה, \"צד ב\")",
+			"addActor": "הוסף",
+			"suggestionBase": "צד",
+			"userSearchPh": "חפש לפי אימייל או שם…",
+			"noRoles": "לא נמצאו תפקידים בהתחייבויות למיפוי.",
+			"clearSelection": "נקה בחירה",
+			"chipDeleteTitle": "הסר"
+		},
+		"form": {
+			"name": "שם החוזה *",
+			"namePh": "הזן שם החוזה",
+			"clientName": "שם הלקוח *",
+			"clientNamePh": "הזן שם הלקוח",
+			"startDate": "תאריך התחלה",
+			"endDate": "תאריך סיום",
+			"totalValue": "ערך החוזה (ש״ח)",
+			"totalValuePh": "0",
+			"description": "תיאור החוזה",
+			"descriptionPh": "תיאור קצר של החוזה..."
+		},
+		"buttons": {
+			"cancel": "ביטול",
+			"saving": "שומר חוזה...",
+			"save": "שמור חוזה עם ניתוח AI"
+		},
+		"save": {
+			"okTitle": "חוזה נשמר בהצלחה! 🎉",
+			"okDescPrefix": "החוזה נשמר עם",
+			"okDescSuffix": "התחייבויות במסד הנתונים",
+			"errTitle": "שגיאה בשמירת החוזה",
+			"errDescSuffix": "— בדוק את החיבור למסד הנתונים"
+		},
+		"common": { "yes": "כן", "no": "לא" }
+	},
+	"obligation": {
+		"edit": "ערוך",
+		"delete": "מחק",
+		"save": "שמור",
+		"cancel": "בטל",
+		"title": "כותרת",
+		"description": "תיאור",
+		"priority": "עדיפות",
+		"dueDate": "תאריך יעד",
+		"responsible": "אחראי",
+		"requiresProof": "דורש הוכחה",
+		"obligationsTitle": "התחייבויות"
+	},
+	"tasks": {
+		"priority": { "low": "נמוכה", "medium": "בינונית", "high": "גבוהה" }
 	}
 }

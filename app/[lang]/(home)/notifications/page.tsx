@@ -188,17 +188,6 @@ export default function NotificationsPage() {
 				</CardTitle>
 
 				<div className='flex items-center gap-2'>
-					{/*<Button variant='outline' size='sm' onClick={onRefresh} disabled={isFetching}>
-            {isFetching ? (
-              <span className='inline-flex items-center gap-2'>
-                <Loader2 className='h-4 w-4 animate-spin' />
-                {t('notifications.markingAll')}
-              </span>
-            ) : (
-              'Обновить'
-            )}
-          </Button>*/}
-
 					<Button
 						variant='outline'
 						size='sm'

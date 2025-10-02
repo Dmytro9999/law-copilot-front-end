@@ -1,8 +1,7 @@
 'use client'
 
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 
-import { useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -32,7 +31,6 @@ import {
 	Sparkles,
 	X,
 	Target,
-	AlertTriangle,
 } from 'lucide-react'
 import { useToast } from '@/components/ui/use-toast'
 import { processFile, isSupportedFile, type ProcessedFile } from '@/lib/file-processor'
@@ -42,14 +40,13 @@ import {
 	TaskFromAnalysisDto,
 	useAnalyzeContractMutation,
 	useExtractDocumentTextMutation,
-	useGetContractsQuery,
 	useMaterializeContractMutation,
 	useUploadDocumentMutation,
 } from '@/store/features/contracts/contractsApi'
-import { useI18n, useLocale } from '@/providers/I18nProvider'
+import { useI18n } from '@/providers/I18nProvider'
 import ManualObligationModal from '@/components/Modals/AddObligationModal'
 import ContractRisksEditor from '@/components/contracts/ContractRisksEditor'
-import { useCreateRiskArrayMutation, useCreateRiskMutation } from '@/store/features/risks/risksApi'
+import { useCreateRiskArrayMutation } from '@/store/features/risks/risksApi'
 import { TaskPriority } from '@/store/features/tasks/tasksTypes'
 import UserSearchSelect from '@/components/contracts/UserSearchSelect'
 
@@ -89,6 +86,8 @@ interface ContractAnalysis {
 		amount: string | null
 		sourceText: string
 		type: string
+		title?: string
+		_key?: string
 	}>
 	keyTerms: Array<{
 		term: string
@@ -98,6 +97,8 @@ interface ContractAnalysis {
 	riskFactors: string[]
 	recommendations: string[]
 }
+
+type Priority = 'low' | 'medium' | 'high' | null | undefined
 
 export default function AddContractModal({ isOpen, onClose, onSave }: AddContractModalProps) {
 	const [formData, setFormData] = useState({
@@ -122,7 +123,7 @@ export default function AddContractModal({ isOpen, onClose, onSave }: AddContrac
 	const [dragActive, setDragActive] = useState(false)
 	const [isManualObligationModalOpen, setManualObligationModalOpen] = useState(false)
 	const [isTimerModalOpen, setTimerModalOpen] = useState(false)
-	const [selectedObligation, setSelectedObligation] = useState(null)
+	const [selectedObligation, setSelectedObligation] = useState<any>(null)
 	const [isSubmitting, setIsSubmitting] = useState(false)
 	const { toast } = useToast()
 	const [obligations, setObligations] = useState<any[]>([])
@@ -134,7 +135,7 @@ export default function AddContractModal({ isOpen, onClose, onSave }: AddContrac
 	const [createRisk] = useCreateRiskArrayMutation()
 	const [extractDoc] = useExtractDocumentTextMutation()
 
-	const [actorMap, setActorMap] = useState({})
+	const [actorMap, setActorMap] = useState<Record<string, any>>({})
 	const [customActors, setCustomActors] = useState<string[]>([])
 
 	const { t } = useI18n()
@@ -183,8 +184,8 @@ export default function AddContractModal({ isOpen, onClose, onSave }: AddContrac
 		setEditingKey('')
 		setContractAnalysis((prev) => (prev ? { ...prev, obligations } : prev))
 		toast({
-			title: 'נשמר',
-			description: 'ההתחייבות עודכנה',
+			title: t('obligation.save') || 'Saved',
+			description: t('obligation.description') ? t('obligation.save') : 'Obligation updated',
 			className: 'bg-green-500 text-white',
 		})
 	}
@@ -194,13 +195,12 @@ export default function AddContractModal({ isOpen, onClose, onSave }: AddContrac
 		setObligations(next)
 		setContractAnalysis((prev) => (prev ? { ...prev, obligations: next } : prev))
 		toast({
-			title: 'נמחק',
-			description: 'ההתחייבות הוסרה מהרשימה',
+			title: t('obligation.delete') || 'Deleted',
+			description: t('obligation.obligationsTitle') || 'Obligation removed from the list',
 			variant: 'destructive',
 		})
 	}
 
-	type Priority = 'low' | 'medium' | 'high' | null | undefined
 	function extractActorKeys(analysis: any): string[] {
 		if (!analysis?.obligations) return []
 		const set = new Set<string>()
@@ -209,7 +209,6 @@ export default function AddContractModal({ isOpen, onClose, onSave }: AddContrac
 			if (!raw) continue
 			const k = normActorKey(raw)
 			if (!k) continue
-			// храним «как есть» исходную метку, но уникализируем по нормализованному ключу
 			if (![...set].some((s) => normActorKey(s) === k)) set.add(raw)
 		}
 		return [...set]
@@ -222,7 +221,6 @@ export default function AddContractModal({ isOpen, onClose, onSave }: AddContrac
 		for (const v of all) {
 			if (!uniq.some((u) => normActorKey(u) === normActorKey(v))) uniq.push(v)
 		}
-		// на вкус: сортировка по алфавиту
 		return uniq.sort((a, b) => a.localeCompare(b))
 	}, [contractAnalysis, customActors])
 
@@ -233,8 +231,8 @@ export default function AddContractModal({ isOpen, onClose, onSave }: AddContrac
 			.trim()
 	}
 
-	const priorityLabel = (p: Priority, t: (k: string) => string) =>
-		p ? t(`tasks.priority.${p}`) || p : '—'
+	const priorityLabel = (p: Priority, tfn: (k: string) => string) =>
+		p ? tfn(`tasks.priority.${p}`) || p : '—'
 
 	const fmtDate = (s?: string | null) => {
 		if (!s) return '—'
@@ -267,8 +265,8 @@ export default function AddContractModal({ isOpen, onClose, onSave }: AddContrac
 		const maxSize = 10 * 1024 * 1024 // 10MB
 		if (selectedFile.size > maxSize) {
 			toast({
-				title: 'קובץ גדול מדי',
-				description: 'גודל הקובץ לא יכול לעלות על 10MB',
+				title: t('contractsAdd.ai.errors.tooBigTitle'),
+				description: t('contractsAdd.ai.errors.tooBigDesc'),
 				variant: 'destructive',
 			})
 			return
@@ -276,36 +274,36 @@ export default function AddContractModal({ isOpen, onClose, onSave }: AddContrac
 
 		if (!isSupportedFile(selectedFile)) {
 			toast({
-				title: 'סוג קובץ לא נתמך',
-				description: 'נא להעלות קובץ PDF, Word או טקסט',
+				title: t('contractsAdd.ai.errors.unsupportedTitle'),
+				description: t('contractsAdd.ai.errors.unsupportedDesc'),
 				variant: 'destructive',
 			})
 			return
 		}
 
 		setFile(selectedFile)
-
-		// עיבוד הקובץ מיידי
 		await processFileContent(selectedFile)
 	}
 
 	function AddActorInline({
 		onAdd,
-		suggestionBase = 'Сторона',
+		suggestionBase = 'Party',
 	}: {
 		onAdd: (label: string) => void
 		suggestionBase?: string
 	}) {
 		const [val, setVal] = useState('')
 
-		// простая подсказка следующей буквы, если уже есть А/Б/В...
-		const nextSuggestions = ['D', 'E', 'F', 'G'].map((ch) => `${suggestionBase} ${ch}`)
+		const base = t('contractsAdd.map.suggestionBase') || suggestionBase
+		const nextSuggestions = ['D', 'E', 'F', 'G'].map((ch) => `${base} ${ch}`)
 
 		return (
 			<div className='flex items-center gap-2'>
 				<input
 					className='flex-1 border rounded-md px-3 py-2 text-sm'
-					placeholder='Новая персона (например, «Сторона В»)'
+					placeholder={
+						t('contractsAdd.map.addActorPlaceholder') || 'New actor (e.g., “Party B”)'
+					}
 					value={val}
 					onChange={(e) => setVal(e.target.value)}
 				/>
@@ -318,18 +316,16 @@ export default function AddContractModal({ isOpen, onClose, onSave }: AddContrac
 						setVal('')
 					}}
 				>
-					Добавить
+					{t('contractsAdd.map.addActor') || 'Add'}
 				</Button>
-				{/* быстрые подсказки (опционально) */}
+
 				<div className='hidden md:flex items-center gap-1'>
 					{nextSuggestions.map((s) => (
 						<button
 							key={s}
 							type='button'
 							className='text-xs px-2 py-1 border rounded hover:bg-slate-50'
-							onClick={() => {
-								onAdd(s)
-							}}
+							onClick={() => onAdd(s)}
 						>
 							{s}
 						</button>
@@ -340,7 +336,6 @@ export default function AddContractModal({ isOpen, onClose, onSave }: AddContrac
 	}
 
 	function addCustomActor(label: string) {
-		// запретим дубли по нормализованному ключу
 		if (actorOptions.some((x) => normActorKey(x) === normActorKey(label))) return
 		setCustomActors((prev) => [...prev, label])
 		setActorMap((prev) => ({ ...prev, [label]: null }))
@@ -353,7 +348,6 @@ export default function AddContractModal({ isOpen, onClose, onSave }: AddContrac
 			delete copy[label]
 			return copy
 		})
-		// было: responsibleParty: ''
 		setObligations((prev) =>
 			prev.map((ob) =>
 				normActorKey(ob.responsibleParty) === normActorKey(label)
@@ -428,16 +422,14 @@ export default function AddContractModal({ isOpen, onClose, onSave }: AddContrac
 	const processFileContent = async (fileToProcess: File) => {
 		setIsProcessing(true)
 		setProcessingProgress(0)
-		setProcessingStage('מעבד קובץ...')
+		setProcessingStage(t('contractsAdd.ai.stage.processing'))
 
 		try {
-			// שלב 1: עיבוד הקובץ וחילוץ טקסט (теперь на бэке через RTK)
-			setProcessingStage('חולץ טקסט מהקובץ...')
+			setProcessingStage(t('contractsAdd.ai.stage.extracting'))
 			setProcessingProgress(20)
 
 			const { text, metadata } = await extractDoc({ file: fileToProcess }).unwrap()
 
-			// собираем объект как раньше (добавляем chunks на фронте)
 			const processed = {
 				text,
 				metadata,
@@ -447,21 +439,23 @@ export default function AddContractModal({ isOpen, onClose, onSave }: AddContrac
 			setContractText(processed.text)
 
 			toast({
-				title: 'קובץ עובד בהצלחה! 📄',
-				description: `חולצו ${processed.metadata.wordCount} מילים מ-${processed.chunks.length} קטעים`,
+				title: t('contractsAdd.ai.processedToastTitle'),
+				description: `${t('contractsAdd.ai.processedToastDescPrefix')} ${processed.metadata.wordCount} ${t('contractsAdd.ai.units.words')} • ${processed.chunks.length} ${t('contractsAdd.ai.units.chunks')}`,
 				className: 'bg-gradient-to-l from-green-600 to-emerald-600 text-white border-none',
 			})
 
-			// שלב 2: ניתוח עם AI
-			setProcessingStage('Contract Analyst with OpenAi...')
+			setProcessingStage(t('contractsAdd.ai.stage.analyzing'))
 			setProcessingProgress(50)
 
 			await analyzeContractWithAI(processed.text, fileToProcess.name)
 		} catch (error: any) {
 			console.error('Error processing file:', error)
 			toast({
-				title: 'שגיאה בעיבוד הקובץ',
-				description: error?.data?.message || error?.message || 'נסה שוב או הזן טקסט ידנית',
+				title: t('contractsAdd.ai.errors.processTitle'),
+				description:
+					error?.data?.message ||
+					error?.message ||
+					t('contractsAdd.ai.errors.processDesc'),
 				variant: 'destructive',
 			})
 		} finally {
@@ -473,12 +467,12 @@ export default function AddContractModal({ isOpen, onClose, onSave }: AddContrac
 
 	const analyzeContractWithAI = async (textToAnalyze?: string, fileName?: string) => {
 		const text = textToAnalyze || contractText
-		const name = fileName || file?.name || 'טקסט ידני'
+		const name = fileName || file?.name || 'manual-text'
 
 		if (!text.trim()) {
 			toast({
-				title: 'שגיאה',
-				description: 'נא להעלות קובץ או להזין טקסט חוזה',
+				title: t('contractsAdd.ai.errors.emptyTextTitle'),
+				description: t('contractsAdd.ai.errors.emptyTextDesc'),
 				variant: 'destructive',
 			})
 			return
@@ -490,23 +484,16 @@ export default function AddContractModal({ isOpen, onClose, onSave }: AddContrac
 		}
 
 		try {
-			setProcessingStage('Contract Analyst with OpenAi...')
+			setProcessingStage(t('contractsAdd.ai.stage.analyzing'))
 			setProcessingProgress(70)
 
 			const response = await fetch('http://localhost:3000/api/ai/analyze-contract', {
 				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json',
-				},
-				body: JSON.stringify({
-					contractText: text,
-					fileName: name,
-				}),
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({ contractText: text, fileName: name }),
 			})
 
-			if (!response.ok) {
-				throw new Error('Failed to analyze contract')
-			}
+			if (!response.ok) throw new Error('Failed to analyze contract')
 
 			const result = await response.json()
 			const analysis = result.analysis
@@ -514,8 +501,7 @@ export default function AddContractModal({ isOpen, onClose, onSave }: AddContrac
 			setContractAnalysis(analysis)
 			setProcessingProgress(90)
 
-			// מילוי אוטומטי של הטופס
-			setProcessingStage('ממלא טופס אוטומטית...')
+			setProcessingStage(t('contractsAdd.ai.stage.autofill'))
 			setFormData((prev) => ({
 				...prev,
 				name: analysis.contractName || prev.name,
@@ -530,15 +516,15 @@ export default function AddContractModal({ isOpen, onClose, onSave }: AddContrac
 			setProcessingProgress(100)
 
 			toast({
-				title: 'ניתוח הושלם! 🎉',
-				description: `זוהו ${analysis.obligations?.length || 0} התחייבויות ו-${analysis.riskFactors?.length || 0} סיכונים`,
+				title: t('contractsAdd.save.okTitle'),
+				description: `${t('contractsAdd.save.okDescPrefix')} ${analysis.obligations?.length || 0} ${t('contractsAdd.save.okDescSuffix')}`,
 				className: 'bg-gradient-to-l from-blue-600 to-purple-600 text-white border-none',
 			})
 		} catch (error) {
 			console.error('Error analyzing contract:', error)
 			toast({
-				title: 'שגיאה בניתוח AI',
-				description: 'נסה שוב או מלא את הטופס ידנית',
+				title: t('contractsAdd.ai.errors.aiTitle'),
+				description: t('contractsAdd.ai.errors.aiDesc'),
 				variant: 'destructive',
 			})
 		} finally {
@@ -561,31 +547,8 @@ export default function AddContractModal({ isOpen, onClose, onSave }: AddContrac
 	function toIsoOrUndefined(x?: string | null) {
 		if (!x) return undefined
 		const d = new Date(x)
-		return isNaN(+d) ? undefined : d.toISOString() // полный RFC3339
+		return isNaN(+d) ? undefined : d.toISOString()
 	}
-
-	// function mapAnalysisToTasks(analysis: any): TaskFromAnalysisDto[] {
-	// 	const list = Array.isArray(analysis?.obligations) ? analysis.obligations : []
-	//
-	// 	return list.map((ob: any, i: number) => {
-	// 		const pr = normalizePriority(ob?.priority) ?? 'medium'
-	// 		return {
-	// 			title: (ob?.title || ob?.description || `Task #${i + 1}`).toString().slice(0, 255),
-	// 			description:
-	// 				[
-	// 					ob?.description ? String(ob.description) : '',
-	// 					ob?.responsibleParty ? `Responsible: ${ob.responsibleParty}` : '',
-	// 				]
-	// 					.filter(Boolean)
-	// 					.join('\n') || undefined,
-	// 			dueDate: toIsoOrUndefined(ob?.dueDate),
-	// 			clientKey: ob?.id ? String(ob.id) : `auto-${i + 1}`,
-	// 			parentClientKey: undefined,
-	// 			priority: pr,
-	// 			// approval_required не заполняем, чтобы не триггерить валидатор assigneeIds
-	// 		}
-	// 	})
-	// }
 
 	function mapAnalysisToTasks(analysis: any): TaskFromAnalysisDto[] {
 		const list = Array.isArray(analysis?.obligations) ? analysis.obligations : []
@@ -593,7 +556,7 @@ export default function AddContractModal({ isOpen, onClose, onSave }: AddContrac
 			const pr = normalizePriority(ob?.priority) ?? 'medium'
 			const rpKey = normActorKey(ob?.responsibleParty)
 			const matched = actorOptions.find((label) => normActorKey(label) === rpKey)
-			const user = matched ? actorMap[matched] : null
+			const user = matched ? (actorMap as any)[matched] : null
 
 			return {
 				title: (ob?.title || ob?.description || `Task #${i + 1}`).toString().slice(0, 255),
@@ -624,8 +587,8 @@ export default function AddContractModal({ isOpen, onClose, onSave }: AddContrac
 	const handleSubmit = async () => {
 		if (!formData.name || !formData.client_name || !formData.contract_type) {
 			toast({
-				title: 'שגיאה בטופס',
-				description: 'נא למלא את כל השדות הנדרשים',
+				title: t('contractsAdd.ai.errors.emptyTextTitle'),
+				description: t('contractsAdd.ai.errors.emptyTextDesc'),
 				variant: 'destructive',
 			})
 			return
@@ -634,8 +597,6 @@ export default function AddContractModal({ isOpen, onClose, onSave }: AddContrac
 		setIsSubmitting(true)
 
 		try {
-			console.log('[v0] Starting contract save process...')
-
 			const contractData = {
 				name: formData.name,
 				client_name: formData.client_name,
@@ -648,51 +609,7 @@ export default function AddContractModal({ isOpen, onClose, onSave }: AddContrac
 				file_url: null,
 			}
 
-			console.log('[v0] Creating contract with data:', contractData)
-
-			let savedContract
-			try {
-				//savedContract = await createContract(contractData)
-				// console.log('[v0] Contract saved successfully:', savedContract)
-			} catch (contractError) {
-				console.error('[v0] Contract creation failed:', contractError)
-				throw new Error(`Failed to create contract: ${contractError.message}`)
-			}
-
-			// if (contractAnalysis?.obligations && contractAnalysis.obligations.length > 0) {
-			// 	console.log('[v0] Saving', contractAnalysis.obligations.length, 'obligations...')
-			//
-			// 	for (const obligation of contractAnalysis.obligations) {
-			// 		const obligationData = {
-			// 			contract_id: savedContract.id,
-			// 			description: obligation.description,
-			// 			responsible_party: obligation.responsibleParty,
-			// 			due_date: obligation.dueDate,
-			// 			priority: obligation.priority,
-			// 			category: obligation.category,
-			// 			requires_proof: obligation.requiresProof,
-			// 			amount: obligation.amount || null,
-			// 			ai_generated: true,
-			// 		}
-			//
-			// 		try {
-			// 			console.log('[v0] Creating obligation:', obligationData)
-			// 			await createObligation(obligationData)
-			// 		} catch (obligationError) {
-			// 			console.error('[v0] Failed to create obligation:', obligationError)
-			// 			// Continue with other obligations even if one fails
-			// 		}
-			// 	}
-			//
-			// 	console.log('[v0] All obligations processed!')
-			// }
-
-			const obligationCount = contractAnalysis?.obligations?.length || 0
-			toast({
-				title: 'חוזה נשמר בהצלחה! 🎉',
-				description: `החוזה נשמר עם ${obligationCount} התחייבויות במסד הנתונים`,
-				className: 'bg-gradient-to-l from-green-600 to-emerald-600 text-white border-none',
-			})
+			// TODO: create contract if needed
 
 			let documentId: number | undefined = undefined
 			if (file) {
@@ -717,7 +634,8 @@ export default function AddContractModal({ isOpen, onClose, onSave }: AddContrac
 
 			const created = await materializeContract(payload).unwrap()
 
-			const contractId: number = Number(created?.contract?.id) || Number(created?.id) || 0
+			const contractId: number =
+				Number((created as any)?.contract?.id) || Number((created as any)?.id) || 0
 
 			if (contractAnalysis && contractId > 0) {
 				const risksPayload = mapAnalysisToRisks(contractAnalysis, contractId)
@@ -725,20 +643,13 @@ export default function AddContractModal({ isOpen, onClose, onSave }: AddContrac
 					await createRisk(risksPayload).unwrap()
 				}
 			}
-			// onSave({
-			// 	name: formData.name,
-			// 	clientName: formData.client_name,
-			// 	clientEmail: formData.client_email,
-			// 	clientPhone: formData.client_phone,
-			// 	signingDate: formData.start_date,
-			// 	contractType: formData.contract_type,
-			// 	value: formData.total_value,
-			// 	file: file,
-			// 	contractAnalysis: contractAnalysis,
-			// 	processedFile: processedFile,
-			// 	contractText: contractText,
-			// 	savedContract: savedContract,
-			// })
+
+			const obligationCount = contractAnalysis?.obligations?.length || 0
+			toast({
+				title: t('contractsAdd.save.okTitle'),
+				description: `${t('contractsAdd.save.okDescPrefix')} ${obligationCount} ${t('contractsAdd.save.okDescSuffix')}`,
+				className: 'bg-gradient-to-l from-green-600 to-emerald-600 text-white border-none',
+			})
 
 			setFormData({
 				name: '',
@@ -757,11 +668,11 @@ export default function AddContractModal({ isOpen, onClose, onSave }: AddContrac
 			setContractText('')
 			setContractAnalysis(null)
 			onSave()
-		} catch (error) {
+		} catch (error: any) {
 			console.error('[v0] Error saving contract:', error)
 			toast({
-				title: 'שגיאה בשמירת החוזה',
-				description: `${error.message || 'שגיאה לא ידועה'} - בדוק את החיבור למסד הנתונים`,
+				title: t('contractsAdd.save.errTitle'),
+				description: `${error?.message || t('contractsAdd.ai.errors.processTitle')} ${t('contractsAdd.save.errDescSuffix')}`,
 				variant: 'destructive',
 			})
 		} finally {
@@ -788,7 +699,7 @@ export default function AddContractModal({ isOpen, onClose, onSave }: AddContrac
 				<DialogHeader>
 					<DialogTitle className='text-2xl font-bold text-slate-800 flex items-center gap-2'>
 						<Plus className='h-6 w-6 text-blue-600' />
-						הוספת חוזה חדש - LAWCOPILOT AI
+						{t('contractsAdd.dialogTitle')}
 					</DialogTitle>
 				</DialogHeader>
 
@@ -798,7 +709,7 @@ export default function AddContractModal({ isOpen, onClose, onSave }: AddContrac
 						<CardHeader>
 							<CardTitle className='flex items-center gap-2 text-blue-800'>
 								<Brain className='h-5 w-5' />
-								OpenAi
+								{t('contractsAdd.ai.title')}
 							</CardTitle>
 						</CardHeader>
 						<CardContent className='space-y-4'>
@@ -815,10 +726,10 @@ export default function AddContractModal({ isOpen, onClose, onSave }: AddContrac
 								<Upload className='h-8 w-8 text-slate-400 mx-auto mb-3' />
 								<div className='space-y-2'>
 									<p className='font-medium text-slate-700'>
-										העלה חוזה לעיבוד אוטומטי מלא
+										{t('contractsAdd.ai.dropTitle')}
 									</p>
 									<p className='text-sm text-slate-500'>
-										PDF, Word, RTF או טקסט - המערכת תחלץ ותנתח הכל
+										{t('contractsAdd.ai.dropHint')}
 									</p>
 									<input
 										type='file'
@@ -838,17 +749,19 @@ export default function AddContractModal({ isOpen, onClose, onSave }: AddContrac
 										className='mt-2'
 									>
 										<Upload className='ml-2 h-4 w-4' />
-										בחר קובץ
+										{t('contractsAdd.ai.chooseFile')}
 									</Button>
 								</div>
 							</div>
 
 							{/* Alternative: Manual text input */}
 							<div className='space-y-2'>
-								<Label htmlFor='contract-text'>או הזן טקסט חוזה ידנית</Label>
+								<Label htmlFor='contract-text'>
+									{t('contractsAdd.ai.manualLabel')}
+								</Label>
 								<Textarea
 									id='contract-text'
-									placeholder='הדבק כאן את טקסט החוזה המלא לניתוח...'
+									placeholder={t('contractsAdd.ai.manualPh')}
 									value={contractText}
 									onChange={(e) => setContractText(e.target.value)}
 									rows={6}
@@ -863,12 +776,12 @@ export default function AddContractModal({ isOpen, onClose, onSave }: AddContrac
 										{isProcessing ? (
 											<>
 												<Loader2 className='ml-2 h-4 w-4 animate-spin' />
-												מנתח...
+												{t('contractsAdd.ai.analyzing')}
 											</>
 										) : (
 											<>
 												<Sparkles className='ml-2 h-4 w-4' />
-												נתח טקסט עם AI
+												{t('contractsAdd.ai.analyze')}
 											</>
 										)}
 									</Button>
@@ -887,7 +800,7 @@ export default function AddContractModal({ isOpen, onClose, onSave }: AddContrac
 											<p className='text-sm text-green-600'>
 												{(file.size / 1024 / 1024).toFixed(2)} MB
 												{processedFile &&
-													` • ${processedFile.metadata.wordCount} מילים • ${processedFile.chunks.length} קטעים`}
+													` • ${processedFile.metadata.wordCount} ${t('contractsAdd.ai.units.words')} • ${processedFile.chunks.length} ${t('contractsAdd.ai.units.chunks')}`}
 											</p>
 										</div>
 										<Button
@@ -910,7 +823,7 @@ export default function AddContractModal({ isOpen, onClose, onSave }: AddContrac
 							{/* Processing Progress */}
 							{isProcessing && (
 								<div className='space-y-3'>
-									<div className='flex items-center gap-2'>
+									<div className='flex items中心 gap-2'>
 										<Loader2 className='h-4 w-4 animate-spin text-blue-600' />
 										<span className='text-sm font-medium'>
 											{processingStage}
@@ -928,7 +841,7 @@ export default function AddContractModal({ isOpen, onClose, onSave }: AddContrac
 							<CardHeader>
 								<CardTitle className='flex items-center gap-2 text-green-800'>
 									<CheckCircle2 className='h-5 w-5' />
-									תוצאות ניתוח החוזה
+									{t('contractsAdd.analysis.title')}
 									<Button
 										onClick={() => setManualObligationModalOpen(true)}
 										variant='outline'
@@ -936,7 +849,7 @@ export default function AddContractModal({ isOpen, onClose, onSave }: AddContrac
 										className='mr-auto bg-blue-50 hover:bg-blue-100 text-blue-700 border-blue-300'
 									>
 										<Plus className='ml-2 h-4 w-4' />
-										הוסף התחייבות ידנית
+										{t('contractsAdd.analysis.addObligation')}
 									</Button>
 								</CardTitle>
 							</CardHeader>
@@ -945,24 +858,22 @@ export default function AddContractModal({ isOpen, onClose, onSave }: AddContrac
 								<div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
 									<div className='bg-white p-4 rounded-lg border border-green-200'>
 										<h4 className='font-semibold text-slate-800 mb-2'>
-											פרטי החוזה
+											{t('contractsAdd.analysis.details')}
 										</h4>
 										<div className='space-y-2 text-sm'>
 											<div>
-												<span className='text-slate-600'>שם:</span>{' '}
+												<span className='text-slate-600'>
+													{t('contractsAdd.analysis.fields.name')}:
+												</span>{' '}
 												<span className='font-medium'>
 													{contractAnalysis.contractName}
 												</span>
 											</div>
-											{/*<div>*/}
-											{/*	<span className='text-slate-600'>סוג:</span>{' '}*/}
-											{/*	<span className='font-medium'>*/}
-											{/*		{contractAnalysis.contractType}*/}
-											{/*	</span>*/}
-											{/*</div>*/}
 											{contractAnalysis.value && (
 												<div>
-													<span className='text-slate-600'>ערך:</span>{' '}
+													<span className='text-slate-600'>
+														{t('contractsAdd.analysis.fields.value')}:
+													</span>{' '}
 													<span className='font-medium'>
 														{contractAnalysis.value}
 													</span>
@@ -970,7 +881,9 @@ export default function AddContractModal({ isOpen, onClose, onSave }: AddContrac
 											)}
 											{contractAnalysis.startDate && (
 												<div>
-													<span className='text-slate-600'>התחלה:</span>{' '}
+													<span className='text-slate-600'>
+														{t('contractsAdd.analysis.fields.start')}:
+													</span>{' '}
 													<span className='font-medium'>
 														{new Date(
 															contractAnalysis.startDate
@@ -980,7 +893,9 @@ export default function AddContractModal({ isOpen, onClose, onSave }: AddContrac
 											)}
 											{contractAnalysis.endDate && (
 												<div>
-													<span className='text-slate-600'>סיום:</span>{' '}
+													<span className='text-slate-600'>
+														{t('contractsAdd.analysis.fields.end')}:
+													</span>{' '}
 													<span className='font-medium'>
 														{new Date(
 															contractAnalysis.endDate
@@ -993,7 +908,7 @@ export default function AddContractModal({ isOpen, onClose, onSave }: AddContrac
 
 									<div className='bg-white p-4 rounded-lg border border-green-200'>
 										<h4 className='font-semibold text-slate-800 mb-2'>
-											צדדים לחוזה
+											{t('contractsAdd.analysis.parties')}
 										</h4>
 										<div className='space-y-3 text-sm'>
 											<div>
@@ -1024,6 +939,75 @@ export default function AddContractModal({ isOpen, onClose, onSave }: AddContrac
 											</div>
 										</div>
 									</div>
+								</div>
+
+								<div className='bg-white p-4 rounded-lg border border-green-200'>
+									<h4 className='font-semibold text-slate-800 mb-3'>
+										{t('contractsAdd.map.title')}
+									</h4>
+
+									<div className='mb-3'>
+										<AddActorInline onAdd={addCustomActor} />
+									</div>
+
+									{customActors.length > 0 && (
+										<div className='flex flex-wrap gap-2 mb-3'>
+											{customActors.map((c) => (
+												<span
+													key={c}
+													className='inline-flex items-center gap-2 text-sm px-2 py-1 border rounded bg-slate-50'
+												>
+													{c}
+													<button
+														type='button'
+														className='text-slate-500 hover:text-red-600'
+														onClick={() => removeCustomActor(c)}
+														title={
+															t('contractsAdd.map.chipDeleteTitle') ||
+															'Remove'
+														}
+													>
+														×
+													</button>
+												</span>
+											))}
+										</div>
+									)}
+
+									{actorOptions.length === 0 ? (
+										<p className='text-sm text-slate-600'>
+											{t('contractsAdd.map.noRoles')}
+										</p>
+									) : (
+										<div className='space-y-3'>
+											{actorOptions.map((key) => (
+												<div
+													key={key}
+													className='grid grid-cols-1 md:grid-cols-3 gap-2 items-center'
+												>
+													<div className='text-sm font-medium text-slate-700'>
+														{key}
+													</div>
+													<div className='md:col-span-2'>
+														<UserSearchSelect
+															value={actorMap[key] ?? null}
+															onChange={(u) =>
+																setActorMap((prev) => ({
+																	...prev,
+																	[key]: u,
+																}))
+															}
+															placeholder={
+																t(
+																	'contractsAdd.map.userSearchPh'
+																) || 'Search by email or name…'
+															}
+														/>
+													</div>
+												</div>
+											))}
+										</div>
+									)}
 								</div>
 
 								{/* Obligations Preview */}
@@ -1109,7 +1093,7 @@ export default function AddContractModal({ isOpen, onClose, onSave }: AddContrac
 																	</div>
 																</div>
 
-																{/* Meta row (без category/amount) */}
+																{/* Meta row */}
 																<div className='grid grid-cols-2 md:grid-cols-3 gap-2 text-xs text-slate-600'>
 																	<div>
 																		<span className='text-slate-500'>
@@ -1140,8 +1124,12 @@ export default function AddContractModal({ isOpen, onClose, onSave }: AddContrac
 																			:
 																		</span>{' '}
 																		{obligation.requiresProof
-																			? t('yes')
-																			: t('no')}
+																			? t(
+																					'contractsAdd.common.yes'
+																				)
+																			: t(
+																					'contractsAdd.common.no'
+																				)}
 																	</div>
 																</div>
 															</>
@@ -1312,7 +1300,6 @@ export default function AddContractModal({ isOpen, onClose, onSave }: AddContrac
 																			)}
 																		</label>
 																		<Select
-																			// undefined => показывается <SelectValue placeholder='—' />
 																			value={
 																				currentLabel ??
 																				undefined
@@ -1360,10 +1347,10 @@ export default function AddContractModal({ isOpen, onClose, onSave }: AddContrac
 																						</SelectItem>
 																					)
 																				)}
-
-																				{/* опционально: пункт для очистки */}
 																				<SelectItem value='__clear__'>
-																					Очистить выбор
+																					{t(
+																						'contractsAdd.map.clearSelection'
+																					)}
 																				</SelectItem>
 																			</SelectContent>
 																		</Select>
@@ -1400,8 +1387,12 @@ export default function AddContractModal({ isOpen, onClose, onSave }: AddContrac
 																				className='text-slate-700'
 																			>
 																				{obligation.requiresProof
-																					? t('yes')
-																					: t('no')}
+																					? t(
+																							'contractsAdd.common.yes'
+																						)
+																					: t(
+																							'contractsAdd.common.no'
+																						)}
 																			</label>
 																		</div>
 																	</div>
@@ -1426,98 +1417,8 @@ export default function AddContractModal({ isOpen, onClose, onSave }: AddContrac
 									/>
 								)}
 
-								<div className='bg-white p-4 rounded-lg border border-green-200'>
-									<h4 className='font-semibold text-slate-800 mb-3'>
-										Связать участников (responsibleParty → пользователь)
-									</h4>
-
-									<div className='mb-3'>
-										<AddActorInline onAdd={addCustomActor} />
-									</div>
-
-									{/* Чипы созданных вручную персон с удалением */}
-									{customActors.length > 0 && (
-										<div className='flex flex-wrap gap-2 mb-3'>
-											{customActors.map((c) => (
-												<span
-													key={c}
-													className='inline-flex items-center gap-2 text-sm px-2 py-1 border rounded bg-slate-50'
-												>
-													{c}
-													<button
-														type='button'
-														className='text-slate-500 hover:text-red-600'
-														onClick={() => removeCustomActor(c)}
-														title='Удалить'
-													>
-														×
-													</button>
-												</span>
-											))}
-										</div>
-									)}
-
-									{actorOptions.length === 0 ? (
-										<p className='text-sm text-slate-600'>
-											В обязанностях не найдено ролей для сопоставления.
-										</p>
-									) : (
-										<div className='space-y-3'>
-											{actorOptions.map((key) => (
-												<div
-													key={key}
-													className='grid grid-cols-1 md:grid-cols-3 gap-2 items-center'
-												>
-													<div className='text-sm font-medium text-slate-700'>
-														{key}
-													</div>
-													<div className='md:col-span-2'>
-														<UserSearchSelect
-															value={actorMap[key] ?? null}
-															onChange={(u) =>
-																setActorMap((prev) => ({
-																	...prev,
-																	[key]: u,
-																}))
-															}
-															placeholder='Найти по email или имени…'
-														/>
-													</div>
-												</div>
-											))}
-										</div>
-									)}
-								</div>
-
-								{/*/!* Risk Factors *!/*/}
-								{/*{contractAnalysis.riskFactors &&*/}
-								{/*	contractAnalysis.riskFactors.length > 0 && (*/}
-								{/*		<div className='bg-red-50 p-4 rounded-lg border border-red-200'>*/}
-								{/*			<h4 className='font-semibold text-red-800 mb-2 flex items-center gap-2'>*/}
-								{/*				<AlertTriangle className='h-4 w-4' />*/}
-								{/*				סיכונים שזוהו ({contractAnalysis.riskFactors.length}*/}
-								{/*				)*/}
-								{/*			</h4>*/}
-								{/*			<ul className='space-y-1 text-sm'>*/}
-								{/*				{contractAnalysis.riskFactors*/}
-								{/*					.slice(0, 3)*/}
-								{/*					.map((risk, index) => (*/}
-								{/*						<li*/}
-								{/*							key={index}*/}
-								{/*							className='text-red-700 flex items-start gap-2'*/}
-								{/*						>*/}
-								{/*							<span className='text-red-500 mt-1'>*/}
-								{/*								•*/}
-								{/*							</span>*/}
-								{/*							{risk}*/}
-								{/*						</li>*/}
-								{/*					))}*/}
-								{/*			</ul>*/}
-								{/*		</div>*/}
-								{/*	)}*/}
-
 								<p className='text-sm text-green-700'>
-									💡 כל המידע ימולא אוטומטית בטופס ויתווסף לחוזה
+									{t('contractsAdd.analysis.hint')}
 								</p>
 							</CardContent>
 						</Card>
@@ -1529,11 +1430,11 @@ export default function AddContractModal({ isOpen, onClose, onSave }: AddContrac
 							<div>
 								<Label htmlFor='name' className='flex items-center gap-2'>
 									<FileText className='h-4 w-4 text-blue-600' />
-									שם החוזה *
+									{t('contractsAdd.form.name')}
 								</Label>
 								<Input
 									id='name'
-									placeholder='הזן שם החוזה'
+									placeholder={t('contractsAdd.form.namePh')}
 									value={formData.name}
 									onChange={(e) => handleInputChange('name', e.target.value)}
 									className={
@@ -1545,11 +1446,11 @@ export default function AddContractModal({ isOpen, onClose, onSave }: AddContrac
 							<div>
 								<Label htmlFor='client_name' className='flex items-center gap-2'>
 									<Building2 className='h-4 w-4 text-green-600' />
-									שם הלקוח *
+									{t('contractsAdd.form.clientName')}
 								</Label>
 								<Input
 									id='client_name'
-									placeholder='הזן שם הלקוח'
+									placeholder={t('contractsAdd.form.clientNamePh')}
 									value={formData.client_name}
 									onChange={(e) =>
 										handleInputChange('client_name', e.target.value)
@@ -1559,68 +1460,13 @@ export default function AddContractModal({ isOpen, onClose, onSave }: AddContrac
 									}
 								/>
 							</div>
-
-							{/*<div>*/}
-							{/*	<Label htmlFor='client_email'>אימייל לקוח</Label>*/}
-							{/*	<Input*/}
-							{/*		id='client_email'*/}
-							{/*		type='email'*/}
-							{/*		placeholder='client@example.com'*/}
-							{/*		value={formData.client_email}*/}
-							{/*		onChange={(e) =>*/}
-							{/*			handleInputChange('client_email', e.target.value)*/}
-							{/*		}*/}
-							{/*	/>*/}
-							{/*</div>*/}
-
-							{/*<div>*/}
-							{/*	<Label htmlFor='client_phone'>טלפון לקוח</Label>*/}
-							{/*	<Input*/}
-							{/*		id='client_phone'*/}
-							{/*		placeholder='050-1234567'*/}
-							{/*		value={formData.client_phone}*/}
-							{/*		onChange={(e) =>*/}
-							{/*			handleInputChange('client_phone', e.target.value)*/}
-							{/*		}*/}
-							{/*	/>*/}
-							{/*</div>*/}
 						</div>
 
 						<div className='space-y-4'>
-							{/*<div>*/}
-							{/*	<Label htmlFor='contract_type' className='flex items-center gap-2'>*/}
-							{/*		<Users className='h-4 w-4 text-purple-600' />*/}
-							{/*		סוג החוזה **/}
-							{/*	</Label>*/}
-							{/*	<Select*/}
-							{/*		value={formData.contract_type}*/}
-							{/*		onValueChange={(value) =>*/}
-							{/*			handleInputChange('contract_type', value)*/}
-							{/*		}*/}
-							{/*	>*/}
-							{/*		<SelectTrigger*/}
-							{/*			className={*/}
-							{/*				contractAnalysis ? 'border-green-300 bg-green-50' : ''*/}
-							{/*			}*/}
-							{/*		>*/}
-							{/*			<SelectValue placeholder='בחר סוג חוזה' />*/}
-							{/*		</SelectTrigger>*/}
-							{/*		<SelectContent>*/}
-							{/*			<SelectItem value='שירותים'>שירותים</SelectItem>*/}
-							{/*			<SelectItem value='אספקה'>אספקה</SelectItem>*/}
-							{/*			<SelectItem value='נדלן'>נדלן</SelectItem>*/}
-							{/*			<SelectItem value='עבודה'>עבודה</SelectItem>*/}
-							{/*			<SelectItem value='שותפות'>שותפות</SelectItem>*/}
-							{/*			<SelectItem value='רישוי'>רישוי</SelectItem>*/}
-							{/*			<SelectItem value='אחר'>אחר</SelectItem>*/}
-							{/*		</SelectContent>*/}
-							{/*	</Select>*/}
-							{/*</div>*/}
-
 							<div>
 								<Label htmlFor='start_date' className='flex items-center gap-2'>
 									<Calendar className='h-4 w-4 text-blue-600' />
-									תאריך התחלה
+									{t('contractsAdd.form.startDate')}
 								</Label>
 								<Input
 									id='start_date'
@@ -1638,7 +1484,7 @@ export default function AddContractModal({ isOpen, onClose, onSave }: AddContrac
 							<div>
 								<Label htmlFor='end_date' className='flex items-center gap-2'>
 									<Calendar className='h-4 w-4 text-red-600' />
-									תאריך סיום
+									{t('contractsAdd.form.endDate')}
 								</Label>
 								<Input
 									id='end_date'
@@ -1654,12 +1500,12 @@ export default function AddContractModal({ isOpen, onClose, onSave }: AddContrac
 							<div>
 								<Label htmlFor='total_value' className='flex items-center gap-2'>
 									<DollarSign className='h-4 w-4 text-amber-600' />
-									ערך החוזה (ש״ח)
+									{t('contractsAdd.form.totalValue')}
 								</Label>
 								<Input
 									id='total_value'
 									type='number'
-									placeholder='0'
+									placeholder={t('contractsAdd.form.totalValuePh')}
 									value={formData.total_value}
 									onChange={(e) =>
 										handleInputChange('total_value', e.target.value)
@@ -1673,10 +1519,10 @@ export default function AddContractModal({ isOpen, onClose, onSave }: AddContrac
 					</div>
 
 					<div>
-						<Label htmlFor='description'>תיאור החוזה</Label>
+						<Label htmlFor='description'>{t('contractsAdd.form.description')}</Label>
 						<Textarea
 							id='description'
-							placeholder='תיאור קצר של החוזה...'
+							placeholder={t('contractsAdd.form.descriptionPh')}
 							value={formData.description}
 							onChange={(e) => handleInputChange('description', e.target.value)}
 							rows={3}
@@ -1709,7 +1555,7 @@ export default function AddContractModal({ isOpen, onClose, onSave }: AddContrac
 							)}
 							disabled={isSubmitting}
 						>
-							ביטול
+							{t('contractsAdd.buttons.cancel')}
 						</Button>
 						<Button
 							onClick={handleSubmit}
@@ -1719,12 +1565,12 @@ export default function AddContractModal({ isOpen, onClose, onSave }: AddContrac
 							{isSubmitting ? (
 								<>
 									<Loader2 className='ml-2 h-4 w-4 animate-spin' />
-									שומר חוזה...
+									{t('contractsAdd.buttons.saving')}
 								</>
 							) : (
 								<>
 									<CheckCircle2 className='ml-2 h-4 w-4' />
-									שמור חוזה עם ניתוח AI
+									{t('contractsAdd.buttons.save')}
 								</>
 							)}
 						</Button>
@@ -1732,21 +1578,6 @@ export default function AddContractModal({ isOpen, onClose, onSave }: AddContrac
 				</div>
 
 				{/* Manual Obligation Modal */}
-				{/*<ManualObligationModal*/}
-				{/*	isOpen={isManualObligationModalOpen}*/}
-				{/*	onClose={() => setManualObligationModalOpen(false)}*/}
-				{/*	onSave={(obligationData) => {*/}
-				{/*		console.log('New manual obligation:', obligationData)*/}
-				{/*		setManualObligationModalOpen(false)*/}
-				{/*		toast({*/}
-				{/*			title: 'התחייבות נוספה!',*/}
-				{/*			description: 'ההתחייבות הידנית נוספה בהצלחה',*/}
-				{/*			className: 'bg-green-500 text-white',*/}
-				{/*		})*/}
-				{/*	}}*/}
-				{/*	contractId={null}*/}
-				{/*/>*/}
-
 				<ManualObligationModal
 					isOpen={isManualObligationModalOpen}
 					onClose={() => setManualObligationModalOpen(false)}
@@ -1761,13 +1592,7 @@ export default function AddContractModal({ isOpen, onClose, onSave }: AddContrac
 					}}
 				/>
 
-				{/* Obligation Timer Modal */}
-				{/*<ObligationTimerModal*/}
-				{/*	isOpen={isTimerModalOpen}*/}
-				{/*	onClose={() => setTimerModalOpen(false)}*/}
-				{/*	obligation={selectedObligation}*/}
-				{/*	clientEmail={formData.client_email}*/}
-				{/*/>*/}
+				{/* Obligation Timer Modal (закомментировано в исходнике) */}
 			</DialogContent>
 		</Dialog>
 	)

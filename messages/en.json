@@ -614,5 +614,103 @@
 			"until": "until"
 		},
 		"markReadTitle": "Mark as read"
+	},
+	"contractsAdd": {
+		"dialogTitle": "Add new contract — LAWCOPILOT AI",
+		"ai": {
+			"title": "OpenAI",
+			"dropTitle": "Upload a contract for full automatic processing",
+			"dropHint": "PDF, Word, RTF or plain text — we will extract and analyze everything",
+			"chooseFile": "Choose file",
+			"manualLabel": "Or enter contract text manually",
+			"manualPh": "Paste the full contract text here for analysis…",
+			"analyze": "Analyze text with AI",
+			"analyzing": "Analyzing…",
+			"processedToastTitle": "File processed successfully! 📄",
+			"processedToastDescPrefix": "Extracted",
+			"units": { "words": "words", "chunks": "chunks" },
+			"stage": {
+				"processing": "Processing file…",
+				"extracting": "Extracting text from file…",
+				"analyzing": "Contract Analyst with OpenAI…",
+				"autofill": "Auto-filling the form…"
+			},
+			"errors": {
+				"tooBigTitle": "File too large",
+				"tooBigDesc": "The file size cannot exceed 10MB",
+				"unsupportedTitle": "Unsupported file type",
+				"unsupportedDesc": "Please upload PDF, Word or text file",
+				"processTitle": "File processing error",
+				"processDesc": "Try again or enter the text manually",
+				"emptyTextTitle": "Error",
+				"emptyTextDesc": "Please upload a file or enter contract text",
+				"aiTitle": "AI analysis error",
+				"aiDesc": "Try again or fill the form manually"
+			}
+		},
+		"analysis": {
+			"title": "Contract analysis results",
+			"addObligation": "Add obligation manually",
+			"details": "Contract details",
+			"fields": {
+				"name": "Name",
+				"value": "Value",
+				"start": "Start",
+				"end": "End"
+			},
+			"parties": "Parties to the contract",
+			"hint": "💡 All data will be auto-filled into the form and added to the contract"
+		},
+		"map": {
+			"title": "Representatives",
+			"addActorPlaceholder": "New representative (e.g., “Party B”)",
+			"addActor": "Add",
+			"suggestionBase": "Party",
+			"userSearchPh": "Search by email or name…",
+			"noRoles": "No roles were found in obligations to map.",
+			"clearSelection": "Clear selection",
+			"chipDeleteTitle": "Remove"
+		},
+		"form": {
+			"name": "Contract name *",
+			"namePh": "Enter contract name",
+			"clientName": "Client name *",
+			"clientNamePh": "Enter client name",
+			"startDate": "Start date",
+			"endDate": "End date",
+			"totalValue": "Contract value (₪)",
+			"totalValuePh": "0",
+			"description": "Contract description",
+			"descriptionPh": "Short description of the contract…"
+		},
+		"buttons": {
+			"cancel": "Cancel",
+			"saving": "Saving contract…",
+			"save": "Save contract with AI analysis"
+		},
+		"save": {
+			"okTitle": "Contract saved! 🎉",
+			"okDescPrefix": "Contract saved with",
+			"okDescSuffix": "obligations in the database",
+			"errTitle": "Error saving contract",
+			"errDescSuffix": "— check database connection"
+		},
+		"common": { "yes": "Yes", "no": "No" }
+	},
+	"obligation": {
+		"edit": "Edit",
+		"delete": "Delete",
+		"save": "Save",
+		"cancel": "Cancel",
+		"title": "Title",
+		"description": "Description",
+		"priority": "Priority",
+		"dueDate": "Due date",
+		"responsible": "Responsible",
+		"requiresProof": "Requires proof",
+		"obligationsTitle": "Obligations"
+	},
+	"tasks": {
+		"priority": { "low": "Low", "medium": "Medium", "high": "High" }
 	}
 }
