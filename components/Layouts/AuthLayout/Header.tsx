@@ -21,6 +21,7 @@ import { resetAuth } from '@/store/features/auth/authSlice'
 import LocaleSelect from '@/components/Layouts/LocaleSelect'
 import { useLocale } from '@/providers/I18nProvider'
 import { useState } from 'react'
+import { selectUnreadCount } from '@/store/features/notifications/notificationsSelectors'
 
 type Stats = {
 	activeContracts: number
@@ -34,12 +35,7 @@ type Props = {
 }
 
 export default function Header({ onOpenSettings }: Props) {
-	const [stats, setStats] = useState({
-		activeContracts: 0,
-		pendingObligations: 0,
-		overdueObligations: 0,
-		completedThisWeek: 0,
-	})
+	const unread = useAppSelector(selectUnreadCount)
 
 	const user = useAppSelector(authSelectors.selectUser)
 
@@ -108,7 +104,11 @@ export default function Header({ onOpenSettings }: Props) {
 						aria-label='התראות'
 					>
 						<Bell className='h-6 w-6' />
-						<span className='absolute -top-1 -left-1 h-4 w-4 bg-red-500 rounded-full text-xs' />
+						{unread > 0 && (
+							<span className='absolute flex justify-center items-center -top-1 -left-1 h-5 w-5 bg-yellow-400 rounded-full text-xs'>
+								{unread}
+							</span>
+						)}
 					</Button>
 
 					<DropdownMenu>
@@ -171,7 +171,7 @@ export default function Header({ onOpenSettings }: Props) {
 								<div className='flex flex-col'>
 									<span className='font-medium text-lg'>התראות</span>
 									<span className='text-sm text-slate-500'>
-										{stats?.overdueObligations ?? 0} התראות חדשות
+										{unread} התראות חדשות
 									</span>
 								</div>
 							</DropdownMenuItem>

@@ -6,6 +6,7 @@ import {
 	UnreadCountResponse,
 } from './notificationsTypes'
 
+// @ts-ignore
 export const notificationsApi = createApi({
 	reducerPath: 'notificationsApi',
 	baseQuery: fetchBaseQuery({
@@ -36,6 +37,7 @@ export const notificationsApi = createApi({
 		getUnreadCount: builder.query<UnreadCountResponse, void>({
 			query: () => ({ url: 'notifications/unread-count', method: 'GET' }),
 			providesTags: [{ type: 'Unread', id: 'COUNT' }],
+			keepUnusedDataFor: 30,
 		}),
 
 		// если перейдёте на bigint PK — поменяйте generic второго параметра на number

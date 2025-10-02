@@ -8,6 +8,8 @@ import { Brain, Sparkles, Zap } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { useI18n, useLocale } from '@/providers/I18nProvider'
 import { BASE_ROUTES, I18N_KEYS, ICONS, TabKey } from '@/lib/nav'
+import { useGetUnreadCountQuery } from '@/store/features/notifications/notificationsApi'
+
 type NavItem = { key: TabKey; name: string; icon: React.ComponentType<any>; href: string }
 interface IPropsSidebar {
 	isCollapsed: boolean
@@ -16,8 +18,14 @@ interface IPropsSidebar {
 }
 const Sidebar: React.FC<IPropsSidebar> = ({ isCollapsed, setIsCollapsed, allowedTabs }) => {
 	const pathname = usePathname()
-
 	const items = useNavItems(allowedTabs)
+
+	const { data } = useGetUnreadCountQuery(undefined, {
+		pollingInterval: 10000,
+		refetchOnFocus: true,
+		refetchOnReconnect: true,
+		//skipPollingIfUnfocused: false,
+	})
 
 	const isActive = (pathname: string, href: string, isRoot = false) => {
 		const strip = (s: string) => s.replace(/\/+$/, '')
@@ -67,7 +75,7 @@ const Sidebar: React.FC<IPropsSidebar> = ({ isCollapsed, setIsCollapsed, allowed
 				<ul className='space-y-3'>
 					{items.map((item) => {
 						const active = isActive(pathname!, item.href, item.key === TabKey.Contracts)
-
+						const isClientTab = item.key === TabKey.Notifications
 						return (
 							<li key={item.key}>
 								<Link
@@ -85,6 +93,11 @@ const Sidebar: React.FC<IPropsSidebar> = ({ isCollapsed, setIsCollapsed, allowed
 									/>
 									{!isCollapsed && (
 										<span className='ml-4 font-medium'>{item.name}</span>
+									)}
+									{!active && isClientTab && data && data.count > 0 && (
+										<div className={'ml-auto text-yellow-400 animate-pulse'}>
+											{data.count}
+										</div>
 									)}
 									{!isCollapsed && active && (
 										<Zap className='h-5 w-5 text-yellow-400 ml-auto animate-pulse' />
