@@ -1,19 +1,19 @@
 import { TabKey } from '@/lib/nav'
-import { RoleSlug } from '@/store/features/auth/authTypes'
+import { RolesEnum } from '@/store/features/auth/authTypes'
 
-export const NAV_ACCESS: Record<TabKey, RoleSlug[]> = {
-	[TabKey.Contracts]: ['admin', 'lawyer', 'client'],
-	[TabKey.Tasks]: ['admin', 'lawyer', 'client'],
-	[TabKey.Clients]: ['admin', 'lawyer'],
-	[TabKey.Meetings]: ['admin', 'lawyer', 'client'],
-	[TabKey.Notifications]: ['admin', 'lawyer', 'client'],
-	[TabKey.Settings]: ['admin', 'lawyer', 'client'],
+export const NAV_ACCESS: Record<TabKey, RolesEnum[]> = {
+	[TabKey.Contracts]: [RolesEnum.ADMIN, RolesEnum.LAWYER, RolesEnum.CLIENT],
+	[TabKey.Tasks]: [RolesEnum.ADMIN, RolesEnum.LAWYER, RolesEnum.CLIENT],
+	[TabKey.Clients]: [RolesEnum.ADMIN, RolesEnum.LAWYER],
+	[TabKey.Meetings]: [RolesEnum.ADMIN, RolesEnum.LAWYER, RolesEnum.CLIENT],
+	[TabKey.Notifications]: [RolesEnum.ADMIN, RolesEnum.LAWYER, RolesEnum.CLIENT],
+	[TabKey.Settings]: [RolesEnum.ADMIN, RolesEnum.LAWYER, RolesEnum.CLIENT],
 }
 
-export const PERMISSIONS: Record<string, RoleSlug[]> = {
-	'contracts.create': ['admin', 'lawyer'],
-	'clients.invite': ['admin', 'lawyer'],
-	'documents.upload': ['admin', 'lawyer'],
-	'tasks.assign': ['admin', 'lawyer'],
-	'risks.create': ['admin', 'lawyer'],
+export const PERMISSIONS: Record<string, RolesEnum[]> = {
+	'contracts.create': [RolesEnum.ADMIN, RolesEnum.LAWYER],
+	'clients.invite': [RolesEnum.ADMIN, RolesEnum.LAWYER],
+	'documents.upload': [RolesEnum.ADMIN, RolesEnum.LAWYER],
+	'tasks.assign': [RolesEnum.ADMIN, RolesEnum.LAWYER],
+	'risks.create': [RolesEnum.ADMIN, RolesEnum.LAWYER],
 }

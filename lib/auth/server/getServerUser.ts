@@ -1,6 +1,6 @@
 import 'server-only'
 import { cookies } from 'next/headers'
-import { RoleSlug, UserMinimal } from '@/store/features/auth/authTypes'
+import { RolesEnum, RoleSlug, UserMinimal } from '@/store/features/auth/authTypes'
 import environment from '@/config'
 
 const API_BASE = environment.BASE_URL
@@ -20,7 +20,7 @@ export async function getServerUser(): Promise<UserMinimal> {
 		if (!res.ok) return null
 
 		const data = await res.json()
-		const roles: RoleSlug[] = Array.isArray(data?.roles)
+		const roles = Array.isArray(data?.roles)
 			? data.roles.map((r: any) => r?.slug).filter(Boolean)
 			: []
 

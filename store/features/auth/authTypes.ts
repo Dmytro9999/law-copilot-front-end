@@ -147,5 +147,5 @@ export type RoleSlug = 'admin' | 'lawyer' | 'client'
 
 export type UserMinimal = {
 	id: number | string
-	roles: RoleSlug[]
+	roles: RolesEnum[]
 } | null
