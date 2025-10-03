@@ -29,7 +29,7 @@ import {
 } from '@/store/features/notifications/notificationsTypes'
 import { useI18n, useLocale } from '@/providers/I18nProvider'
 
-function labelByTypeFactory(t: (k: string) => string, lang: 'he' | 'en') {
+export function labelByTypeFactory(t: (k: string) => string, lang: 'he' | 'en') {
 	const quote = (s?: string) => (s ? `: «${s}»` : '')
 	const fmtUntil = (iso?: string) => {
 		if (!iso) return ''
@@ -37,12 +37,39 @@ function labelByTypeFactory(t: (k: string) => string, lang: 'he' | 'en') {
 		const dt = new Intl.DateTimeFormat(lang).format(d)
 		return ` (${t('notifications.types.until')} ${dt})`
 	}
+	const fmtBy = (name?: string) => (name ? ` ${t('notifications.types.by')} ${name}` : '')
+	const fmtContract = (title?: string | null) =>
+		title ? ` (${t('notifications.types.inContract')} «${title}»)` : ''
+
 	return (n: NotificationDto) => {
+		const title = n.payload?.taskTitle
+		const contractTitle = n.payload?.contractTitle as string | undefined
+
 		switch (n.type) {
 			case NotificationType.TASK_ASSIGNED:
-				return `${t('notifications.types.taskAssignedPrefix')}${quote(n.payload?.taskTitle)}`
+				return `${t('notifications.types.taskAssignedPrefix')}${quote(title)}${fmtContract(contractTitle)}`
+
 			case NotificationType.TASK_EVIDENCE_REQUESTED:
-				return `${t('notifications.types.taskEvidencePrefix')}${quote(n.payload?.taskTitle)}${fmtUntil(n.payload?.dueDate)}`
+				return `${
+					t('notifications.types.taskEvidenceRequestedPrefix') ||
+					t('notifications.types.taskEvidencePrefix')
+				}${quote(title)}${fmtUntil(n.payload?.dueDate)}${fmtContract(contractTitle)}`
+
+			case NotificationType.TASK_EVIDENCE_SUBMITTED:
+				return `${t('notifications.types.taskEvidenceSubmittedPrefix')}${quote(title)}${fmtBy(
+					n.payload?.submitterName
+				)}${fmtContract(contractTitle)}`
+
+			case NotificationType.TASK_EVIDENCE_APPROVED:
+				return `${t('notifications.types.taskEvidenceApprovedPrefix')}${quote(title)}${fmtContract(contractTitle)}`
+
+			case NotificationType.TASK_EVIDENCE_REJECTED:
+				return `${t('notifications.types.taskEvidenceRejectedPrefix')}${quote(title)}${
+					n.payload?.reason
+						? ` (${t('notifications.types.reason')}: ${n.payload.reason})`
+						: ''
+				}${fmtContract(contractTitle)}`
+
 			default:
 				return t('notifications.types.default')
 		}

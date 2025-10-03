@@ -610,7 +610,14 @@
 			"default": "התראה",
 			"taskAssignedPrefix": "הוקצתה לך משימה",
 			"taskEvidencePrefix": "נתבקשו ראיות עבור המשימה",
-			"until": "עד"
+			"taskEvidenceRequestedPrefix": "נתבקשו ראיות עבור המשימה",
+			"taskEvidenceSubmittedPrefix": "הוגשו ראיות עבור המשימה",
+			"taskEvidenceApprovedPrefix": "הראיות אושרו עבור המשימה",
+			"taskEvidenceRejectedPrefix": "הראיות נדחו עבור המשימה",
+			"until": "עד",
+			"by": "על ידי",
+			"inContract": "בחוזה",
+			"reason": "סיבה"
 		},
 		"markReadTitle": "סמן כנקרא"
 	},

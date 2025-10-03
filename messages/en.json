@@ -611,7 +611,14 @@
 			"default": "Notification",
 			"taskAssignedPrefix": "You were assigned to a task",
 			"taskEvidencePrefix": "Evidence requested for the task",
-			"until": "until"
+			"taskEvidenceRequestedPrefix": "Evidence requested for the task",
+			"taskEvidenceSubmittedPrefix": "Evidence submitted for the task",
+			"taskEvidenceApprovedPrefix": "Evidence approved for the task",
+			"taskEvidenceRejectedPrefix": "Evidence rejected for the task",
+			"until": "until",
+			"by": "by",
+			"inContract": "in contract",
+			"reason": "reason"
 		},
 		"markReadTitle": "Mark as read"
 	},

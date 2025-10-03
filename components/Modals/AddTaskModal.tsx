@@ -60,6 +60,8 @@ export default function AddTaskModal({ isOpen, onClose, contracts, onCreated }: 
 			description: formData.description.trim() || null,
 			priority: formData.priority,
 			due_at: formData.dueDate ? formData.dueDate.toISOString().slice(0, 10) : null,
+			approval_required: formData.approval_required,
+			assigneeIds: [3],
 		}
 
 		try {

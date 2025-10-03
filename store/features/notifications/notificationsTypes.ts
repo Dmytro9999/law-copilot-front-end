@@ -1,6 +1,9 @@
 export enum NotificationType {
 	TASK_ASSIGNED = 'task_assigned',
 	TASK_EVIDENCE_REQUESTED = 'task_evidence_requested',
+	TASK_EVIDENCE_REJECTED = 'task_evidence_rejected',
+	TASK_EVIDENCE_APPROVED = 'task_evidence_approved',
+	TASK_EVIDENCE_SUBMITTED = 'task_evidence_submitted',
 }
 
 export enum NotificationObjectType {
