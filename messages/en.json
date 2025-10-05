@@ -1,723 +1,756 @@
 {
-	"brand": {
-		"title": "Law Copilot",
-		"subtitle": "AI Legal Assistant",
-		"tagline": "The first smart legal system in Israel"
-	},
-	"auth": {
-		"login": {
-			"title": "Sign in",
-			"subtitle": "Access your account",
-			"emailLabel": "Email address *",
-			"emailPlaceholder": "lawyer@example.com",
-			"button": "Sign in",
-			"loading": "Signing in...",
-			"forgot": "Forgot password?",
-			"signup": "Don't have an account? Sign up",
-			"features": {
-				"ai": "Advanced AI",
-				"security": "Full security",
-				"automation": "Automation"
-			},
-			"legal": {
-				"prefix": "By signing up you agree to the",
-				"terms": "Terms of Use",
-				"and": "and",
-				"privacy": "Privacy Policy"
-			},
-			"password": {
-				"label": "Password *",
-				"show": "Show password",
-				"hide": "Hide password"
-			}
-		},
-		"forgot": {
-			"title": "Reset password",
-			"subtitle": "Enter your email to receive a reset link",
-			"emailLabel": "Email address",
-			"emailPlaceholder": "lawyer@example.com",
-			"submit": "Send reset link",
-			"sending": "Sending...",
-			"backToLogin": "Back to sign in",
-			"dialog": {
-				"title": "Reset link sent",
-				"desc": "An email with password reset instructions has been sent to your address.",
-				"ok": "OK"
-			},
-			"toast": {
-				"errorTitle": "Error",
-				"defaultError": "Something went wrong, try again"
-			}
-		},
-		"reset": {
-			"title": "Reset password",
-			"subtitle": "Choose a new password and sign in",
-			"emailLabel": "Email address *",
-			"emailPlaceholder": "lawyer@example.com",
-			"newPasswordLabel": "New password *",
-			"confirmPasswordLabel": "Confirm password *",
-			"submit": "Change password & sign in",
-			"saving": "Saving…",
-			"toast": {
-				"errorTitle": "Error",
-				"emailRequired": "Please enter your email",
-				"pwMin": "Password must be at least 8 characters",
-				"pwMismatch": "Passwords do not match",
-				"successTitle": "Password updated",
-				"successDesc": "Signed in successfully",
-				"defaultError": "Something went wrong, try again"
-			},
-			"invalidTitle": "Link is invalid or expired",
-			"invalidDesc": "Try requesting a new password reset link."
-		},
-		"signup": {
-			"title": "Create account",
-			"subtitle": "Open a new account for your law firm",
-			"alert": "The system is intended for lawyers only. Professional verification is required.",
-			"fields": {
-				"fullNameLabel": "Full name *",
-				"fullNamePlaceholder": "Adv. David Cohen",
-				"lawFirmLabel": "Law firm *",
-				"lawFirmPlaceholder": "Cohen & Partners",
-				"phoneLabel": "Phone *",
-				"phonePlaceholder": "050-1234567",
-				"emailLabel": "Email address *",
-				"emailPlaceholder": "lawyer@example.com"
-			},
-			"passwordHelper": "Password must contain at least 8 characters, an uppercase letter, a lowercase letter and a number",
-			"submit": "Sign up",
-			"submitting": "Signing up...",
-			"footerLogin": "Already have an account? Sign in here",
-			"toast": {
-				"successTitle": "Signed up successfully! 📧",
-				"successDesc": "Please check your email to verify your account",
-				"errorTitle": "Error",
-				"defaultError": "Something went wrong, try again"
-			}
-		}
-	},
-	"twofa": {
-		"title": "Two-factor verification",
-		"subtitle": "Enter the code we sent you",
-		"codeSent": "Code sent",
-		"to": "to",
-		"validForApprox": "Valid for ~",
-		"min": "min.",
-		"label6": "Enter 6-digit code",
-		"pasteHint": "You can paste all 6 digits at once from the clipboard.",
-		"verifying": "Verifying...",
-		"confirmAndSignIn": "Confirm & sign in",
-		"resend": "Send code again",
-		"resendCooldown": "Send again",
-		"changeAccount": "Change account",
-		"toast": {
-			"error": "Error",
-			"codeIncompleteTitle": "Code is incomplete",
-			"codeIncompleteDesc": "Enter 6 digits",
-			"resendOkTitle": "Code sent",
-			"resendOkDesc": "Check your email",
-			"resendFailDesc": "Could not send the code",
-			"verifyFailDefault": "Invalid or expired code"
-		}
-	},
-	"obligation": {
-		"obligationsTitle": "Detected obligations",
-		"edit": "Edit",
-		"delete": "Delete",
-		"save": "Save",
-		"cancel": "Cancel",
-		"dueDate": "Due date",
-		"category": "Category",
-		"responsible": "Responsible",
-		"amount": "Amount",
-		"priority": "Priority",
-		"requiresProof": "Proof required",
-		"yes": "Yes",
-		"no": "No",
-		"saved": "Saved",
-		"updatedDesc": "Obligation updated",
-		"deleted": "Deleted",
-		"removedDesc": "Obligation removed from the list",
-		"placeholderCategory": "Payment / Delivery / ...",
-		"placeholderResponsible": "Party A / Party B / Name"
-	},
-	"nav": {
-		"contracts": "Contracts",
-		"tasks": "Tasks",
-		"clients": "Clients",
-		"meetings": "Meeting summaries",
-		"notifications": "Notifications",
-		"settings": "Settings"
-	},
-	"signupInvite": {
-		"title": "Complete your signup",
-		"subtitle": "Review details and set your password",
-		"loading": "Loading invitation...",
-		"invalidOrExpired": "The invitation link is invalid or expired. Please ask your lawyer to resend it.",
-		"goLogin": "Go to login",
-		"welcome": "Welcome, {{name}}!",
-		"invitedBy": "You were invited by {{lawyer}}",
-		"invitedByUnknown": "You were invited by a lawyer",
-		"checkAndSetPassword": "Please review the details below and set your password.",
-		"fields": {
-			"fullName": "Full name",
-			"email": "Email (read only)",
-			"phone": "Phone",
-			"position": "Position",
-			"clientType": "Client type",
-			"companyName": "Company",
-			"address": "Address",
-			"identificationCode": "Identification code",
-			"businessNumber": "Business number",
-			"notes": "Notes"
-		},
-		"placeholders": {
-			"fullName": "e.g., Nastya Cohen",
-			"phone": "050-0000000",
-			"companyName": "Company (optional)",
-			"position": "Position (optional)",
-			"clientType": "Select client type",
-			"address": "Street, number, city",
-			"identificationCode": "e.g., 123456789",
-			"businessNumber": "e.g., 515111111",
-			"notes": "Notes (optional)"
-		},
-		"clientTypes": {
-			"individual": "Individual",
-			"company": "Company"
-		},
-		"emailLockedHint": "Email is set by the invitation and cannot be changed now.",
-		"passwordHelper": "Use a strong password. You can change it later.",
-		"submit": "Finish & Sign up",
-		"submitting": "Creating account...",
-		"toast": {
-			"missingPasswordTitle": "Validation error",
-			"missingPasswordDesc": "Please enter a password.",
-			"successTitle": "Signed up successfully",
-			"successDesc": "You can now sign in.",
-			"errorTitle": "Sign up error",
-			"defaultError": "Something went wrong. Please try again."
-		},
-		"footerLogin": "Already have account? Login"
-	},
-	"inviteModal": {
-		"title": "Add New Client",
-		"clientTypeLabel": "Client Type",
-		"clientTypePlaceholder": "Select client type",
-		"clientTypeIndividual": "Individual",
-		"clientTypeCompany": "Company",
-		"fullNameLabel": "Full Name",
-		"fullNamePh": "Enter full name...",
-		"companyNameLabel": "Company Name",
-		"companyNamePh": "Enter company name...",
-		"emailLabel": "Email",
-		"phoneLabel": "Phone",
-		"phonePh": "050-1234567",
-		"positionLabel": "Contact Position",
-		"positionPh": "CEO, CFO...",
-		"addressLabel": "Address",
-		"addressPh": "Street, number, city...",
-		"identificationCodeLabel": "ID Number",
-		"identificationCodePh": "123456789",
-		"businessNumberLabel": "Business Number",
-		"businessNumberPh": "123456789",
-		"notesLabel": "Notes",
-		"notesPh": "Additional notes about the client...",
-		"submit": "Send Invitation",
-		"saving": "Sending invitation...",
-		"cancel": "Cancel",
-		"toast": {
-			"successTitle": "Invitation sent",
-			"successDesc": "Client invitation with a signup link was sent.",
-			"errorTitle": "Invitation error",
-			"defaultError": "Something went wrong. Please try again later."
-		}
-	},
-	"common": {
-		"loading": "Loading..."
-	},
-	"invitationsPage": {
-		"title": "Invitations",
-		"actions": {
-			"new": "New invitation",
-			"refresh": "Refresh",
-			"refreshing": "Refreshing..."
-		},
-		"filters": {
-			"searchPlaceholder": "Search by name/email/company...",
-			"allStatuses": "All statuses",
-			"allTypes": "All types",
-			"perPage10": "10 per page",
-			"perPage20": "20 per page",
-			"perPage50": "50 per page"
-		},
-		"status": {
-			"pending": "Pending",
-			"activated": "Activated",
-			"expired": "Expired"
-		},
-		"clientType": {
-			"individual": "Individual",
-			"company": "Company"
-		},
-		"cards": {
-			"activated": "Activated",
-			"pending": "Pending",
-			"expired": "Expired",
-			"total": "Total"
-		},
-		"table": {
-			"title": "Invitation list",
-			"columns": {
-				"name": "Name / Company",
-				"type": "Type",
-				"email": "Email",
-				"phone": "Phone",
-				"status": "Status",
-				"expires": "Expires",
-				"actions": "Actions"
-			}
-		},
-		"empty": "No invitations yet",
-		"pagination": {
-			"prev": "Prev",
-			"next": "Next",
-			"page": "Page",
-			"of": "of"
-		},
-		"toasts": {
-			"createdTitle": "Invitation created",
-			"createdDesc": "Email sent to",
-			"resentTitle": "Resent",
-			"resentDesc": "Resent to",
-			"cancelledTitle": "Invitation canceled"
-		},
-		"confirm": {
-			"cancel": "Cancel this invitation?"
-		}
-	},
-	"tasks": {
-		"title": "Task management",
-		"subtitle": "Track and organize your legal tasks",
-		"add": "Add new task",
-		"addNew": "Add new task",
-		"loading": "Loading tasks...",
-		"listTitle": "Tasks list",
-		"emptyTitle": "No tasks yet",
-		"emptyDesc": "Start by adding your first task",
-		"forContract": "Contract",
-		"stats": {
-			"pending": "Pending",
-			"inProgress": "In progress",
-			"completed": "Completed",
-			"total": "Total tasks"
-		},
-		"filters": {
-			"search": "Search",
-			"searchPh": "Search by title or description",
-			"status": "Status",
-			"contract": "Contract",
-			"allContracts": "All contracts"
-		},
-		"status": {
-			"all": "All",
-			"pending": "Pending",
-			"inProgress": "In progress",
-			"in_progress": "In progress",
-			"completed": "Completed"
-		},
-		"th": {
-			"title": "Title",
-			"contract": "Contract",
-			"priority": "Priority",
-			"status": "Status",
-			"due": "Due",
-			"actions": "Actions"
-		},
-		"priority": {
-			"low": "Low",
-			"medium": "Medium",
-			"high": "High",
-			"urgent": "Urgent"
-		},
-		"toast": {
-			"deleted": "Task deleted",
-			"updated": "Task updated",
-			"error": "Action failed"
-		},
-		"confirm": {
-			"delete": "Delete this task?"
-		},
-		"pagination": {
-			"page": "Page",
-			"prev": "Prev",
-			"next": "Next"
-		},
-		"actions": {
-			"inProgress": "In progress",
-			"complete": "Mark as completed"
-		},
-		"sampleContract": "Sample contract"
-	},
-	"taskModal": {
-		"title": "Create a new task",
-		"contractLabel": "Contract",
-		"contractPlaceholder": "Select a contract",
-		"titleLabel": "Task title",
-		"titlePh": "Enter a title…",
-		"category": "Category",
-		"cat": {
-			"general": "General",
-			"legal": "Legal",
-			"client": "Client",
-			"contract": "Contract",
-			"research": "Research",
-			"admin": "Admin"
-		},
-		"description": "Task description",
-		"descriptionPh": "Describe the task…",
-		"priority": "Priority",
-		"dueDate": "Due date",
-		"pickDate": "Pick a date",
-		"estimatedHours": "Estimated hours",
-		"estimatedHoursPh": "Number of hours",
-		"tags": "Tags (comma-separated)",
-		"tagsPh": "urgent, important, new client…",
-		"subtasks": "Subtasks",
-		"subtaskPlaceholder": "Describe subtask…",
-		"addSubtask": "Add subtask",
-		"saving": "Saving…",
-		"submit": "Create task",
-		"cancel": "Cancel",
-		"createdTitle": "Task created",
-		"createdDesc": "The task was saved successfully",
-		"toastError": "Failed to create task"
-	},
-	"risks": {
-		"title": "Identified risks",
-		"empty": "No risks",
-		"edit": "Edit",
-		"delete": "Delete",
-		"save": "Save",
-		"cancel": "Cancel",
-		"placeholder": "Describe the risk...",
-		"addNew": "Add new risk",
-		"newPlaceholder": "Title / short description",
-		"add": "Add"
-	},
-	"taskView": {
-		"title": "Task",
-		"subtitle": "Details and progress",
-		"back": "Back to tasks",
-		"backToParent": "Back to parent",
-		"description": "Description",
-		"due": "Due date",
-		"dueDate": "Due date",
-		"created": "Created",
-		"createdBy": "Created by",
-		"progress": "Progress",
-		"assignees": "Assignees",
-		"approvalRequired": "Approval required",
-		"contract": "Contract",
-		"contractDue": "Contract due",
-		"noSubtasks": "No subtasks",
-		"subtasks": "Subtasks",
-		"evidence": {
-			"title": "Evidences",
-			"submitted": "Submitted",
-			"approved": "Approved",
-			"rejected": "Rejected",
-			"submittedBy": "Submitted by",
-			"createdAt": "Created",
-			"openDoc": "Open document",
-			"document": "Document",
-			"noDocument": "No document attached",
-			"noMessage": "No message",
-			"approve": "Approve",
-			"reject": "Reject",
-			"form": {
-				"title": "Submit evidence for approval",
-				"messageLabel": "Message",
-				"messagePlaceholder": "Write a short note…",
-				"fileLabel": "Attachment",
-				"pickFile": "Choose file",
-				"removeFile": "Remove file",
-				"fileSelected": "File selected",
-				"submit": "Submit evidence",
-				"submitting": "Submitting…",
-				"cancel": "Cancel",
-				"hint": "Attach a file if needed. Message is required.",
-				"hiddenSubmitted": "Evidence already submitted and awaits review.",
-				"errors": {
-					"messageRequired": "Message is required",
-					"uploadFailed": "File upload failed",
-					"submitFailed": "Could not submit evidence"
-				},
-				"success": "Evidence submitted"
-			}
-		},
-		"status": {
-			"todo": "To do",
-			"in_progress": "In progress",
-			"awaiting_approval": "Awaiting approval",
-			"done": "Done",
-			"unknown": "Unknown"
-		},
-		"subtasksModal": {
-			"createTitle": "Create subtask",
-			"createBtn": "Create subtask",
-			"saving": "Saving...",
-			"submit": "Create",
-			"cancel": "Cancel",
-			"created": "Subtask created",
-			"createdDesc": "The subtask has been created.",
-			"createFailed": "Failed to create subtask",
-			"assigneesRequired": "Assignees required",
-			"assigneesRequiredDesc": "Add at least one assignee when approval is required.",
-			"fields": {
-				"title": "Title",
-				"titlePh": "Enter subtask title...",
-				"description": "Description",
-				"descriptionPh": "Describe the subtask...",
-				"priority": "Priority",
-				"assigneesPh": "Assignee IDs (comma-separated)"
-			}
-		}
-	},
-	"meetingSummaries": {
-		"title": "Meeting Summaries",
-		"subtitle": "Search by title and filter by contract",
-		"new": "New Meeting",
-		"search": {
-			"label": "Search by title",
-			"placeholder": "Type a meeting title…"
-		},
-		"contract": {
-			"label": "Contract",
-			"all": "All contracts"
-		},
-		"filters": {
-			"clear": "Clear filters"
-		},
-		"loading": "Loading…",
-		"empty": {
-			"title": "No summaries yet",
-			"text": "Try changing filters or create a new summary."
-		},
-		"summary": "Summary:",
-		"keyPoints": "Key points:",
-		"docBadge": "Document",
-		"keyPoints.more": "+{n} more",
-		"actions": {
-			"open": "Open",
-			"openDesc": "Coming soon: summary details page"
-		},
-		"pagination": {
-			"prev": "Previous",
-			"next": "Next",
-			"pageOf": "Page {page} of {total}"
-		}
-	},
-
-	"meetingSummaryModal": {
-		"title": "Meeting summary",
-		"fields": {
-			"contract": "Related contract (optional)",
-			"contractPh": "Select a contract",
-			"date": "Meeting date",
-			"title": "Title",
-			"titlePh": "e.g., Meeting with client X",
-			"notes": "Notes / focus (optional)",
-			"notesPh": "Briefly write what was discussed or what should be extracted..."
-		},
-		"file": {
-			"label": "Single document (any file type)",
-			"remove": "Remove file",
-			"tempLink": "Temporary view link:",
-			"open": "Open",
-			"progress": "{done}/1 completed",
-			"status": {
-				"selected": "Selected",
-				"analyzing": "Analyzing…",
-				"done": "Analyzed",
-				"error": "Error"
-			}
-		},
-		"actions": {
-			"analyze": "AI Analyze",
-			"analyzing": "AI analyzing…",
-			"save": "Save summary",
-			"saving": "Saving...",
-			"cancel": "Cancel"
-		},
-		"ai": {
-			"resultTitle": "AI analysis results",
-			"completed": "Completed",
-			"summaryTitle": "Summary",
-			"keyPointsTitle": "Key points"
-		},
-		"errors": {
-			"titleRequired": "Title is required",
-			"dateRequired": "Meeting date is required",
-			"fileRequired": "Select a file first"
-		},
-		"fallback": {
-			"summary": "Short summary for \"{title}\""
-		},
-		"toasts": {
-			"analyzeSuccess": {
-				"title": "Analysis complete",
-				"desc": "AI summary generated"
-			},
-			"analyzeFailed": {
-				"title": "Analysis failed",
-				"desc": "Could not analyze the file. Try again."
-			},
-			"saveSuccess": {
-				"title": "Saved",
-				"desc": "ID: {id}"
-			},
-			"saveFailed": {
-				"title": "Save failed"
-			}
-		}
-	},
-	"contracts": {
-		"title": "Legal Contracts",
-		"subtitle": "Centralize, organize, and analyze all your agreements",
-		"addNew": "Create Contract"
-	},
-
-	"notifications": {
-		"title": "Notifications",
-		"markAll": "Mark all as read",
-		"markingAll": "Marking…",
-		"toast": {
-			"errorTitle": "Error",
-			"markOneFail": "Failed to mark the notification",
-			"markAllFail": "Failed to mark all notifications"
-		},
-		"empty": "No notifications yet",
-		"groups": {
-			"unread": "Recent (unread)",
-			"all": "All"
-		},
-		"paginate": {
-			"prev": "Back",
-			"next": "Forward",
-			"page": "Page"
-		},
-		"types": {
-			"default": "Notification",
-			"taskAssignedPrefix": "You were assigned to a task",
-			"taskEvidencePrefix": "Evidence requested for the task",
-			"taskEvidenceRequestedPrefix": "Evidence requested for the task",
-			"taskEvidenceSubmittedPrefix": "Evidence submitted for the task",
-			"taskEvidenceApprovedPrefix": "Evidence approved for the task",
-			"taskEvidenceRejectedPrefix": "Evidence rejected for the task",
-			"until": "until",
-			"by": "by",
-			"inContract": "in contract",
-			"reason": "reason"
-		},
-		"markReadTitle": "Mark as read"
-	},
-	"contractsAdd": {
-		"dialogTitle": "Add new contract — LAWCOPILOT AI",
-		"ai": {
-			"title": "OpenAI",
-			"dropTitle": "Upload a contract for full automatic processing",
-			"dropHint": "PDF, Word, RTF or plain text — we will extract and analyze everything",
-			"chooseFile": "Choose file",
-			"manualLabel": "Or enter contract text manually",
-			"manualPh": "Paste the full contract text here for analysis…",
-			"analyze": "Analyze text with AI",
-			"analyzing": "Analyzing…",
-			"processedToastTitle": "File processed successfully! 📄",
-			"processedToastDescPrefix": "Extracted",
-			"units": { "words": "words", "chunks": "chunks" },
-			"stage": {
-				"processing": "Processing file…",
-				"extracting": "Extracting text from file…",
-				"analyzing": "Contract Analyst with OpenAI…",
-				"autofill": "Auto-filling the form…"
-			},
-			"errors": {
-				"tooBigTitle": "File too large",
-				"tooBigDesc": "The file size cannot exceed 10MB",
-				"unsupportedTitle": "Unsupported file type",
-				"unsupportedDesc": "Please upload PDF, Word or text file",
-				"processTitle": "File processing error",
-				"processDesc": "Try again or enter the text manually",
-				"emptyTextTitle": "Error",
-				"emptyTextDesc": "Please upload a file or enter contract text",
-				"aiTitle": "AI analysis error",
-				"aiDesc": "Try again or fill the form manually"
-			}
-		},
-		"analysis": {
-			"title": "Contract analysis results",
-			"addObligation": "Add obligation manually",
-			"details": "Contract details",
-			"fields": {
-				"name": "Name",
-				"value": "Value",
-				"start": "Start",
-				"end": "End"
-			},
-			"parties": "Parties to the contract",
-			"hint": "💡 All data will be auto-filled into the form and added to the contract"
-		},
-		"map": {
-			"title": "Representatives",
-			"addActorPlaceholder": "New representative (e.g., “Party B”)",
-			"addActor": "Add",
-			"suggestionBase": "Party",
-			"userSearchPh": "Search by email or name…",
-			"noRoles": "No roles were found in obligations to map.",
-			"clearSelection": "Clear selection",
-			"chipDeleteTitle": "Remove"
-		},
-		"form": {
-			"name": "Contract name *",
-			"namePh": "Enter contract name",
-			"clientName": "Client name *",
-			"clientNamePh": "Enter client name",
-			"startDate": "Start date",
-			"endDate": "End date",
-			"totalValue": "Contract value (₪)",
-			"totalValuePh": "0",
-			"description": "Contract description",
-			"descriptionPh": "Short description of the contract…"
-		},
-		"buttons": {
-			"cancel": "Cancel",
-			"saving": "Saving contract…",
-			"save": "Save contract with AI analysis"
-		},
-		"save": {
-			"okTitle": "Contract saved! 🎉",
-			"okDescPrefix": "Contract saved with",
-			"okDescSuffix": "obligations in the database",
-			"errTitle": "Error saving contract",
-			"errDescSuffix": "— check database connection"
-		},
-		"common": { "yes": "Yes", "no": "No" }
-	},
-	"obligation": {
-		"edit": "Edit",
-		"delete": "Delete",
-		"save": "Save",
-		"cancel": "Cancel",
-		"title": "Title",
-		"description": "Description",
-		"priority": "Priority",
-		"dueDate": "Due date",
-		"responsible": "Responsible",
-		"requiresProof": "Requires proof",
-		"obligationsTitle": "Obligations"
-	},
-	"tasks": {
-		"priority": { "low": "Low", "medium": "Medium", "high": "High" }
-	}
+  "brand": {
+    "title": "Law Copilot",
+    "subtitle": "AI Legal Assistant",
+    "tagline": "The first smart legal system in Israel"
+  },
+  "auth": {
+    "login": {
+      "title": "Sign in",
+      "subtitle": "Access your account",
+      "emailLabel": "Email address *",
+      "emailPlaceholder": "lawyer@example.com",
+      "button": "Sign in",
+      "loading": "Signing in...",
+      "forgot": "Forgot password?",
+      "signup": "Don't have an account? Sign up",
+      "features": {
+        "ai": "Advanced AI",
+        "security": "Full security",
+        "automation": "Automation"
+      },
+      "legal": {
+        "prefix": "By signing up you agree to the",
+        "terms": "Terms of Use",
+        "and": "and",
+        "privacy": "Privacy Policy"
+      },
+      "password": {
+        "label": "Password *",
+        "show": "Show password",
+        "hide": "Hide password"
+      }
+    },
+    "forgot": {
+      "title": "Reset password",
+      "subtitle": "Enter your email to receive a reset link",
+      "emailLabel": "Email address",
+      "emailPlaceholder": "lawyer@example.com",
+      "submit": "Send reset link",
+      "sending": "Sending...",
+      "backToLogin": "Back to sign in",
+      "dialog": {
+        "title": "Reset link sent",
+        "desc": "An email with password reset instructions has been sent to your address.",
+        "ok": "OK"
+      },
+      "toast": {
+        "errorTitle": "Error",
+        "defaultError": "Something went wrong, try again"
+      }
+    },
+    "reset": {
+      "title": "Reset password",
+      "subtitle": "Choose a new password and sign in",
+      "emailLabel": "Email address *",
+      "emailPlaceholder": "lawyer@example.com",
+      "newPasswordLabel": "New password *",
+      "confirmPasswordLabel": "Confirm password *",
+      "submit": "Change password & sign in",
+      "saving": "Saving…",
+      "toast": {
+        "errorTitle": "Error",
+        "emailRequired": "Please enter your email",
+        "pwMin": "Password must be at least 8 characters",
+        "pwMismatch": "Passwords do not match",
+        "successTitle": "Password updated",
+        "successDesc": "Signed in successfully",
+        "defaultError": "Something went wrong, try again"
+      },
+      "invalidTitle": "Link is invalid or expired",
+      "invalidDesc": "Try requesting a new password reset link."
+    },
+    "signup": {
+      "title": "Create account",
+      "subtitle": "Open a new account for your law firm",
+      "alert": "The system is intended for lawyers only. Professional verification is required.",
+      "fields": {
+        "fullNameLabel": "Full name *",
+        "fullNamePlaceholder": "Adv. David Cohen",
+        "lawFirmLabel": "Law firm *",
+        "lawFirmPlaceholder": "Cohen & Partners",
+        "phoneLabel": "Phone *",
+        "phonePlaceholder": "050-1234567",
+        "emailLabel": "Email address *",
+        "emailPlaceholder": "lawyer@example.com"
+      },
+      "passwordHelper": "Password must contain at least 8 characters, an uppercase letter, a lowercase letter and a number",
+      "submit": "Sign up",
+      "submitting": "Signing up...",
+      "footerLogin": "Already have an account? Sign in here",
+      "toast": {
+        "successTitle": "Signed up successfully! 📧",
+        "successDesc": "Please check your email to verify your account",
+        "errorTitle": "Error",
+        "defaultError": "Something went wrong, try again"
+      }
+    }
+  },
+  "twofa": {
+    "title": "Two-factor verification",
+    "subtitle": "Enter the code we sent you",
+    "codeSent": "Code sent",
+    "to": "to",
+    "validForApprox": "Valid for ~",
+    "min": "min.",
+    "label6": "Enter 6-digit code",
+    "pasteHint": "You can paste all 6 digits at once from the clipboard.",
+    "verifying": "Verifying...",
+    "confirmAndSignIn": "Confirm & sign in",
+    "resend": "Send code again",
+    "resendCooldown": "Send again",
+    "changeAccount": "Change account",
+    "toast": {
+      "error": "Error",
+      "codeIncompleteTitle": "Code is incomplete",
+      "codeIncompleteDesc": "Enter 6 digits",
+      "resendOkTitle": "Code sent",
+      "resendOkDesc": "Check your email",
+      "resendFailDesc": "Could not send the code",
+      "verifyFailDefault": "Invalid or expired code"
+    }
+  },
+  "obligation": {
+    "obligationsTitle": "Detected obligations",
+    "edit": "Edit",
+    "delete": "Delete",
+    "save": "Save",
+    "cancel": "Cancel",
+    "dueDate": "Due date",
+    "category": "Category",
+    "responsible": "Responsible",
+    "amount": "Amount",
+    "priority": "Priority",
+    "requiresProof": "Proof required",
+    "yes": "Yes",
+    "no": "No",
+    "saved": "Saved",
+    "updatedDesc": "Obligation updated",
+    "deleted": "Deleted",
+    "removedDesc": "Obligation removed from the list",
+    "placeholderCategory": "Payment / Delivery / ...",
+    "placeholderResponsible": "Party A / Party B / Name"
+  },
+  "nav": {
+    "contracts": "Contracts",
+    "tasks": "Tasks",
+    "clients": "Clients",
+    "meetings": "Meeting summaries",
+    "notifications": "Notifications",
+    "settings": "Settings"
+  },
+  "signupInvite": {
+    "title": "Complete your signup",
+    "subtitle": "Review details and set your password",
+    "loading": "Loading invitation...",
+    "invalidOrExpired": "The invitation link is invalid or expired. Please ask your lawyer to resend it.",
+    "goLogin": "Go to login",
+    "welcome": "Welcome, {{name}}!",
+    "invitedBy": "You were invited by {{lawyer}}",
+    "invitedByUnknown": "You were invited by a lawyer",
+    "checkAndSetPassword": "Please review the details below and set your password.",
+    "fields": {
+      "fullName": "Full name",
+      "email": "Email (read only)",
+      "phone": "Phone",
+      "position": "Position",
+      "clientType": "Client type",
+      "companyName": "Company",
+      "address": "Address",
+      "identificationCode": "Identification code",
+      "businessNumber": "Business number",
+      "notes": "Notes"
+    },
+    "placeholders": {
+      "fullName": "e.g., Nastya Cohen",
+      "phone": "050-0000000",
+      "companyName": "Company (optional)",
+      "position": "Position (optional)",
+      "clientType": "Select client type",
+      "address": "Street, number, city",
+      "identificationCode": "e.g., 123456789",
+      "businessNumber": "e.g., 515111111",
+      "notes": "Notes (optional)"
+    },
+    "clientTypes": {
+      "individual": "Individual",
+      "company": "Company"
+    },
+    "emailLockedHint": "Email is set by the invitation and cannot be changed now.",
+    "passwordHelper": "Use a strong password. You can change it later.",
+    "submit": "Finish & Sign up",
+    "submitting": "Creating account...",
+    "toast": {
+      "missingPasswordTitle": "Validation error",
+      "missingPasswordDesc": "Please enter a password.",
+      "successTitle": "Signed up successfully",
+      "successDesc": "You can now sign in.",
+      "errorTitle": "Sign up error",
+      "defaultError": "Something went wrong. Please try again."
+    },
+    "footerLogin": "Already have account? Login"
+  },
+  "inviteModal": {
+    "title": "Add New Client",
+    "clientTypeLabel": "Client Type",
+    "clientTypePlaceholder": "Select client type",
+    "clientTypeIndividual": "Individual",
+    "clientTypeCompany": "Company",
+    "fullNameLabel": "Full Name",
+    "fullNamePh": "Enter full name...",
+    "companyNameLabel": "Company Name",
+    "companyNamePh": "Enter company name...",
+    "emailLabel": "Email",
+    "phoneLabel": "Phone",
+    "phonePh": "050-1234567",
+    "positionLabel": "Contact Position",
+    "positionPh": "CEO, CFO...",
+    "addressLabel": "Address",
+    "addressPh": "Street, number, city...",
+    "identificationCodeLabel": "ID Number",
+    "identificationCodePh": "123456789",
+    "businessNumberLabel": "Business Number",
+    "businessNumberPh": "123456789",
+    "notesLabel": "Notes",
+    "notesPh": "Additional notes about the client...",
+    "submit": "Send Invitation",
+    "saving": "Sending invitation...",
+    "cancel": "Cancel",
+    "toast": {
+      "successTitle": "Invitation sent",
+      "successDesc": "Client invitation with a signup link was sent.",
+      "errorTitle": "Invitation error",
+      "defaultError": "Something went wrong. Please try again later."
+    }
+  },
+  "common": {
+    "loading": "Loading..."
+  },
+  "invitationsPage": {
+    "title": "Invitations",
+    "actions": {
+      "new": "New invitation",
+      "refresh": "Refresh",
+      "refreshing": "Refreshing..."
+    },
+    "filters": {
+      "searchPlaceholder": "Search by name/email/company...",
+      "allStatuses": "All statuses",
+      "allTypes": "All types",
+      "perPage10": "10 per page",
+      "perPage20": "20 per page",
+      "perPage50": "50 per page"
+    },
+    "status": {
+      "pending": "Pending",
+      "activated": "Activated",
+      "expired": "Expired"
+    },
+    "clientType": {
+      "individual": "Individual",
+      "company": "Company"
+    },
+    "cards": {
+      "activated": "Activated",
+      "pending": "Pending",
+      "expired": "Expired",
+      "total": "Total"
+    },
+    "table": {
+      "title": "Invitation list",
+      "columns": {
+        "name": "Name / Company",
+        "type": "Type",
+        "email": "Email",
+        "phone": "Phone",
+        "status": "Status",
+        "expires": "Expires",
+        "actions": "Actions"
+      }
+    },
+    "empty": "No invitations yet",
+    "pagination": {
+      "prev": "Prev",
+      "next": "Next",
+      "page": "Page",
+      "of": "of"
+    },
+    "toasts": {
+      "createdTitle": "Invitation created",
+      "createdDesc": "Email sent to",
+      "resentTitle": "Resent",
+      "resentDesc": "Resent to",
+      "cancelledTitle": "Invitation canceled"
+    },
+    "confirm": {
+      "cancel": "Cancel this invitation?"
+    }
+  },
+  "tasks": {
+    "title": "Task management",
+    "subtitle": "Track and organize your legal tasks",
+    "add": "Add new task",
+    "addNew": "Add new task",
+    "loading": "Loading tasks...",
+    "listTitle": "Tasks list",
+    "emptyTitle": "No tasks yet",
+    "emptyDesc": "Start by adding your first task",
+    "forContract": "Contract",
+    "stats": {
+      "pending": "Pending",
+      "inProgress": "In progress",
+      "completed": "Completed",
+      "total": "Total tasks"
+    },
+    "filters": {
+      "search": "Search",
+      "searchPh": "Search by title or description",
+      "status": "Status",
+      "contract": "Contract",
+      "allContracts": "All contracts"
+    },
+    "status": {
+      "all": "All",
+      "pending": "Pending",
+      "inProgress": "In progress",
+      "in_progress": "In progress",
+      "completed": "Completed"
+    },
+    "th": {
+      "title": "Title",
+      "contract": "Contract",
+      "priority": "Priority",
+      "status": "Status",
+      "due": "Due",
+      "actions": "Actions"
+    },
+    "priority": {
+      "low": "Low",
+      "medium": "Medium",
+      "high": "High",
+      "urgent": "Urgent"
+    },
+    "toast": {
+      "deleted": "Task deleted",
+      "updated": "Task updated",
+      "error": "Action failed"
+    },
+    "confirm": {
+      "delete": "Delete this task?"
+    },
+    "pagination": {
+      "page": "Page",
+      "prev": "Prev",
+      "next": "Next"
+    },
+    "actions": {
+      "inProgress": "In progress",
+      "complete": "Mark as completed"
+    },
+    "sampleContract": "Sample contract"
+  },
+  "taskModal": {
+    "title": "Create a new task",
+    "contractLabel": "Contract",
+    "contractPlaceholder": "Select a contract",
+    "titleLabel": "Task title",
+    "titlePh": "Enter a title…",
+    "category": "Category",
+    "cat": {
+      "general": "General",
+      "legal": "Legal",
+      "client": "Client",
+      "contract": "Contract",
+      "research": "Research",
+      "admin": "Admin"
+    },
+    "description": "Task description",
+    "descriptionPh": "Describe the task…",
+    "priority": "Priority",
+    "dueDate": "Due date",
+    "pickDate": "Pick a date",
+    "estimatedHours": "Estimated hours",
+    "estimatedHoursPh": "Number of hours",
+    "tags": "Tags (comma-separated)",
+    "tagsPh": "urgent, important, new client…",
+    "subtasks": "Subtasks",
+    "subtaskPlaceholder": "Describe subtask…",
+    "addSubtask": "Add subtask",
+    "saving": "Saving…",
+    "submit": "Create task",
+    "cancel": "Cancel",
+    "createdTitle": "Task created",
+    "createdDesc": "The task was saved successfully",
+    "toastError": "Failed to create task"
+  },
+  "risks": {
+    "title": "Identified risks",
+    "empty": "No risks",
+    "edit": "Edit",
+    "delete": "Delete",
+    "save": "Save",
+    "cancel": "Cancel",
+    "placeholder": "Describe the risk...",
+    "addNew": "Add new risk",
+    "newPlaceholder": "Title / short description",
+    "add": "Add"
+  },
+  "taskView": {
+    "title": "Task",
+    "subtitle": "Details and progress",
+    "back": "Back to tasks",
+    "backToParent": "Back to parent",
+    "description": "Description",
+    "due": "Due date",
+    "dueDate": "Due date",
+    "created": "Created",
+    "createdBy": "Created by",
+    "progress": "Progress",
+    "assignees": "Assignees",
+    "approvalRequired": "Approval required",
+    "contract": "Contract",
+    "contractDue": "Contract due",
+    "noSubtasks": "No subtasks",
+    "subtasks": "Subtasks",
+    "evidence": {
+      "title": "Evidences",
+      "submitted": "Submitted",
+      "approved": "Approved",
+      "rejected": "Rejected",
+      "submittedBy": "Submitted by",
+      "createdAt": "Created",
+      "openDoc": "Open document",
+      "document": "Document",
+      "noDocument": "No document attached",
+      "noMessage": "No message",
+      "approve": "Approve",
+      "reject": "Reject",
+      "form": {
+        "title": "Submit evidence for approval",
+        "messageLabel": "Message",
+        "messagePlaceholder": "Write a short note…",
+        "fileLabel": "Attachment",
+        "pickFile": "Choose file",
+        "removeFile": "Remove file",
+        "fileSelected": "File selected",
+        "submit": "Submit evidence",
+        "submitting": "Submitting…",
+        "cancel": "Cancel",
+        "hint": "Attach a file if needed. Message is required.",
+        "hiddenSubmitted": "Evidence already submitted and awaits review.",
+        "errors": {
+          "messageRequired": "Message is required",
+          "uploadFailed": "File upload failed",
+          "submitFailed": "Could not submit evidence"
+        },
+        "success": "Evidence submitted"
+      }
+    },
+    "status": {
+      "todo": "To do",
+      "in_progress": "In progress",
+      "awaiting_approval": "Awaiting approval",
+      "done": "Done",
+      "unknown": "Unknown"
+    },
+    "subtasksModal": {
+      "createTitle": "Create subtask",
+      "createBtn": "Create subtask",
+      "saving": "Saving...",
+      "submit": "Create",
+      "cancel": "Cancel",
+      "created": "Subtask created",
+      "createdDesc": "The subtask has been created.",
+      "createFailed": "Failed to create subtask",
+      "assigneesRequired": "Assignees required",
+      "assigneesRequiredDesc": "Add at least one assignee when approval is required.",
+      "fields": {
+        "title": "Title",
+        "titlePh": "Enter subtask title...",
+        "description": "Description",
+        "descriptionPh": "Describe the subtask...",
+        "priority": "Priority",
+        "assigneesPh": "Assignee IDs (comma-separated)"
+      }
+    }
+  },
+  "meetingSummaries": {
+    "title": "Meeting Summaries",
+    "subtitle": "Search by title and filter by contract",
+    "new": "New Meeting",
+    "search": {
+      "label": "Search by title",
+      "placeholder": "Type a meeting title…"
+    },
+    "contract": {
+      "label": "Contract",
+      "all": "All contracts"
+    },
+    "filters": {
+      "clear": "Clear filters"
+    },
+    "loading": "Loading…",
+    "empty": {
+      "title": "No summaries yet",
+      "text": "Try changing filters or create a new summary."
+    },
+    "summary": "Summary:",
+    "keyPoints": "Key points:",
+    "docBadge": "Document",
+    "keyPoints.more": "+{n} more",
+    "actions": {
+      "open": "Open",
+      "openDesc": "Coming soon: summary details page"
+    },
+    "pagination": {
+      "prev": "Previous",
+      "next": "Next",
+      "pageOf": "Page {page} of {total}"
+    }
+  },
+  "meetingSummaryModal": {
+    "title": "Meeting summary",
+    "fields": {
+      "contract": "Related contract (optional)",
+      "contractPh": "Select a contract",
+      "date": "Meeting date",
+      "title": "Title",
+      "titlePh": "e.g., Meeting with client X",
+      "notes": "Notes / focus (optional)",
+      "notesPh": "Briefly write what was discussed or what should be extracted..."
+    },
+    "file": {
+      "label": "Single document (any file type)",
+      "remove": "Remove file",
+      "tempLink": "Temporary view link:",
+      "open": "Open",
+      "progress": "{done}/1 completed",
+      "status": {
+        "selected": "Selected",
+        "analyzing": "Analyzing…",
+        "done": "Analyzed",
+        "error": "Error"
+      }
+    },
+    "actions": {
+      "analyze": "AI Analyze",
+      "analyzing": "AI analyzing…",
+      "save": "Save summary",
+      "saving": "Saving...",
+      "cancel": "Cancel"
+    },
+    "ai": {
+      "resultTitle": "AI analysis results",
+      "completed": "Completed",
+      "summaryTitle": "Summary",
+      "keyPointsTitle": "Key points"
+    },
+    "errors": {
+      "titleRequired": "Title is required",
+      "dateRequired": "Meeting date is required",
+      "fileRequired": "Select a file first"
+    },
+    "fallback": {
+      "summary": "Short summary for \"{title}\""
+    },
+    "toasts": {
+      "analyzeSuccess": {
+        "title": "Analysis complete",
+        "desc": "AI summary generated"
+      },
+      "analyzeFailed": {
+        "title": "Analysis failed",
+        "desc": "Could not analyze the file. Try again."
+      },
+      "saveSuccess": {
+        "title": "Saved",
+        "desc": "ID: {id}"
+      },
+      "saveFailed": {
+        "title": "Save failed"
+      }
+    }
+  },
+  "contracts": {
+    "title": "Legal Contracts",
+    "subtitle": "Centralize, organize, and analyze all your agreements",
+    "addNew": "Create Contract"
+  },
+  "notifications": {
+    "title": "Notifications",
+    "markAll": "Mark all as read",
+    "markingAll": "Marking…",
+    "toast": {
+      "errorTitle": "Error",
+      "markOneFail": "Failed to mark the notification",
+      "markAllFail": "Failed to mark all notifications"
+    },
+    "empty": "No notifications yet",
+    "groups": {
+      "unread": "Recent (unread)",
+      "all": "All"
+    },
+    "paginate": {
+      "prev": "Back",
+      "next": "Forward",
+      "page": "Page"
+    },
+    "types": {
+      "default": "Notification",
+      "taskAssignedPrefix": "You were assigned to a task",
+      "taskEvidencePrefix": "Evidence requested for the task",
+      "taskEvidenceRequestedPrefix": "Evidence requested for the task",
+      "taskEvidenceSubmittedPrefix": "Evidence submitted for the task",
+      "taskEvidenceApprovedPrefix": "Evidence approved for the task",
+      "taskEvidenceRejectedPrefix": "Evidence rejected for the task",
+      "until": "until",
+      "by": "by",
+      "inContract": "in contract",
+      "reason": "reason"
+    },
+    "markReadTitle": "Mark as read"
+  },
+  "contractsAdd": {
+    "dialogTitle": "Add new contract — LAWCOPILOT AI",
+    "ai": {
+      "title": "OpenAI",
+      "dropTitle": "Upload a contract for full automatic processing",
+      "dropHint": "PDF, Word, RTF or plain text — we will extract and analyze everything",
+      "chooseFile": "Choose file",
+      "manualLabel": "Or enter contract text manually",
+      "manualPh": "Paste the full contract text here for analysis…",
+      "analyze": "Analyze text with AI",
+      "analyzing": "Analyzing…",
+      "processedToastTitle": "File processed successfully! 📄",
+      "processedToastDescPrefix": "Extracted",
+      "units": {
+        "words": "words",
+        "chunks": "chunks"
+      },
+      "stage": {
+        "processing": "Processing file…",
+        "extracting": "Extracting text from file…",
+        "analyzing": "Contract Analyst with OpenAI…",
+        "autofill": "Auto-filling the form…"
+      },
+      "errors": {
+        "tooBigTitle": "File too large",
+        "tooBigDesc": "The file size cannot exceed 10MB",
+        "unsupportedTitle": "Unsupported file type",
+        "unsupportedDesc": "Please upload PDF, Word or text file",
+        "processTitle": "File processing error",
+        "processDesc": "Try again or enter the text manually",
+        "emptyTextTitle": "Error",
+        "emptyTextDesc": "Please upload a file or enter contract text",
+        "aiTitle": "AI analysis error",
+        "aiDesc": "Try again or fill the form manually"
+      }
+    },
+    "analysis": {
+      "title": "Contract analysis results",
+      "addObligation": "Add obligation manually",
+      "details": "Contract details",
+      "fields": {
+        "name": "Name",
+        "value": "Value",
+        "start": "Start",
+        "end": "End"
+      },
+      "parties": "Parties to the contract",
+      "hint": "💡 All data will be auto-filled into the form and added to the contract"
+    },
+    "map": {
+      "title": "Representatives",
+      "addActorPlaceholder": "New representative (e.g., “Party B”)",
+      "addActor": "Add",
+      "suggestionBase": "Party",
+      "userSearchPh": "Search by email or name…",
+      "noRoles": "No roles were found in obligations to map.",
+      "clearSelection": "Clear selection",
+      "chipDeleteTitle": "Remove"
+    },
+    "form": {
+      "name": "Contract name *",
+      "namePh": "Enter contract name",
+      "clientName": "Client name *",
+      "clientNamePh": "Enter client name",
+      "startDate": "Start date",
+      "endDate": "End date",
+      "totalValue": "Contract value (₪)",
+      "totalValuePh": "0",
+      "description": "Contract description",
+      "descriptionPh": "Short description of the contract…"
+    },
+    "buttons": {
+      "cancel": "Cancel",
+      "saving": "Saving contract…",
+      "save": "Save contract with AI analysis"
+    },
+    "save": {
+      "okTitle": "Contract saved! 🎉",
+      "okDescPrefix": "Contract saved with",
+      "okDescSuffix": "obligations in the database",
+      "errTitle": "Error saving contract",
+      "errDescSuffix": "— check database connection"
+    },
+    "common": {
+      "yes": "Yes",
+      "no": "No"
+    }
+  },
+  "obligation": {
+    "edit": "Edit",
+    "delete": "Delete",
+    "save": "Save",
+    "cancel": "Cancel",
+    "title": "Title",
+    "description": "Description",
+    "priority": "Priority",
+    "dueDate": "Due date",
+    "responsible": "Responsible",
+    "requiresProof": "Requires proof",
+    "obligationsTitle": "Obligations"
+  },
+  "tasks": {
+    "priority": {
+      "low": "Low",
+      "medium": "Medium",
+      "high": "High"
+    }
+  },
+  "settings": {
+    "security": {
+      "twofa": {
+        "title": "Two-factor authentication (2FA)",
+        "statusEnabled": "Enabled for your account",
+        "statusDisabled": "Improve security by turning on 2FA",
+        "enabledTitle": "2FA enabled",
+        "enabledDesc": "Two-factor authentication has been activated.",
+        "disabledTitle": "2FA disabled",
+        "disabledDesc": "Two-factor authentication has been turned off.",
+        "enableError": "Failed to enable 2FA",
+        "disableError": "Failed to disable 2FA",
+        "confirmDisableTitle": "Disable 2FA",
+        "confirmDisableDesc": "To turn off 2FA, enter your account password.",
+        "passwordLabel": "Password",
+        "passwordPh": "Enter your password",
+        "disableCta": "Disable 2FA",
+        "disabling": "Disabling…",
+        "on": "On",
+        "off": "Off",
+        "error": "Error",
+        "cancel": "Cancel"
+      }
+    }
+  }
 }

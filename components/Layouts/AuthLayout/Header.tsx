@@ -111,6 +111,7 @@ export default function Header({ onOpenSettings }: Props) {
 						)}
 					</Button>
 
+					<div>{user?.name}</div>
 					<DropdownMenu>
 						<DropdownMenuTrigger asChild>
 							<Button

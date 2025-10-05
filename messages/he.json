@@ -634,7 +634,10 @@
 			"analyzing": "מנתח...",
 			"processedToastTitle": "קובץ עובד בהצלחה! 📄",
 			"processedToastDescPrefix": "חולצו",
-			"units": { "words": "מילים", "chunks": "קטעים" },
+			"units": {
+				"words": "מילים",
+				"chunks": "קטעים"
+			},
 			"stage": {
 				"processing": "מעבד קובץ...",
 				"extracting": "חולץ טקסט מהקובץ...",
@@ -701,7 +704,10 @@
 			"errTitle": "שגיאה בשמירת החוזה",
 			"errDescSuffix": "— בדוק את החיבור למסד הנתונים"
 		},
-		"common": { "yes": "כן", "no": "לא" }
+		"common": {
+			"yes": "כן",
+			"no": "לא"
+		}
 	},
 	"obligation": {
 		"edit": "ערוך",
@@ -717,6 +723,35 @@
 		"obligationsTitle": "התחייבויות"
 	},
 	"tasks": {
-		"priority": { "low": "נמוכה", "medium": "בינונית", "high": "גבוהה" }
+		"priority": {
+			"low": "נמוכה",
+			"medium": "בינונית",
+			"high": "גבוהה"
+		}
+	},
+	"settings": {
+		"security": {
+			"twofa": {
+				"title": "אימות דו-שלבי (2FA)",
+				"statusEnabled": "מופעל בחשבונך",
+				"statusDisabled": "ניתן לשפר את האבטחה באמצעות הפעלת אימות דו-שלבי",
+				"enabledTitle": "האימות הדו-שלבי הופעל",
+				"enabledDesc": "אימות דו-שלבי הופעל בהצלחה.",
+				"disabledTitle": "האימות הדו-שלבי כובה",
+				"disabledDesc": "אימות דו-שלבי כובה בהצלחה.",
+				"enableError": "הפעלת אימות דו-שלבי נכשלה",
+				"disableError": "כיבוי אימות דו-שלבי נכשל",
+				"confirmDisableTitle": "כיבוי אימות דו-שלבי",
+				"confirmDisableDesc": "כדי לכבות את האימות הדו-שלבי, הזן את סיסמת החשבון.",
+				"passwordLabel": "סיסמה",
+				"passwordPh": "הזן סיסמה",
+				"disableCta": "כבה אימות דו-שלבי",
+				"disabling": "מכבה…",
+				"on": "מופעל",
+				"off": "מכובה",
+				"error": "שגיאה",
+				"cancel": "ביטול"
+			}
+		}
 	}
 }
