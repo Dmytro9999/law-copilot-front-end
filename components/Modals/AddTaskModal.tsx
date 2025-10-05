@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import React, { useState } from 'react'
 import { format } from 'date-fns'
 import { he } from 'date-fns/locale'
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
@@ -22,6 +22,7 @@ import { cn } from '@/lib/utils'
 import { useI18n } from '@/providers/I18nProvider'
 import { useToast } from '@/components/ui/use-toast'
 import { useCreateTaskMutation } from '@/store/features/tasks/tasksApi'
+import UserSearchSelect from '@/components/contracts/UserSearchSelect'
 
 type Priority = 'low' | 'medium' | 'high'
 
@@ -39,6 +40,7 @@ export default function AddTaskModal({ isOpen, onClose, contracts, onCreated }: 
 	const { toast } = useToast()
 	const [createTask, { isLoading }] = useCreateTaskMutation()
 
+	const [assignedUser, setAssignedUser] = useState(null)
 	const [formData, setFormData] = useState({
 		contractId: undefined as number | undefined,
 		title: '',
@@ -241,6 +243,15 @@ export default function AddTaskModal({ isOpen, onClose, contracts, onCreated }: 
 							/>
 							{t('taskView.approvalRequired') || 'Approval required'}
 						</Label>
+
+						<UserSearchSelect
+							value={assignedUser}
+							onChange={(item) => setAssignedUser(item)}
+							placeholder={
+								t('contractsAdd.map.userSearchPh') || 'Search by email or name…'
+							}
+						/>
+
 						<Input
 							disabled={!formData.approval_required}
 							value={formData.assigneeIdsRaw}

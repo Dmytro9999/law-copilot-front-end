@@ -1,7 +1,7 @@
 'use client'
 
 import Link from 'next/link'
-import { useMemo, useState } from 'react'
+import React, { useMemo, useState } from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import Badge from '@/components/ui/badge'
 import { Progress } from '@/components/ui/progress'
@@ -18,6 +18,7 @@ import {
 	CheckCircle,
 	XCircle,
 	ExternalLink,
+	Plus,
 } from 'lucide-react'
 import { useI18n, useLocale } from '@/providers/I18nProvider'
 import { toast } from 'sonner'
@@ -38,6 +39,7 @@ import {
 	SelectValue,
 } from '@/components/ui/select'
 import { useUpdateTaskMutation } from '@/store/features/tasks/tasksApi'
+import { Can } from '@/components/rbac/Can'
 
 const data = {
 	id: 3,
@@ -786,27 +788,31 @@ export default function TaskDetailsPage() {
 										)}
 
 										{/* Кнопки только если submitted */}
-										{ev.status === 'submitted' && (
-											<div className='flex items-center gap-2'>
-												<Button
-													size='sm'
-													className='bg-green-600 hover:bg-green-700 text-white'
-													onClick={() => handleApproveEvidence(ev.id)}
-												>
-													<CheckCircle className='h-4 w-4 ml-1' />
-													{t('taskView.evidence.approve') || 'Approve'}
-												</Button>
-												<Button
-													size='sm'
-													variant='outline'
-													className='border-red-300 text-red-700 hover:bg-red-50'
-													onClick={() => handleRejectEvidence(ev.id)}
-												>
-													<XCircle className='h-4 w-4 ml-1' />
-													{t('taskView.evidence.reject') || 'Reject'}
-												</Button>
-											</div>
-										)}
+
+										<Can action='evidences.approve'>
+											{ev.status === 'submitted' && (
+												<div className='flex items-center gap-2'>
+													<Button
+														size='sm'
+														className='bg-green-600 hover:bg-green-700 text-white'
+														onClick={() => handleApproveEvidence(ev.id)}
+													>
+														<CheckCircle className='h-4 w-4 ml-1' />
+														{t('taskView.evidence.approve') ||
+															'Approve'}
+													</Button>
+													<Button
+														size='sm'
+														variant='outline'
+														className='border-red-300 text-red-700 hover:bg-red-50'
+														onClick={() => handleRejectEvidence(ev.id)}
+													>
+														<XCircle className='h-4 w-4 ml-1' />
+														{t('taskView.evidence.reject') || 'Reject'}
+													</Button>
+												</div>
+											)}
+										</Can>
 									</div>
 								</div>
 							)

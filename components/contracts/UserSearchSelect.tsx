@@ -58,7 +58,7 @@ export default function UserSearchSelect({
 						className='text-red-600 border-red-300 hover:bg-red-50'
 						onClick={() => onChange(null)}
 					>
-						убрать
+						Remove
 					</Button>
 				</div>
 			) : (
@@ -77,9 +77,11 @@ export default function UserSearchSelect({
 
 			{open && !value && (isFetching || (dq && data.length >= 0)) && (
 				<div className='absolute z-20 mt-1 w-full bg-white border rounded-md shadow-sm max-h-56 overflow-auto'>
-					{isFetching && <div className='px-3 py-2 text-sm text-slate-500'>ищем…</div>}
+					{isFetching && (
+						<div className='px-3 py-2 text-sm text-slate-500'>searching…</div>
+					)}
 					{!isFetching && dq && data.length === 0 && (
-						<div className='px-3 py-2 text-sm text-slate-500'>ничего не найдено</div>
+						<div className='px-3 py-2 text-sm text-slate-500'>no found</div>
 					)}
 					{!isFetching &&
 						data.map((u) => (

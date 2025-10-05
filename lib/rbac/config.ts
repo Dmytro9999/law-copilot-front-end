@@ -16,4 +16,5 @@ export const PERMISSIONS: Record<string, RolesEnum[]> = {
 	'documents.upload': [RolesEnum.ADMIN, RolesEnum.LAWYER],
 	'tasks.assign': [RolesEnum.ADMIN, RolesEnum.LAWYER],
 	'risks.create': [RolesEnum.ADMIN, RolesEnum.LAWYER],
+	'evidences.approve': [RolesEnum.ADMIN, RolesEnum.LAWYER],
 }
