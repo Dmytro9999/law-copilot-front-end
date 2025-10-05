@@ -22,6 +22,7 @@ import LocaleSelect from '@/components/Layouts/LocaleSelect'
 import { useLocale } from '@/providers/I18nProvider'
 import { useState } from 'react'
 import { selectUnreadCount } from '@/store/features/notifications/notificationsSelectors'
+import * as React from 'react'
 
 type Stats = {
 	activeContracts: number
@@ -86,6 +87,15 @@ export default function Header({ onOpenSettings }: Props) {
 		}
 	}
 
+	const initials =
+		(user?.name || '')
+			.split(' ')
+			.map((p: any) => p[0])
+			.filter(Boolean)
+			.slice(0, 2)
+			.join('')
+			.toUpperCase() || 'U'
+
 	return (
 		<header className='h-24 px-10 bg-white/80 backdrop-blur-xl border-b border-slate-200/50 shadow-sm'>
 			<div className='flex items-center justify-between h-full'>
@@ -112,6 +122,7 @@ export default function Header({ onOpenSettings }: Props) {
 					</Button>
 
 					<div>{user?.name}</div>
+
 					<DropdownMenu>
 						<DropdownMenuTrigger asChild>
 							<Button
@@ -119,15 +130,25 @@ export default function Header({ onOpenSettings }: Props) {
 								className='relative h-14 w-14 rounded-full border-2 border-blue-300 hover:border-blue-400 transition-colors'
 								aria-label='תפריט משתמש'
 							>
-								<Avatar className='h-12 w-12'>
-									<AvatarImage
-										src='/placeholder.svg?width=48&height=48'
-										alt='@lawyer'
-									/>
-									<AvatarFallback className='bg-gradient-to-l from-blue-500 to-purple-500 text-white font-bold text-lg'>
-										עד
+								{/*<Avatar className='h-12 w-12'>*/}
+								{/*	<AvatarImage*/}
+								{/*		src='/placeholder.svg?width=48&height=48'*/}
+								{/*		alt='@lawyer'*/}
+								{/*	/>*/}
+								{/*	<AvatarFallback className='bg-gradient-to-l from-blue-500 to-purple-500 text-white font-bold text-lg'>*/}
+								{/*		עד*/}
+								{/*	</AvatarFallback>*/}
+								{/*</Avatar>*/}
+
+								<Avatar className='h-12 w-12 ring-2 ring-white shadow'>
+									{user?.avatar ? (
+										<AvatarImage src={user?.avatar} alt={user?.name} />
+									) : null}
+									<AvatarFallback className='bg-slate-100 text-slate-700'>
+										{initials}
 									</AvatarFallback>
 								</Avatar>
+
 								<div className='absolute -bottom-1 -right-1 h-5 w-5 bg-green-500 border-2 border-white rounded-full' />
 							</Button>
 						</DropdownMenuTrigger>
