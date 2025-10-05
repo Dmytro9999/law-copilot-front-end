@@ -1,8 +1,12 @@
-import React from 'react'
+'use client'
 
-interface IPropsPage {}
-const Page: React.FC<IPropsPage> = () => {
-	return <div className='space-y-8'>Settings page</div>
+import TwoFAToggle from '@/components/settings/TwoFAToggle'
+
+export default function SettingsPage() {
+	return (
+		<div className='p-6 space-y-6'>
+			<h1 className='text-2xl font-bold'>Settings</h1>
+			<TwoFAToggle />
+		</div>
+	)
 }
-
-export default Page

@@ -24,6 +24,7 @@ import {
 	ISignUpData,
 	ISignUpResponse,
 } from '@/store/features/auth/authTypes'
+import { setTwoFactorEnabled } from '@/store/features/auth/authSlice'
 
 export const authApi = createApi({
 	reducerPath: 'authApi',
@@ -99,14 +100,43 @@ export const authApi = createApi({
 			query: (body) => ({ url: '2fa/resend', method: 'POST', body }),
 		}),
 
-		enable2fa: builder.mutation<{ two_factor_enabled: true }, void>({
-			query: () => ({ url: '2fa/enable', method: 'POST' }),
+		enable2fa: builder.mutation<{ two_factor_enabled: boolean }, void>({
+			query: () => ({
+				url: '2fa/enable',
+				method: 'POST',
+				body: {},
+			}),
+			async onQueryStarted(_, { dispatch, queryFulfilled }) {
+				try {
+					const { data } = await queryFulfilled
+					dispatch(setTwoFactorEnabled(true))
+					dispatch(
+						authApi.util.updateQueryData('me', undefined, (draft: any) => {
+							if (draft) draft.two_factor_enabled = true
+						})
+					)
+				} catch {}
+			},
 		}),
 
-		disable2fa: builder.mutation<{ two_factor_enabled: false }, { password: string }>({
-			query: (body) => ({ url: '2fa/disable', method: 'POST', body }),
+		disable2fa: builder.mutation<{ two_factor_enabled: boolean }, { password: string }>({
+			query: ({ password }) => ({
+				url: '2fa/disable',
+				method: 'POST',
+				body: { password },
+			}),
+			async onQueryStarted(_, { dispatch, queryFulfilled }) {
+				try {
+					const { data } = await queryFulfilled
+					dispatch(setTwoFactorEnabled(false))
+					dispatch(
+						authApi.util.updateQueryData('me', undefined, (draft: any) => {
+							if (draft) draft.two_factor_enabled = false
+						})
+					)
+				} catch {}
+			},
 		}),
-
 		///////////////
 
 		refresh: builder.mutation<IRefreshResponse, IRefreshData>({

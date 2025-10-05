@@ -49,10 +49,23 @@ export const authSlice = createSlice({
 			state.user = null
 			state.initialized = false
 		},
+		setTwoFactorEnabled(state, action: PayloadAction<boolean>) {
+			state.user = {
+				...state.user,
+				two_factor_enabled: action.payload,
+			}
+		},
 	},
 })
 
-export const { setLoginData, logout, setRefreshData, setUser, clearUser, resetAuth } =
-	authSlice.actions
+export const {
+	setLoginData,
+	logout,
+	setRefreshData,
+	setUser,
+	clearUser,
+	resetAuth,
+	setTwoFactorEnabled,
+} = authSlice.actions
 
 export default authSlice.reducer
