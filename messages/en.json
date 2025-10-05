@@ -358,7 +358,7 @@
 			"complete": "Mark as completed"
 		},
 		"sampleContract": "Sample contract"
-	},
+    },
 	"taskModal": {
 		"title": "Create a new task",
 		"contractLabel": "Contract",
@@ -721,13 +721,7 @@
 		"requiresProof": "Requires proof",
 		"obligationsTitle": "Obligations"
 	},
-	"tasks": {
-		"priority": {
-			"low": "Low",
-			"medium": "Medium",
-			"high": "High"
-		}
-	},
+
 	"settings": {
 		"security": {
 			"twofa": {

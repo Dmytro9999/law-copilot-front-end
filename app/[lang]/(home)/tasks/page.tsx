@@ -265,17 +265,17 @@ export default function TasksPage() {
 									}
 									className='h-11'
 								/>
-								<Button
-									variant='outline'
-									className='h-11'
-									onClick={() => {
-										setPageNumber(1)
-										refetchTasks()
-									}}
-								>
-									<Filter className='h-4 w-4 mr-2' />
-									{t('tasks.filters.apply') || 'החל'}
-								</Button>
+								{/*<Button*/}
+								{/*	variant='outline'*/}
+								{/*	className='h-11'*/}
+								{/*	onClick={() => {*/}
+								{/*		setPageNumber(1)*/}
+								{/*		refetchTasks()*/}
+								{/*	}}*/}
+								{/*>*/}
+								{/*	<Filter className='h-4 w-4 mr-2' />*/}
+								{/*	{t('tasks.filters.apply') || 'החל'}*/}
+								{/*</Button>*/}
 							</div>
 						</div>
 

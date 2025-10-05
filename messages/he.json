@@ -722,13 +722,7 @@
 		"requiresProof": "דורש הוכחה",
 		"obligationsTitle": "התחייבויות"
 	},
-	"tasks": {
-		"priority": {
-			"low": "נמוכה",
-			"medium": "בינונית",
-			"high": "גבוהה"
-		}
-	},
+
 	"settings": {
 		"security": {
 			"twofa": {
