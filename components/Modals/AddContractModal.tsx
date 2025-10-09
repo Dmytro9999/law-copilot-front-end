@@ -487,11 +487,14 @@ export default function AddContractModal({ isOpen, onClose, onSave }: AddContrac
 			setProcessingStage(t('contractsAdd.ai.stage.analyzing'))
 			setProcessingProgress(70)
 
-			const response = await fetch('http://localhost:3000/api/ai/analyze-contract', {
-				method: 'POST',
-				headers: { 'Content-Type': 'application/json' },
-				body: JSON.stringify({ contractText: text, fileName: name }),
-			})
+			const response = await fetch(
+				'https://api-law-copilot.sargas.io/api/ai/analyze-contract',
+				{
+					method: 'POST',
+					headers: { 'Content-Type': 'application/json' },
+					body: JSON.stringify({ contractText: text, fileName: name }),
+				}
+			)
 
 			if (!response.ok) throw new Error('Failed to analyze contract')
 
